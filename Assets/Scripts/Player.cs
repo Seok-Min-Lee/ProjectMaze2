@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Transform respawnPosition;
+    public Transform respawnPoint;
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public bool enableMinimap;
@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //OnDamage();
-        //Respawn();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,6 +28,11 @@ public class Player : MonoBehaviour
 
             GetItem(gameObject: gameObject);
             gameObject.SetActive(false);
+        }
+        else if(other.tag == NameManager.TAG_PLAYER_RESPAWN)
+        {
+            // 리스폰 지점 업데이트
+            respawnPoint = other.GetComponent<Transform>();
         }
     }
 
@@ -63,8 +67,20 @@ public class Player : MonoBehaviour
         }
         else if (currentHp < 0)
         {
+            if(currentLife > 0)
+            {
+                Respawn();
+            }
+
             currentHp = 0;
         }
+    }
+
+    private void Respawn()
+    {
+        this.transform.position = respawnPoint.position;
+        currentHp = maxHp;
+        currentLife--;
     }
 
     private void ActivateMinimap()

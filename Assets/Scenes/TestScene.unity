@@ -2346,7 +2346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f9f17034bfe12a448af4e9c2178f57d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  respawnPosition: {fileID: 0}
+  respawnPoint: {fileID: 0}
   currentHp: 50
   maxHp: 100
   currentLife: 1
