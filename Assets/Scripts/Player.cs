@@ -78,29 +78,6 @@ public class Player : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void ChangeCurrentHp(int value)
-    {
-        currentHp += value;
-
-        if (currentHp > maxHp)
-        {
-            currentHp = maxHp;
-        }
-        else if (currentHp < 0)
-        {
-            currentHp = 0;
-
-            if (currentLife > 0)
-            {
-                Respawn();
-            }
-            else
-            {
-                //Gameover 추가.
-            }
-        }
-    }
-
     private void ActivateMinimap()
     {
         enableMinimap = true;
@@ -149,7 +126,7 @@ public class Player : MonoBehaviour
 
     }
 
-    void OnDamageByInsect(int damage)
+    private void OnDamageByInsect(int damage)
     {
         currentHp -= damage;    // 기본공격 데미지
         isPoison = true;        // 중독 상태 활성화
@@ -157,7 +134,7 @@ public class Player : MonoBehaviour
         stopTime = 0;       // 해독 타이머 초기화
     }
 
-    IEnumerator Addict(int summaryDamage)
+    private IEnumerator Addict(int summaryDamage)
     {
         if (isPoison)
         {
@@ -169,7 +146,7 @@ public class Player : MonoBehaviour
         StartCoroutine(routine: Addict(summaryDamage: summaryDamage));
     }
 
-    void Detoxify()
+    private void Detoxify()
     {
         if (isPoison)
         {
@@ -183,7 +160,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void CountStopTime()
+    private void CountStopTime()
     {
         StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
 
@@ -198,7 +175,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ChangePoisonEffect(bool isAddict)
+    private void ChangePoisonEffect(bool isAddict)
     {
         addictEffect.SetActive(isAddict);
         detoxEffect.SetActive(!isAddict);
@@ -210,6 +187,29 @@ public class Player : MonoBehaviour
         else
         {
             detoxEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
+        }
+    }
+
+    private void ChangeCurrentHp(int value)
+    {
+        currentHp += value;
+
+        if (currentHp > maxHp)
+        {
+            currentHp = maxHp;
+        }
+        else if (currentHp < 0)
+        {
+            currentHp = 0;
+
+            if (currentLife > 0)
+            {
+                Respawn();
+            }
+            else
+            {
+                //Gameover 추가.
+            }
         }
     }
 }
