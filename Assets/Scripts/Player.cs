@@ -17,7 +17,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        
+        //OnDamage();
+        //Respawn();
     }
 
     private void OnTriggerEnter(Collider other)
