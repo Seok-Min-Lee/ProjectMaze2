@@ -6,6 +6,7 @@ using StarterAssets;
 
 public class Player : MonoBehaviour
 {
+    public GameObject addictEffect, detoxEffect;
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public bool enableMinimap;
@@ -127,21 +128,20 @@ public class Player : MonoBehaviour
 
     private void OnDamage(Monster monster)
     {
-        KnockBack();
+        KnockBack();    // 추가 필요.
 
+        // monster 별 업데이트 할 것.
         switch (monster.type)
         {
             case MonsterType.Insect:
-                currentHp -= monster.damage;
-                isPoison = true;
-                poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;
-
+                OnDamageByInsect(damage: monster.damage);
                 break;
+
             default:
                 break;
         }
 
-        StartCoroutine(routine: Poisoned(summaryDamage: poisonTicDamage * poisonStack));
+        StartCoroutine(routine: Addict(summaryDamage: -poisonTicDamage * poisonStack));    // 시각적 이펙트 추가 필요.
     }
 
     private void KnockBack()
@@ -149,15 +149,24 @@ public class Player : MonoBehaviour
 
     }
 
-    IEnumerator Poisoned(int summaryDamage)
+    void OnDamageByInsect(int damage)
+    {
+        currentHp -= damage;    // 기본공격 데미지
+        isPoison = true;        // 중독 상태 활성화
+        poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
+        stopTime = 0;       // 해독 타이머 초기화
+    }
+
+    IEnumerator Addict(int summaryDamage)
     {
         if (isPoison)
         {
+            ChangePoisonEffect(isAddict: true);
             ChangeCurrentHp(value: summaryDamage);
         }
 
         yield return new WaitForSeconds(1f);
-        StartCoroutine(routine: Poisoned(summaryDamage: summaryDamage));
+        StartCoroutine(routine: Addict(summaryDamage: summaryDamage));
     }
 
     void Detoxify()
@@ -169,6 +178,7 @@ public class Player : MonoBehaviour
             if(stopTime > detoxStopTime)
             {
                 isPoison = false;
+                ChangePoisonEffect(isAddict: false);
             }
         }
     }
@@ -185,6 +195,21 @@ public class Player : MonoBehaviour
         else
         {
             stopTime = 0;
+        }
+    }
+
+    void ChangePoisonEffect(bool isAddict)
+    {
+        addictEffect.SetActive(isAddict);
+        detoxEffect.SetActive(!isAddict);
+
+        if (isAddict)
+        {
+            addictEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
+        }
+        else
+        {
+            detoxEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
         }
     }
 }
