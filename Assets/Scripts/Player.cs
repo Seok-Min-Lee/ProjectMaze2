@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Transform respawnPoint;
+    //public Transform respawnPoint;
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public bool enableMinimap;
     public bool[] enableBeads;
+
+    Vector3 respawnPoint;
 
     private void Awake()
     {
@@ -29,10 +31,16 @@ public class Player : MonoBehaviour
             GetItem(gameObject: gameObject);
             gameObject.SetActive(false);
         }
-        else if(other.tag == NameManager.TAG_PLAYER_RESPAWN)
+        else if (other.tag == NameManager.TAG_PLAYER_RESPAWN)
         {
             // 리스폰 지점 업데이트
-            respawnPoint = other.GetComponent<Transform>();
+            respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 20);
+            //Debug.Log("Respawn Point - x :" + respawnPoint.x + " y : " + respawnPoint.y + " z : " + respawnPoint.z);
+            //respawnPoint = other.transform;
+        }
+        else if (other.tag == NameManager.TAG_FALL)
+        {
+            Respawn();
         }
     }
 
@@ -67,20 +75,13 @@ public class Player : MonoBehaviour
         }
         else if (currentHp < 0)
         {
-            if(currentLife > 0)
+            currentHp = 0;
+
+            if (currentLife > 0)
             {
                 Respawn();
             }
-
-            currentHp = 0;
         }
-    }
-
-    private void Respawn()
-    {
-        this.transform.position = respawnPoint.position;
-        currentHp = maxHp;
-        currentLife--;
     }
 
     private void ActivateMinimap()
@@ -94,5 +95,17 @@ public class Player : MonoBehaviour
         {
             enableBeads[index] = true;
         }
+    }
+
+    private void Respawn()
+    {
+        CharacterController controller = GetComponent<CharacterController>();
+        controller.enabled = false;
+        this.transform.position = respawnPoint;
+        controller.enabled = true;
+
+        Debug.Log("Respawn Point - x :" + this.transform.position.x + " y : " + this.transform.position.y + " z : " + this.transform.position.z);
+        currentHp = maxHp;
+        currentLife--;
     }
 }

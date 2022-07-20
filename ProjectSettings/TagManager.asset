@@ -7,6 +7,7 @@ TagManager:
   - CinemachineTarget
   - PlayerRespawn
   - Item
+  - Fall
   layers:
   - Default
   - TransparentFX
