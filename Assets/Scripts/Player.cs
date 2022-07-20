@@ -39,12 +39,15 @@ public class Player : MonoBehaviour
         switch (item.type)
         {
             case ItemType.Heal:
+                // 체력 0 이하일 경우 리스폰과 라이프 감소 추가 필요.
                 ChangeCurrentHp(value: item.value);
                 break;
             case ItemType.Map:
+                // 미니맵 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
                 ActivateMinimap();
                 break;
             case ItemType.Bead:
+                // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
                 ActivateBead(index: item.value);
                 break;
         }
