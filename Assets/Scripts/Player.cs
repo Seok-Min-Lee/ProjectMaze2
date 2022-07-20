@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Item")
+        if (other.tag == NameManager.TAG_ITEM)
         {
             GameObject gameObject = other.gameObject;
 
