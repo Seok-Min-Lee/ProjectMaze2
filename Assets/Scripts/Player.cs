@@ -41,8 +41,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_PLAYER_RESPAWN:
-                // 리스폰 지점 업데이트
-                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 10);
+                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 10);    // 리스폰 지점 업데이트
                 break;
 
             case NameManager.TAG_FALL:
@@ -62,7 +61,7 @@ public class Player : MonoBehaviour
         switch (item.type)
         {
             case ItemType.Heal:
-                // 체력 0 이하일 경우 리스폰과 라이프 감소 추가 필요.
+                // hp, life 둘다 0 인 경우 GameOver 추가 필요.
                 ChangeCurrentHp(value: item.value);
                 break;
             case ItemType.Map:
@@ -91,21 +90,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Respawn()
-    {
-        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
-        CharacterController controller = GetComponent<CharacterController>();
-        controller.enabled = false;
-        this.transform.position = respawnPoint;
-        controller.enabled = true;
-
-        currentHp = maxHp;
-        currentLife--;
-    }
-
     private void OnDamage(Monster monster)
     {
-        KnockBack();    // 추가 필요.
+        KnockBack();    // 내용 추가 필요.
 
         // monster 별 업데이트 할 것.
         switch (monster.type)
@@ -113,12 +100,15 @@ public class Player : MonoBehaviour
             case MonsterType.Insect:
                 OnDamageByInsect(damage: monster.damage);
                 break;
-
+            case MonsterType.Zombie:
+                break;
+            case MonsterType.Robot:
+                break;
             default:
                 break;
         }
 
-        StartCoroutine(routine: Addict(summaryDamage: -poisonTicDamage * poisonStack));    // 시각적 이펙트 추가 필요.
+        StartCoroutine(routine: Addict(summaryDamage: -poisonTicDamage * poisonStack));
     }
 
     private void KnockBack()
@@ -129,8 +119,11 @@ public class Player : MonoBehaviour
     private void OnDamageByInsect(int damage)
     {
         currentHp -= damage;    // 기본공격 데미지
+
         isPoison = true;        // 중독 상태 활성화
         poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
+        ChangePoisonEffect(isAddict: isPoison); // 중독 이펙트 활성화
+
         stopTime = 0;       // 해독 타이머 초기화
     }
 
@@ -138,7 +131,6 @@ public class Player : MonoBehaviour
     {
         if (isPoison)
         {
-            ChangePoisonEffect(isAddict: true);
             ChangeCurrentHp(value: summaryDamage);
         }
 
@@ -155,7 +147,7 @@ public class Player : MonoBehaviour
             if(stopTime > detoxStopTime)
             {
                 isPoison = false;
-                ChangePoisonEffect(isAddict: false);
+                ChangePoisonEffect(isAddict: isPoison);
             }
         }
     }
@@ -164,6 +156,7 @@ public class Player : MonoBehaviour
     {
         StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
 
+        // 점프, 이동 입력 없을 경우 정지 상태로 판단
         if (!input.jump &&
             input.move == Vector2.zero)
         {
@@ -211,5 +204,17 @@ public class Player : MonoBehaviour
                 //Gameover 추가.
             }
         }
+    }
+
+    private void Respawn()
+    {
+        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
+        CharacterController controller = GetComponent<CharacterController>();
+        controller.enabled = false;
+        this.transform.position = respawnPoint;
+        controller.enabled = true;
+
+        currentHp = maxHp;
+        currentLife--;
     }
 }
