@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using StarterAssets;
 
 public class Player : MonoBehaviour
 {
@@ -12,6 +14,11 @@ public class Player : MonoBehaviour
 
     Vector3 respawnPoint;
 
+    public bool isPoison;
+
+    int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
+    float stopTime = 0f, detoxStopTime = 5f;
+
     private void Awake()
     {
         enableBeads = new bool[3];
@@ -20,6 +27,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //OnDamage();
+        Detoxify();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -41,6 +49,11 @@ public class Player : MonoBehaviour
         else if (other.tag == NameManager.TAG_FALL)
         {
             Respawn();
+        }
+        else if (other.tag == NameManager.TAG_MONSTER_ATTACK)
+        {
+            OnDamage(monster: other.GetComponentInParent<Monster>());
+            //StartCoroutine(routine: OnDamage(monster: other.GetComponentInParent<Monster>()));
         }
     }
 
@@ -107,5 +120,68 @@ public class Player : MonoBehaviour
         Debug.Log("Respawn Point - x :" + this.transform.position.x + " y : " + this.transform.position.y + " z : " + this.transform.position.z);
         currentHp = maxHp;
         currentLife--;
+    }
+
+    private void OnDamage(Monster monster)
+    {
+        KnockBack();
+
+        switch (monster.type)
+        {
+            case MonsterType.Insect:
+                currentHp -= monster.damage;
+                isPoison = true;
+                poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;
+
+                break;
+            default:
+                break;
+        }
+
+        StartCoroutine(routine: Poisoned(summaryDamage: poisonTicDamage * poisonStack));
+    }
+
+    private void KnockBack()
+    {
+
+    }
+
+    IEnumerator Poisoned(int summaryDamage)
+    {
+        if (isPoison)
+        {
+            ChangeCurrentHp(value: summaryDamage);
+        }
+
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(routine: Poisoned(summaryDamage: summaryDamage));
+    }
+
+    void Detoxify()
+    {
+        if (isPoison)
+        {
+            CountStopTime();
+
+            if(stopTime > detoxStopTime)
+            {
+                isPoison = false;
+            }
+        }
+    }
+
+    void CountStopTime()
+    {
+        StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
+
+        if (!input.jump &&
+            input.move == Vector2.zero)
+        {
+            stopTime += Time.deltaTime;
+        }
+        else
+        {
+            stopTime = 0;
+        }
     }
 }

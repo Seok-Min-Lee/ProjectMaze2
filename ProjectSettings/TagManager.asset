@@ -8,11 +8,15 @@ TagManager:
   - PlayerRespawn
   - Item
   - Fall
+  - Floor
+  - Wall
+  - Monster
+  - MonsterAttack
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - 
