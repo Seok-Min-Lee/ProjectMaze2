@@ -6,7 +6,6 @@ using StarterAssets;
 
 public class Player : MonoBehaviour
 {
-    //public Transform respawnPoint;
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public bool enableMinimap;
@@ -32,28 +31,26 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == NameManager.TAG_ITEM)
-        {
-            GameObject gameObject = other.gameObject;
+        GameObject gameObject = other.gameObject;
 
-            GetItem(gameObject: gameObject);
-            gameObject.SetActive(false);
-        }
-        else if (other.tag == NameManager.TAG_PLAYER_RESPAWN)
+        switch (other.tag)
         {
-            // 리스폰 지점 업데이트
-            respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 20);
-            //Debug.Log("Respawn Point - x :" + respawnPoint.x + " y : " + respawnPoint.y + " z : " + respawnPoint.z);
-            //respawnPoint = other.transform;
-        }
-        else if (other.tag == NameManager.TAG_FALL)
-        {
-            Respawn();
-        }
-        else if (other.tag == NameManager.TAG_MONSTER_ATTACK)
-        {
-            OnDamage(monster: other.GetComponentInParent<Monster>());
-            //StartCoroutine(routine: OnDamage(monster: other.GetComponentInParent<Monster>()));
+            case NameManager.TAG_ITEM:
+                GetItem(gameObject: gameObject);
+                break;
+
+            case NameManager.TAG_PLAYER_RESPAWN:
+                // 리스폰 지점 업데이트
+                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 10);
+                break;
+
+            case NameManager.TAG_FALL:
+                Respawn();
+                break;
+
+            case NameManager.TAG_MONSTER_ATTACK:
+                OnDamage(monster: other.GetComponentInParent<Monster>());
+                break;
         }
     }
 
@@ -76,6 +73,8 @@ public class Player : MonoBehaviour
                 ActivateBead(index: item.value);
                 break;
         }
+
+        gameObject.SetActive(false);
     }
 
     private void ChangeCurrentHp(int value)
@@ -93,6 +92,10 @@ public class Player : MonoBehaviour
             if (currentLife > 0)
             {
                 Respawn();
+            }
+            else
+            {
+                //Gameover 추가.
             }
         }
     }
@@ -112,12 +115,12 @@ public class Player : MonoBehaviour
 
     private void Respawn()
     {
+        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
         CharacterController controller = GetComponent<CharacterController>();
         controller.enabled = false;
         this.transform.position = respawnPoint;
         controller.enabled = true;
 
-        Debug.Log("Respawn Point - x :" + this.transform.position.x + " y : " + this.transform.position.y + " z : " + this.transform.position.z);
         currentHp = maxHp;
         currentLife--;
     }
