@@ -12,6 +12,7 @@ TagManager:
   - Wall
   - Monster
   - MonsterAttack
+  - NegativeEffect
   layers:
   - Default
   - TransparentFX

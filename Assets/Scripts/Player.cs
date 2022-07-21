@@ -14,12 +14,16 @@ public class Player : MonoBehaviour
     public bool enableMinimap;
     public bool[] enableBeads;
 
-    Vector3 respawnPoint;
-
     public bool isPoison;
+    public bool isChaos;
+    public int currentChaos, maxChaos;
+
+    Vector3 respawnPoint;
 
     int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
     float stopTime = 0f, detoxStopTime = 5f;
+
+    float countTimeChaos = 0f, activateTimeChaos = 1f;
 
     private void Awake()
     {
@@ -53,6 +57,19 @@ public class Player : MonoBehaviour
             case NameManager.TAG_MONSTER_ATTACK:
                 OnDamage(monster: other.GetComponentInParent<Monster>());
                 break;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == NameManager.TAG_NEAGTIVE_EFFECT)
+        {
+            Timer(time: ref countTimeChaos);
+            if (countTimeChaos > activateTimeChaos)
+            {
+                currentChaos += other.GetComponent<NegativeEffectZone>().value;
+                countTimeChaos = 0f;
+            }
         }
     }
 
@@ -221,5 +238,10 @@ public class Player : MonoBehaviour
 
         currentHp = maxHp;
         currentLife--;
+    }
+
+    private void Timer(ref float time)
+    {
+        time += Time.deltaTime;
     }
 }

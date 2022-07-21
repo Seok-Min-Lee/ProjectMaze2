@@ -1,10 +1,12 @@
 public static class NameManager
 {
+    public const string TAG_PLAYER = "Player";
     public const string TAG_ITEM = "Item";
     public const string TAG_PLAYER_RESPAWN = "PlayerRespawn";
     public const string TAG_FALL = "Fall";
     public const string TAG_MONSTER = "Monster";
     public const string TAG_MONSTER_ATTACK = "MonsterAttack";
+    public const string TAG_NEAGTIVE_EFFECT = "NegativeEffect";
 
     public const string LAYER_PLAYER = "Player";
 
