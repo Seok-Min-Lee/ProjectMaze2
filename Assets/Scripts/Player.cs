@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     public int currentConfusion, maxConfusion;
 
     Vector3 respawnPoint;
+    StarterAssetsInputs playerInput;
 
     int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
     float countTimeDetox = 0f, activateTimeDetox = 5f;
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        playerInput = GetComponent<StarterAssetsInputs>();
         enableBeads = new bool[3];
     }
 
@@ -183,11 +185,9 @@ public class Player : MonoBehaviour
 
     private void CountStopTime()
     {
-        StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
-
         // 점프, 이동 입력 없을 경우 정지 상태로 판단
-        if (!input.jump &&
-            input.move == Vector2.zero)
+        if (!playerInput.jump &&
+            playerInput.move == Vector2.zero)
         {
             Timer(tick: Time.deltaTime, time: ref countTimeDetox);
         }
@@ -214,13 +214,12 @@ public class Player : MonoBehaviour
 
     IEnumerator Confusion()
     {
-        StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
-        input.isReverse = true;
+        playerInput.isReverse = true;
 
         // 플레이어 이펙트 활성화 추가
         yield return new WaitForSeconds(durationConfusion);
 
-        input.isReverse = true;
+        playerInput.isReverse = true;
         //플레이어 이펙트 비활성화 추가
 
         isConfusion = false;
