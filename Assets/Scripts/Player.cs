@@ -7,6 +7,8 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public GameObject addictEffect, detoxEffect;
+    public GameObject[] beads;
+
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public bool enableMinimap;
@@ -84,9 +86,10 @@ public class Player : MonoBehaviour
 
     private void ActivateBead(int index)
     {
-        if(index > 0 && index < enableBeads.Length)
+        if(index >= 0 && index < enableBeads.Length)
         {
             enableBeads[index] = true;
+            beads[index].SetActive(true);
         }
     }
 
