@@ -102,7 +102,9 @@ public class Player : MonoBehaviour
                 break;
             case MonsterType.Zombie:
                 break;
-            case MonsterType.Robot:
+            case MonsterType.Range:
+                break;
+            case MonsterType.Rock:
                 break;
             default:
                 break;

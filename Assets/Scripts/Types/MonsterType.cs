@@ -3,5 +3,6 @@ public enum MonsterType
     Normal,
     Insect,
     Zombie,
-    Robot,
+    Range,
+    Rock
 }

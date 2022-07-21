@@ -10,4 +10,6 @@ public static class NameManager
 
     public const string ANIMATION_PARAMETER_RUN_FORWARD = "Run Forward";
     public const string ANIMATION_PARAMETER_STAB_ATTACK = "Stab Attack";
+    public const string ANIMATION_PARAMETER_DO_ATTACK = "DoAttack";
+    public const string ANIMATION_PARAMETER_DO_DIE = "DoDie";
 }
