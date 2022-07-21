@@ -7,7 +7,7 @@ public class MonsterInsect : Monster
 {
     public Transform target;
     public BoxCollider AttackArea;
-    public float maxDistance, lockOnRadius, lockOnDistance;
+    public float senseRadius, senseDistance, lockOnRadius, lockOnDistance;
 
     NavMeshAgent agent;
     Animator animator;
@@ -22,7 +22,7 @@ public class MonsterInsect : Monster
 
     private void Update()
     {
-        Debug.DrawRay(start: transform.position + (Vector3.up * 2), dir: Vector3.right * maxDistance, color: Color.red);
+        Debug.DrawRay(start: transform.position + (Vector3.up * 2), dir: Vector3.right * senseDistance, color: Color.red);
 
         if (target == null)
         {
@@ -37,16 +37,29 @@ public class MonsterInsect : Monster
 
     private void SetNavigationTarget()
     {
-        RaycastHit hit;
+        //RaycastHit hit;
 
-        if(Physics.Raycast(origin: transform.position + (Vector3.up * 2), 
-                           direction: Vector3.right,
-                           maxDistance: maxDistance, 
-                           layerMask: LayerMask.GetMask(NameManager.LAYER_PLAYER),
-                           hitInfo: out hit))
+        //if(Physics.Raycast(origin: transform.position + (Vector3.up * 2), 
+        //                   direction: Vector3.right,
+        //                   maxDistance: maxDistance, 
+        //                   layerMask: LayerMask.GetMask(NameManager.LAYER_PLAYER),
+        //                   hitInfo: out hit))
+        //{
+        //    target = hit.transform;
+
+        //    animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
+        //}
+        RaycastHit[] hits = Physics.SphereCastAll(
+            origin: transform.position + (Vector3.up * 2),
+            direction: Vector3.right,
+            radius: senseRadius,
+            maxDistance: senseDistance,
+            layerMask: LayerMask.GetMask(NameManager.LAYER_PLAYER)
+        );
+
+        if(hits.Length > 0)
         {
-            target = hit.transform;
-            
+            target = hits[0].transform;
             animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
         }
     }
@@ -89,5 +102,6 @@ public class MonsterInsect : Monster
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(center: transform.position + transform.forward * lockOnDistance, radius: lockOnRadius);
+        Gizmos.DrawWireSphere(center: transform.position + (Vector3.up * 2) + transform.forward * senseDistance, radius: senseRadius);
     }
 }
