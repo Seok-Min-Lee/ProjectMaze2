@@ -224,16 +224,17 @@ public class Player : MonoBehaviour
 
     IEnumerator Confuse()
     {
+        isConfusion = true;
         playerInput.isReverse = true;
 
         // 플레이어 이펙트 활성화 추가
         yield return new WaitForSeconds(durationConfusion);
 
-        playerInput.isReverse = true;
         //플레이어 이펙트 비활성화 추가
-
+        playerInput.isReverse = false;
         isConfusion = false;
-        countTimeConfusion = 0f;
+
+        currentConfusion = 0;
     }
 
     private void ChangeCurrentHp(int value)
