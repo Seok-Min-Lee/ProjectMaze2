@@ -15,14 +15,14 @@ public class Player : MonoBehaviour
     public bool[] enableBeads;
 
     public bool isPoison;
-    public bool isChaos;
-    public int currentChaos, maxChaos;
+    public bool isConfusion;
+    public int currentConfusion, maxConfusion;
 
     Vector3 respawnPoint;
 
     int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
     float countTimeDetox = 0f, activateTimeDetox = 5f;
-    float countTimeChaos = 0f, activateTimeChaos = 1f;
+    float countTimeConfusion = 0f, activateTimeConfusion = 1f, durationConfusion = 5;
 
     private void Awake()
     {
@@ -63,11 +63,19 @@ public class Player : MonoBehaviour
     {
         if (other.tag == NameManager.TAG_NEAGTIVE_EFFECT)
         {
-            Timer(time: ref countTimeChaos);
-            if (countTimeChaos > activateTimeChaos)
+            if (!isConfusion)
             {
-                currentChaos += other.GetComponent<NegativeEffectZone>().value;
-                countTimeChaos = 0f;
+                Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
+                if (countTimeConfusion >= activateTimeConfusion)
+                {
+                    currentConfusion += other.GetComponent<NegativeEffectZone>().value;
+                    countTimeConfusion = 0f;
+
+                    if(currentConfusion >= maxConfusion)
+                    {
+                        StartCoroutine(routine: Confusion());
+                    }
+                }
             }
         }
     }
@@ -181,7 +189,7 @@ public class Player : MonoBehaviour
         if (!input.jump &&
             input.move == Vector2.zero)
         {
-            Timer(time: ref countTimeDetox);
+            Timer(tick: Time.deltaTime, time: ref countTimeDetox);
         }
         else
         {
@@ -202,6 +210,21 @@ public class Player : MonoBehaviour
         {
             detoxEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
         }
+    }
+
+    IEnumerator Confusion()
+    {
+        StarterAssetsInputs input = GetComponent<StarterAssetsInputs>();
+        input.isReverse = true;
+
+        // 플레이어 이펙트 활성화 추가
+        yield return new WaitForSeconds(durationConfusion);
+
+        input.isReverse = true;
+        //플레이어 이펙트 비활성화 추가
+
+        isConfusion = false;
+        countTimeConfusion = 0f;
     }
 
     private void ChangeCurrentHp(int value)
@@ -239,8 +262,8 @@ public class Player : MonoBehaviour
         currentLife--;
     }
 
-    private void Timer(ref float time)
+    private void Timer(float tick, ref float time)
     {
-        time += Time.deltaTime;
+        time += tick;
     }
 }

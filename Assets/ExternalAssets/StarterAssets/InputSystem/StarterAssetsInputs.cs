@@ -20,10 +20,14 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		public bool isReverse = false;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
 		{
-			MoveInput(value.Get<Vector2>());
+            Vector2 valuevec = value.Get<Vector2>();
+            MoveInput(isReverse ? -valuevec : valuevec);
+
+            //MoveInput(value.Get<Vector2>());
 		}
 
 		public void OnLook(InputValue value)
