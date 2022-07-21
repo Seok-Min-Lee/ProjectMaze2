@@ -21,8 +21,7 @@ public class Player : MonoBehaviour
     Vector3 respawnPoint;
 
     int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
-    float stopTime = 0f, detoxStopTime = 5f;
-
+    float countTimeDetox = 0f, activateTimeDetox = 5f;
     float countTimeChaos = 0f, activateTimeChaos = 1f;
 
     private void Awake()
@@ -146,7 +145,7 @@ public class Player : MonoBehaviour
         poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
         ChangePoisonEffect(isAddict: isPoison); // 중독 이펙트 활성화
 
-        stopTime = 0;       // 해독 타이머 초기화
+        countTimeDetox = 0;       // 해독 타이머 초기화
     }
 
     private IEnumerator Addict(int summaryDamage)
@@ -166,7 +165,7 @@ public class Player : MonoBehaviour
         {
             CountStopTime();
 
-            if(stopTime > detoxStopTime)
+            if(countTimeDetox > activateTimeDetox)
             {
                 isPoison = false;
                 ChangePoisonEffect(isAddict: isPoison);
@@ -182,11 +181,11 @@ public class Player : MonoBehaviour
         if (!input.jump &&
             input.move == Vector2.zero)
         {
-            stopTime += Time.deltaTime;
+            Timer(time: ref countTimeDetox);
         }
         else
         {
-            stopTime = 0;
+            countTimeDetox = 0;
         }
     }
 
