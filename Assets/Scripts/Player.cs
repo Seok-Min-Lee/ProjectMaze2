@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
 
                     if(currentConfusion >= maxConfusion)
                     {
-                        StartCoroutine(routine: Confusion());
+                        StartCoroutine(routine: Confuse());
                     }
                 }
             }
@@ -173,7 +173,7 @@ public class Player : MonoBehaviour
     {
         if (isPoison)
         {
-            CountStopTime();
+            UpdateCountTimeDetox();
 
             if(countTimeDetox > activateTimeDetox)
             {
@@ -183,7 +183,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void CountStopTime()
+    private void UpdateCountTimeDetox()
     {
         // 점프, 이동 입력 없을 경우 정지 상태로 판단
         if (!playerInput.jump &&
@@ -212,7 +212,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator Confusion()
+    IEnumerator Confuse()
     {
         playerInput.isReverse = true;
 
