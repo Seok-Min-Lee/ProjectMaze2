@@ -6,6 +6,7 @@ using StarterAssets;
 
 public class Player : MonoBehaviour
 {
+    public GameManager manager;
     public GameObject addictEffect, detoxEffect;
     public GameObject[] beads;
 
@@ -16,19 +17,28 @@ public class Player : MonoBehaviour
 
     public bool isPoison;
     public bool isConfusion;
-    public int currentConfusion, maxConfusion;
 
     Vector3 respawnPoint;
     StarterAssetsInputs playerInput;
 
-    int poisonStack = 0, poisonStackMax = 5, poisonTicDamage = 2, poisonSumDamage = 0;
-    float countTimeDetox = 0f, activateTimeDetox = 5f;
-    float countTimeConfusion = 0f, activateTimeConfusion = 1f, durationConfusion = 5;
+    int poisonStack = 0, currentConfusion = 0, maxConfusion = 20;
+    float countTimeDetox = 0f, countTimeConfusion = 0f;
+
+    int poisonStackMax, poisonTicDamage;
+    float activateTimeDetox, activateTimeConfusion, durationConfusion;
 
     private void Awake()
     {
         playerInput = GetComponent<StarterAssetsInputs>();
         enableBeads = new bool[3];
+
+        manager.Initialize(
+            playerPoisonStackMax: out poisonStackMax,
+            playerPoisonTicDamage: out poisonTicDamage,
+            playerActivateTimeDetox: out activateTimeDetox,
+            playerActivateTimeConfusion: out activateTimeConfusion,
+            playerDurationConfusion: out durationConfusion
+        );
     }
 
     private void Update()
