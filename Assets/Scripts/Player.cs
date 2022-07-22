@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
                 Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
                 if (countTimeConfusion >= activateTimeConfusion)
                 {
-                    StartCoroutine(routine: ChargeConfusion());
+                    StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
 
                     currentConfusion += other.GetComponent<NegativeEffectZone>().value;
                     countTimeConfusion = 0f;
@@ -224,13 +224,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator ChargeConfusion()
-    {
-        confusionChargeEffect.SetActive(true);
-        yield return new WaitForSeconds(activateTimeConfusion);
-        confusionChargeEffect.SetActive(false);
-    }
-
     IEnumerator Confuse()
     {
         isConfusion = true;
@@ -286,5 +279,12 @@ public class Player : MonoBehaviour
     private void Timer(float tick, ref float time)
     {
         time += tick;
+    }
+
+    IEnumerator ActiveVolatileEffect(GameObject effect, float duration)
+    {
+        effect.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        effect.SetActive(false);
     }
 }
