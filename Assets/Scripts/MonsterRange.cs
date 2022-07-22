@@ -58,4 +58,11 @@ public class MonsterRange : Monster
 
         yield return null;
     }
+
+    public void TurnBack()
+    {
+        this.isReverse = !this.isReverse;
+
+        this.gameObject.transform.rotation = Quaternion.Euler(0, transform.localEulerAngles.y + 180, 0);
+    }
 }

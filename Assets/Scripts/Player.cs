@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
-                TurnBackMonster(monsterRange: other.GetComponentInParent<MonsterRange>());
+                other.GetComponentInParent<MonsterRange>().TurnBack();
                 break;
 
             case NameManager.TAG_TRAP_ACTIVATOR:
@@ -160,13 +160,6 @@ public class Player : MonoBehaviour
         }
 
         StartCoroutine(routine: Addict(summaryDamage: -poisonTicDamage * poisonStack));
-    }
-
-    private void TurnBackMonster(MonsterRange monsterRange)
-    {
-        monsterRange.isReverse = !monsterRange.isReverse;
-        Quaternion quaternion = Quaternion.Euler(0, monsterRange.transform.localEulerAngles.y + 180, 0);
-        monsterRange.gameObject.transform.rotation = quaternion;
     }
 
     private void KnockBack()
