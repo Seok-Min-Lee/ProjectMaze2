@@ -13,6 +13,7 @@ TagManager:
   - Monster
   - MonsterAttack
   - NegativeEffect
+  - MonsterTurnBackArea
   layers:
   - Default
   - TransparentFX

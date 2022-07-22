@@ -7,6 +7,7 @@ public static class NameManager
     public const string TAG_MONSTER = "Monster";
     public const string TAG_MONSTER_ATTACK = "MonsterAttack";
     public const string TAG_NEAGTIVE_EFFECT = "NegativeEffect";
+    public const string TAG_MONSTER_TURN_BACK_AREA= "MonsterTurnBackArea";
 
     public const string LAYER_PLAYER = "Player";
 

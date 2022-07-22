@@ -68,6 +68,13 @@ public class Player : MonoBehaviour
             case NameManager.TAG_MONSTER_ATTACK:
                 OnDamage(monster: other.GetComponentInParent<Monster>());
                 break;
+
+            case NameManager.TAG_MONSTER_TURN_BACK_AREA:
+                MonsterRange monsterRange = gameObject.GetComponentInParent<MonsterRange>();
+                monsterRange.isReverse = !monsterRange.isReverse;
+                Quaternion quaternion = monsterRange.isReverse ? Quaternion.Euler(0, -90, 0) : Quaternion.Euler(0, 90, 0);
+                monsterRange.gameObject.transform.rotation = quaternion;
+                break;
         }
     }
 

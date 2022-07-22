@@ -8,6 +8,7 @@ public class MonsterRange : Monster
     public Transform projectilePosition;
     public float attackTime;
 
+    public bool isReverse;
     Animator animator;
 
     Vector3 instantModifyVec;
