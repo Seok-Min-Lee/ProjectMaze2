@@ -7,7 +7,7 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public GameManager manager;
-    public GameObject addictEffect, detoxEffect;
+    public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
     public GameObject[] beads;
 
     public int currentHp, maxHp;
@@ -80,6 +80,8 @@ public class Player : MonoBehaviour
                 Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
                 if (countTimeConfusion >= activateTimeConfusion)
                 {
+                    StartCoroutine(routine: ChargeConfusion());
+
                     currentConfusion += other.GetComponent<NegativeEffectZone>().value;
                     countTimeConfusion = 0f;
 
@@ -222,15 +224,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    IEnumerator ChargeConfusion()
+    {
+        confusionChargeEffect.SetActive(true);
+        yield return new WaitForSeconds(activateTimeConfusion);
+        confusionChargeEffect.SetActive(false);
+    }
+
     IEnumerator Confuse()
     {
         isConfusion = true;
         playerInput.isReverse = true;
 
         // 플레이어 이펙트 활성화 추가
+        confusionEffect.SetActive(true);
         yield return new WaitForSeconds(durationConfusion);
 
         //플레이어 이펙트 비활성화 추가
+        confusionEffect.SetActive(false);
         playerInput.isReverse = false;
         isConfusion = false;
 
