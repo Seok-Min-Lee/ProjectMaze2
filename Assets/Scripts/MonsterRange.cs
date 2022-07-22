@@ -37,8 +37,8 @@ public class MonsterRange : Monster
             animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_DO_ATTACK);
 
             GameObject instantProjectile = Instantiate(original: projectile,
-                                                   position: transform.position + instantModifyVec,
-                                                   rotation: transform.rotation);
+                                                       position: transform.position + instantModifyVec,
+                                                       rotation: transform.rotation);
             if (this.type == MonsterType.Range)
             {
                 MonsterMissile monsterMissile = instantProjectile.GetComponent<MonsterMissile>();
