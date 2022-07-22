@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class TrapActivator : MonoBehaviour
 {
-    public GameObject trap;
+    public GameObject[] traps;
     public bool isVolatility;
 
     public void ActivateTrap()
     {
-        trap.GetComponent<Trap>().ActivateEvent();
-
+        foreach(GameObject trap in traps)
+        {
+            trap.GetComponent<Trap>().ActivateEvent();
+        }
+        
         if (isVolatility)
         {
             this.gameObject.SetActive(false);
