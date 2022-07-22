@@ -23,14 +23,10 @@ public class MonsterRange : Monster
 
     void Update()
     {
-        Attack();
+        StartCoroutine(Attack());
     }
 
-    private void TurnBackward()
-    {
-    }
-
-    private void Attack()
+    IEnumerator Attack()
     {
         if(attackDelay > attackTime)
         {
@@ -59,5 +55,7 @@ public class MonsterRange : Monster
         {
             attackDelay += Time.deltaTime;
         }
+
+        yield return null;
     }
 }
