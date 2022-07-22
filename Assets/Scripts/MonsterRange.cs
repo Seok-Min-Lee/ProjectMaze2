@@ -8,7 +8,7 @@ public class MonsterRange : Monster
     public Transform projectilePosition;
     public float attackTime;
 
-    public bool isReverse;
+    public bool isReverse;  // 현재 방향전환을 앞,뒤로만 하고 있기 때문에 Bool 타입으로 처리 (처리 로직은 Player 스크립트 참조)
     Animator animator;
 
     Vector3 instantModifyVec;

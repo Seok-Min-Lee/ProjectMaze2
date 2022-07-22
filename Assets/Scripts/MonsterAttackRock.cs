@@ -11,9 +11,10 @@ public class MonsterAttackRock : MonoBehaviour
 
     float angularPower, scaleValue; // 운동량과 스케일
     float angularPowerIncrementValue, scaleValueIncrementValue; // 운동량과 스케일의 증가값
-    float gainPowerTime;
     float delayDestroy;
     bool isShoot;
+
+    float gainPowerTime = 2f;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
 
     void Awake()
     {
@@ -25,8 +26,6 @@ public class MonsterAttackRock : MonoBehaviour
         scaleValue = 0.05f;
         angularPowerIncrementValue = 0.05f;
         scaleValueIncrementValue = 0.01f;
-
-        gainPowerTime = 2f;
 
         delayDestroy = 4f;
     }
