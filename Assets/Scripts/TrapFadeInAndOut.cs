@@ -6,6 +6,8 @@ public class TrapFadeInAndOut : Trap
 {
     public float waittingTime;
 
+    bool isActive;
+
     Renderer renderer;
     Color updateColor;
 
@@ -26,17 +28,23 @@ public class TrapFadeInAndOut : Trap
         StartCoroutine(ActiaveAfterWatting());
     }
 
+    public override void DeactivateEvent()
+    {
+        isActive = false;
+    }
+
     IEnumerator ActiaveAfterWatting()
     {
         yield return new WaitForSeconds(waittingTime);
-
+        
+        isActive = true;
         StopCoroutine(FadeInAndOut());
         StartCoroutine(FadeInAndOut());
     }
 
     IEnumerator FadeInAndOut()
     {
-        while (true)
+        while (isActive)
         {
             // Fade Out
             for (int i = (int)updateCount; i >= 0; i--)

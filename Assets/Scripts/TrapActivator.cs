@@ -19,4 +19,12 @@ public class TrapActivator : MonoBehaviour
             this.gameObject.SetActive(false);
         }
     }
+
+    public void DeactivateTrap()
+    {
+        foreach (GameObject trap in traps)
+        {
+            trap.GetComponent<Trap>().DeactivateEvent();
+        }
+    }
 }

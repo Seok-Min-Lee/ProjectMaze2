@@ -8,4 +8,9 @@ public class Trap : MonoBehaviour
     {
 
     }
+
+    public virtual void DeactivateEvent()
+    {
+
+    }
 }

@@ -76,6 +76,10 @@ public class Player : MonoBehaviour
             case NameManager.TAG_TRAP_ACTIVATOR:
                 other.GetComponentInParent<TrapActivator>().ActivateTrap();
                 break;
+
+            case NameManager.TAG_TRAP_DEACTIVATOR:
+                other.GetComponentInParent<TrapDeactivator>().CallDeactivateTrap();
+                break;
         }
     }
 
