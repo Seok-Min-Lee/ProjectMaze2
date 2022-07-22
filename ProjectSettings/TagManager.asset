@@ -14,6 +14,7 @@ TagManager:
   - MonsterAttack
   - NegativeEffect
   - MonsterTurnBackArea
+  - TrapActivator
   layers:
   - Default
   - TransparentFX

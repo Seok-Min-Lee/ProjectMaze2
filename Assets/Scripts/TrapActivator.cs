@@ -9,7 +9,7 @@ public class TrapActivator : MonoBehaviour
 
     public void ActivateTrap()
     {
-        trap.SetActive(!trap.activeSelf);
+        trap.GetComponent<Trap>().ActivateEvent();
 
         if (isVolatility)
         {
