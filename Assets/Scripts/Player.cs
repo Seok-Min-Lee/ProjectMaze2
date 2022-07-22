@@ -145,7 +145,7 @@ public class Player : MonoBehaviour
                 break;
             case MonsterType.Range:
                 break;
-            case MonsterType.Rock:
+            case MonsterType.Catapult:
                 break;
             default:
                 break;

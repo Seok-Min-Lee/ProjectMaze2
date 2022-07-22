@@ -4,5 +4,5 @@ public enum MonsterType
     Insect,
     Zombie,
     Range,
-    Rock
+    Catapult
 }
