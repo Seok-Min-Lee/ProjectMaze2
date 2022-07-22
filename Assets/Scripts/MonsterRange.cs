@@ -42,7 +42,8 @@ public class MonsterRange : Monster
             if (this.type == MonsterType.Range)
             {
                 MonsterMissile monsterMissile = instantProjectile.GetComponent<MonsterMissile>();
-                instantProjectile.GetComponent<Rigidbody>().AddForce(force: Vector3.right * monsterMissile.speed, mode: ForceMode.Impulse);
+
+                instantProjectile.GetComponent<Rigidbody>().velocity = transform.forward * monsterMissile.speed;
                 monsterMissile.damage = this.damage;
             }
             else if(this.type == MonsterType.Catapult)
