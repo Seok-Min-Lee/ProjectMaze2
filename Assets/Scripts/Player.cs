@@ -72,6 +72,10 @@ public class Player : MonoBehaviour
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
                 TurnBackMonster(monsterRange: other.GetComponentInParent<MonsterRange>());
                 break;
+
+            case NameManager.TAG_TRAP_ACTIVATOR:
+                other.GetComponentInParent<TrapActivator>().ActivateTrap();
+                break;
         }
     }
 
