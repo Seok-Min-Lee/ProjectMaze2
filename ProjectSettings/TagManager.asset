@@ -16,6 +16,7 @@ TagManager:
   - MonsterTurnBackArea
   - TrapActivator
   - TrapDeactivator
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -23,9 +24,9 @@ TagManager:
   - Player
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Item
+  - Monster
+  - MonsterAttack
   - 
   - 
   - 

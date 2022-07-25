@@ -5,7 +5,10 @@ using UnityEngine;
 public class TrapActivator : MonoBehaviour
 {
     public GameObject[] traps;
+    public TrapDeactivator deactivator;
     public bool isVolatility;
+
+    GameObject deactivatorObject;
 
     public void ActivateTrap()
     {
@@ -17,6 +20,11 @@ public class TrapActivator : MonoBehaviour
         if (isVolatility)
         {
             this.gameObject.SetActive(false);
+        }
+
+        if(deactivator != null)
+        {
+            deactivator.gameObject.SetActive(true);
         }
     }
 

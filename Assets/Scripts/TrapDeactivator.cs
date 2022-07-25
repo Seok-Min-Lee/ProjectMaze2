@@ -9,5 +9,7 @@ public class TrapDeactivator : MonoBehaviour
     public void CallDeactivateTrap()
     {
         activator.DeactivateTrap();
+
+        this.gameObject.SetActive(false);
     }
 }
