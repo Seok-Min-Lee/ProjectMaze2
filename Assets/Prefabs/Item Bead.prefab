@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8536434731695124370}
   - component: {fileID: 8536434731695124368}
   - component: {fileID: 8536434731695124371}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4823,7 +4823,7 @@ GameObject:
   - component: {fileID: 8536434731784673353}
   - component: {fileID: 8536434731784673349}
   - component: {fileID: 8536434731784673348}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Mesh Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4904,7 +4904,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8536434732239492509}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4938,7 +4938,7 @@ GameObject:
   - component: {fileID: 8536434733140599795}
   - component: {fileID: 3525518360580351504}
   - component: {fileID: 3525518360580351505}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Item Bead
   m_TagString: Item
   m_Icon: {fileID: 0}

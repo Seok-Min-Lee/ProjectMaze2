@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6512893925393166926}
   - component: {fileID: 5129811181619664682}
   - component: {fileID: 5129811181619664683}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Item Map
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6512893925482694714}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 6512893926364808276}
   - component: {fileID: 6512893926364808278}
   - component: {fileID: 6512893926364808279}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 6512893926425845055}
   - component: {fileID: 6512893926425845049}
   - component: {fileID: 6512893926425845054}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5108940063078260298}
   - component: {fileID: 8322489647501459186}
   - component: {fileID: 6574853937410908015}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 2202472487292331952}
   - component: {fileID: 2202472487292331954}
   - component: {fileID: 2202472487292331955}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4907,7 +4907,7 @@ GameObject:
   - component: {fileID: 2202472486282336884}
   - component: {fileID: 2202472486282336885}
   - component: {fileID: 2202472486282336882}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Missile
   m_TagString: MonsterAttack
   m_Icon: {fileID: 0}
