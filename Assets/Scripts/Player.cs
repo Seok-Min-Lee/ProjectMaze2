@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 
     public int currentHp, maxHp;
     public int currentLife, maxLife;
+    public int currentConfusion = 0, maxConfusion = 100;
     public bool enableMinimap;
     public bool[] enableBeads;
 
@@ -21,7 +22,7 @@ public class Player : MonoBehaviour
     Vector3 respawnPoint;
     StarterAssetsInputs playerInput;
 
-    int poisonStack = 0, currentConfusion = 0, maxConfusion = 20;
+    int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
 
     int poisonStackMax, poisonTicDamage;
@@ -32,7 +33,7 @@ public class Player : MonoBehaviour
         playerInput = GetComponent<StarterAssetsInputs>();
         enableBeads = new bool[3];
 
-        manager.Initialize(
+        manager.InitializePlayer(
             playerPoisonStackMax: out poisonStackMax,
             playerPoisonTicDamage: out poisonTicDamage,
             playerActivateTimeDetox: out activateTimeDetox,

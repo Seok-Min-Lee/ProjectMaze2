@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     const float PLAYER_ACTIVATE_TIME_DETOX = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
     const float PLAYER_ACTIVATE_TIME_CONFUSION = 1.0f, PLAYER_DURATION_CONFUSION = 5.0f;  // '공포' 스택 업데이트 시간, '공포' 발현 시 지속 시간
 
-    public void Initialize(
+    public void InitializePlayer(
         out int playerPoisonStackMax,
         out int playerPoisonTicDamage,
         out float playerActivateTimeDetox,
@@ -21,5 +21,17 @@ public class GameManager : MonoBehaviour
         playerActivateTimeDetox = PLAYER_ACTIVATE_TIME_DETOX;
         playerActivateTimeConfusion = PLAYER_ACTIVATE_TIME_CONFUSION;
         playerDurationConfusion = PLAYER_DURATION_CONFUSION;
+    }
+
+    public Player player;
+    public RectTransform playerHpBar, playerConfusionBar;
+
+    private void LateUpdate()
+    {
+        if (player != null)
+        {
+            playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
+            playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
+        }
     }
 }
