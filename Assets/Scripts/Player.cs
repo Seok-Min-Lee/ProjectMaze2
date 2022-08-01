@@ -18,9 +18,10 @@ public class Player : MonoBehaviour
 
     public bool isPoison;
     public bool isConfusion;
+    public bool isInteract, wasInteractPreprocess, isInteractPreprocessReady;
 
-    Vector3 respawnPoint;
-    StarterAssetsInputs playerInput;
+    Vector3 respawnPoint, interactPoint;
+    StarterAssetsInputs _input;
 
     int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
@@ -30,7 +31,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        playerInput = GetComponent<StarterAssetsInputs>();
+        _input = GetComponent<StarterAssetsInputs>();
         enableBeads = new bool[3];
 
         manager.InitializePlayer(
@@ -46,6 +47,9 @@ public class Player : MonoBehaviour
     {
         //OnDamage();
         Detoxify();
+        InteractPreprocess();
+        Interact();
+        InteractPostProcess();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -104,6 +108,21 @@ public class Player : MonoBehaviour
                     }
                 }
             }
+        }
+        else if(other.tag == NameManager.TAG_NPC_INTERACTION_ZONE)
+        {
+            isInteractPreprocessReady = true;
+            interactPoint = other.transform.position;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == NameManager.TAG_NPC_INTERACTION_ZONE)
+        {
+            isInteractPreprocessReady = false;
+            wasInteractPreprocess = false;
+            isInteract = false;
         }
     }
 
@@ -211,8 +230,8 @@ public class Player : MonoBehaviour
     private void UpdateCountTimeDetox()
     {
         // 점프, 이동 입력 없을 경우 정지 상태로 판단
-        if (!playerInput.jump &&
-            playerInput.move == Vector2.zero)
+        if (!_input.jump &&
+            _input.move == Vector2.zero)
         {
             Timer(tick: Time.deltaTime, time: ref countTimeDetox);
         }
@@ -240,7 +259,7 @@ public class Player : MonoBehaviour
     IEnumerator Confuse()
     {
         isConfusion = true;
-        playerInput.isReverse = true;
+        _input.isReverse = true;
 
         // 플레이어 이펙트 활성화 추가
         confusionEffect.SetActive(true);
@@ -248,10 +267,81 @@ public class Player : MonoBehaviour
 
         //플레이어 이펙트 비활성화 추가
         confusionEffect.SetActive(false);
-        playerInput.isReverse = false;
+        _input.isReverse = false;
         isConfusion = false;
 
         currentConfusion = 0;
+    }
+
+    private void InteractPreprocess()
+    {
+        // 상호작용 전 한 번만 실행하기 위한 조건 세팅
+        // 1. 상호작용 상태가 아니다.
+        // 2. 상호작용 전처리를 하지 않은 상태이다.
+        // 3. 상호작용 전처리 준비 상태이다.
+        // 4. 상호작용 버튼 입력이 들어왔다.
+        if (!isInteract &&
+            !wasInteractPreprocess &&
+            isInteractPreprocessReady && 
+            _input.interact)
+        {
+            // 플레이어 위치 NPC 앞으로 이동.
+            CharacterController controller = GetComponent<CharacterController>();
+            controller.enabled = false;
+            this.transform.position = interactPoint;
+            controller.enabled = true;
+
+            // 카메라 위치 조정
+            Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
+            cameraPosition.x = this.transform.position.x;
+            manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
+
+            // 카메라 및 UI 업데이트.
+            manager.UpdateUI(isInteract: true);
+
+            // 상호작용 준비 상태 업데이트.
+            wasInteractPreprocess = true;
+            isInteract = true;
+
+            _input.interact = false;
+        }
+    }
+
+    private void Interact()
+    {
+        if (wasInteractPreprocess && isInteract)
+        {
+            while (true)
+            {
+                // 상호작용 과정
+                _input.interact = false;
+
+                break;
+            }
+
+            isInteract = false;
+        }
+    }
+
+    private void InteractPostProcess()
+    {
+        // 상호작용 후 한 번만 실행하기 위한 조건 세팅
+        // 1. 상호작용 상태가 아니다.
+        // 2. 상호작용 전처리를 한 상태이다.
+        // 3. 상호작용 버튼 입력이 들어왔다.
+        if (!isInteract &&
+            wasInteractPreprocess &&
+            _input.interact)
+        {
+            // UI 업데이트.
+            manager.UpdateUI(isInteract: false);
+
+            // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
+            wasInteractPreprocess = false;
+
+            // 상호작용 키 입력 초기화
+            _input.interact = false;
+        }
     }
 
     private void ChangeCurrentHp(int value)

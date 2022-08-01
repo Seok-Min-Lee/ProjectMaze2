@@ -17,6 +17,8 @@ TagManager:
   - TrapActivator
   - TrapDeactivator
   - Trap
+  - NPC
+  - NpcInteractionZone
   layers:
   - Default
   - TransparentFX
