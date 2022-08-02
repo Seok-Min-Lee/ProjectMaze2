@@ -46,13 +46,7 @@ public class GameManager : MonoBehaviour
     {
         if (isInteract)
         {
-            // 활성화된 카메라 교체.
-            followCamera.gameObject.SetActive(false);
-            npcInteractionCamera.gameObject.SetActive(true);
-
-            // 플레이어 조작 설정.
-            player._input.controlEnable = false;
-            Cursor.lockState = CursorLockMode.Confined;
+            UpdateUISetting(isInteract: isInteract);
 
             // UI 관련 데이터 초기화.
             this.dialogueSituationNo = 0;
@@ -69,26 +63,26 @@ public class GameManager : MonoBehaviour
                 npcDialogue.text = dialogueCollection.FirstOrDefault(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo).text;
                 dialogueSequenceNo++;
             }
-
-
-            // 활성화된 UI 교체.
-            NormalPanel.SetActive(false);
-            InteractPanel.SetActive(true);
         }
         else
         {
-            // 활성화된 카메라 교체.
-            followCamera.gameObject.SetActive(true);
-            npcInteractionCamera.gameObject.SetActive(false);
-
-            // 플레이어 조작 설정.
-            player._input.controlEnable = true;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            // 활성화된 UI 교체.
-            NormalPanel.SetActive(true);
-            InteractPanel.SetActive(false);
+            UpdateUISetting(isInteract: isInteract);
         }
+    }
+
+    private void UpdateUISetting(bool isInteract)
+    {
+        // 활성화된 카메라 교체.
+        followCamera.gameObject.SetActive(!isInteract);
+        npcInteractionCamera.gameObject.SetActive(isInteract);
+
+        // 플레이어 조작 설정.
+        player._input.controlEnable = !isInteract;
+        Cursor.lockState = isInteract ? CursorLockMode.Confined : CursorLockMode.Locked;
+
+        // 활성화된 UI 교체.
+        NormalPanel.SetActive(!isInteract);
+        InteractPanel.SetActive(isInteract);
     }
 
     public void UpdateInteractionUI(out bool isEnd)
