@@ -23,12 +23,17 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 		public bool isReverse = false;
+		public bool interactEnable = true;
+		public bool controlEnable = true;
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
 		{
-            Vector2 valuevec = value.Get<Vector2>();
-            MoveInput(isReverse ? -valuevec : valuevec);
+            if (controlEnable)
+			{
+				Vector2 valuevec = value.Get<Vector2>();
+				MoveInput(isReverse ? -valuevec : valuevec);
+			}
 
             //MoveInput(value.Get<Vector2>());
 		}
@@ -43,7 +48,10 @@ namespace StarterAssets
 
 		public void OnJump(InputValue value)
 		{
-			JumpInput(value.isPressed);
+            if (controlEnable)
+			{
+				JumpInput(value.isPressed);
+			}
 		}
 
 		public void OnSprint(InputValue value)
@@ -53,7 +61,10 @@ namespace StarterAssets
 
 		public void OnInteract(InputValue value)
         {
-			InteractInput(value.isPressed);
+            if (interactEnable)
+            {
+				InteractInput(value.isPressed);
+			}
 		}
 #endif
 
