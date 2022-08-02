@@ -40,9 +40,9 @@ public class GameManager : MonoBehaviour
         playerDurationConfusion = PLAYER_DURATION_CONFUSION;
     }
 
-    DialogueCollection npcDialogues, npcDialogueOptions;
-    int dialogueSituationNo, dialogueSequenceNo;
-    public void UpdateUINormalToInteract(bool isInteract, string name = NameManager.NPC_NAME_HUMAN_OLD_MAN, int situationNo = 0)
+    DialogueCollection dialogueCollection;
+    int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
+    public void UpdateUINormalToInteract(bool isInteract, string name = NameManager.NPC_NAME_HUMAN_OLD_MAN)
     {
         if (isInteract)
         {
@@ -55,23 +55,21 @@ public class GameManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Confined;
 
             // UI 관련 데이터 초기화.
-            dialogueSituationNo = situationNo;
-            dialogueSequenceNo = 0;
+            this.dialogueSituationNo = 0;
+            this.dialogueSequenceNo = 0;
+            this.dialogueSequenceSubNo = 0;
             npcName.text = name;
 
+            // 상호작용 다이얼로그 세팅.
             if (systemManager.GetNpcIndexByName(name: name, index: out int npcIndex) &&
-                systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
+                systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
             {
-                npcDialogues = new DialogueCollection();
-                npcDialogues.AddRange(dialogues.Where(dialogue => dialogue.situationNo == dialogueSituationNo && dialogue.type != DialogueType.Option));
+                dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
 
-                npcDialogueOptions = new DialogueCollection();
-                npcDialogueOptions.AddRange(dialogues.Where(dialogue => dialogue.situationNo == dialogueSituationNo && dialogue.type == DialogueType.Option));
-
-                Dialogue dialogue = npcDialogues.ElementAt(dialogueSequenceNo++);
-                npcDialogue.text = dialogue.text;
-                interactChoicePanel.SetActive(dialogue.type == DialogueType.Question? true : false);
+                npcDialogue.text = dialogueCollection.FirstOrDefault(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo).text;
+                dialogueSequenceNo++;
             }
+
 
             // 활성화된 UI 교체.
             NormalPanel.SetActive(false);
@@ -96,50 +94,73 @@ public class GameManager : MonoBehaviour
     public void UpdateInteractionUI(out bool isEnd)
     {
         Dialogue dialogue;
-        if(dialogueSequenceNo < npcDialogues.Count)
+        if (TryGetNextDialogue(dialogue: out dialogue))
         {
-            dialogue = npcDialogues.FirstOrDefault(npcDialogue => npcDialogue.sequenceNo == dialogueSequenceNo);
+            npcDialogue.text = dialogue.text;
 
             if (dialogue.type == DialogueType.Question)
             {
-                interactChoicePanel.SetActive(true);
+                DialogueCollection options = new DialogueCollection(dialogueCollection.Where(x => x.type == DialogueType.Option && x.sequenceNo == this.dialogueSequenceNo));
 
-                List<Dialogue> options = new List<Dialogue>();
-                options.AddRange(npcDialogueOptions.Where(option => option.sequenceNo == dialogueSequenceNo));
-
-                for(int i = 0; i < options.Count; i++)
+                // 선택지 활성화
+                for (int i = 0; i < options.Count; i++)
                 {
                     npcChoiceButtons[i].SetActive(true);
                     npcChoiceTexts[i].text = options[i].text;
                 }
 
+                // 상호작용 입력 비활성화
                 player._input.interactEnable = false;
             }
             else
             {
-                interactChoicePanel.SetActive(false);
-                for (int i = 0; i < npcChoiceButtons.Length; i++)
+                // 선택지 비활성화
+                foreach (GameObject button in npcChoiceButtons)
                 {
-                    npcChoiceButtons[i].SetActive(false);
+                    if (button.activeSelf)
+                    {
+                        button.SetActive(false);
+                    }
                 }
 
+                // 상호작용 입력 활성화
                 player._input.interactEnable = true;
             }
 
             dialogueSequenceNo++;
-            npcDialogue.text = dialogue.text;
+        }
 
-            isEnd = false;
+        isEnd = dialogueSequenceNo > dialogueLastSequenceNo ? true : false;
+    }
+
+    private bool TryGetNextDialogue(out Dialogue dialogue)
+    {
+        DialogueCollection dialogues = new DialogueCollection(dialogueCollection.Where(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo));
+
+        if(dialogues.Count > 0)
+        {
+            if (dialogues.Count > 1)
+            {
+                dialogue = dialogues.Where(dialogue => dialogue.sequenceSubNo == dialogueSequenceSubNo).FirstOrDefault();
+            }
+            else
+            {
+                dialogue = dialogues.FirstOrDefault();
+            }
+
+            return true;
         }
         else
         {
-            isEnd = true;
+            dialogue = new Dialogue();
+
+            return false;
         }
     }
 
     public void InteractChooseOption(int choiceNo)
     {
-        dialogueSequenceNo += choiceNo;
+        dialogueSequenceSubNo = choiceNo;
         UpdateInteractionUI(isEnd: out bool isEnd);
     }
 

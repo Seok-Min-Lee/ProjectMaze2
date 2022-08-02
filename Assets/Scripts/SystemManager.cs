@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SystemManager
@@ -86,10 +87,10 @@ public class SystemManager
 
         if (GetNpcIndexByName(name: NameManager.NPC_NAME_HUMAN_OLD_MAN, index: out npcIndex))
         {
-            DialogueCollection dialogueList = new DialogueCollection();
+            DialogueCollection dialogueRaws = new DialogueCollection();
             int dialogueSequenceNo = 0;
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
@@ -99,7 +100,7 @@ public class SystemManager
                 text: "당신은 모르겠지만 하늘이 닿힌 것이 마냥 나쁜 것은 아니야.."
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
@@ -109,7 +110,7 @@ public class SystemManager
                 text: "이것은 테스트"
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
@@ -119,7 +120,7 @@ public class SystemManager
                 text: "골라라"
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
@@ -129,7 +130,7 @@ public class SystemManager
                 text: "선택지 A"
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
@@ -141,29 +142,29 @@ public class SystemManager
 
             dialogueSequenceNo++;
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
-                sequenceNo: dialogueSequenceNo++,
+                sequenceNo: dialogueSequenceNo,
                 sequenceSubNo: 0,
-                type: DialogueType.Answer,
+                type: DialogueType.Reaction,
                 text: "A를 선택했구만"
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 0,
-                sequenceNo: dialogueSequenceNo++,
+                sequenceNo: dialogueSequenceNo,
                 sequenceSubNo: 1,
-                type: DialogueType.Answer,
+                type: DialogueType.Reaction,
                 text: "B를 선택했군"
             ));
 
             dialogueSequenceNo = 0;
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 1,
@@ -173,7 +174,7 @@ public class SystemManager
                 text: "결국 하늘이 열렸어.."
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 1,
@@ -183,7 +184,7 @@ public class SystemManager
                 text: "(기쁘지 않아 보인다.)"
             ));
 
-            dialogueList.Add(new Dialogue(
+            dialogueRaws.Add(new Dialogue(
                 id: dialogueIndex++,
                 npcId: npcIndex,
                 situationNo: 1,
@@ -193,6 +194,8 @@ public class SystemManager
                 text: "거인들의 왕의 분노로 닿혔던 하늘이 열렸지만.. 그의 분노가 사라졌다고 할 수 없지 않은가.."
             ));
 
+
+            DialogueCollection dialogueList = new DialogueCollection(dialogueRaws.OrderBy(dialogue => dialogue.situationNo).ThenBy(dialogue => dialogue.sequenceNo).ThenBy(dialogue => dialogue.sequenceSubNo));
             indexDialogueListDictionary.Add(key: npcIndex, value: dialogueList);
         }
 

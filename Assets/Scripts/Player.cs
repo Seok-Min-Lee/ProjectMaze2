@@ -273,7 +273,6 @@ public class Player : MonoBehaviour
         currentConfusion = 0;
     }
 
-    public int situationNo;
     private void InteractPreprocess()
     {
         // 상호작용 전 한 번만 실행하기 위한 조건 세팅
@@ -298,7 +297,7 @@ public class Player : MonoBehaviour
             manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
 
             // 카메라 및 UI 업데이트.
-            manager.UpdateUINormalToInteract(isInteract: true, situationNo: situationNo);
+            manager.UpdateUINormalToInteract(isInteract: true);
 
             // 상호작용 준비 상태 업데이트.
             wasInteractPreprocess = true;

@@ -7,5 +7,5 @@ public enum DialogueType
     Normal,
     Question,
     Option,
-    Answer,
+    Reaction,
 }
