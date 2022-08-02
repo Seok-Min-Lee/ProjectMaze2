@@ -46,26 +46,18 @@ public class GameManager : MonoBehaviour
     {
         if (isInteract)
         {
+            // UI 세팅.
             UpdateUISetting(isInteract: isInteract);
 
-            // UI 관련 데이터 초기화.
-            this.dialogueSituationNo = 0;
-            this.dialogueSequenceNo = 0;
-            this.dialogueSequenceSubNo = 0;
-            npcName.text = name;
+            // 상호작용 관련 데이터 초기화.
+            InitializeInteractionData(name: name);
 
-            // 상호작용 다이얼로그 세팅.
-            if (systemManager.GetNpcIndexByName(name: name, index: out int npcIndex) &&
-                systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
-            {
-                dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
-
-                npcDialogue.text = dialogueCollection.FirstOrDefault(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo).text;
-                dialogueSequenceNo++;
-            }
+            // 상호작용 호출.
+            UpdateInteractionUI(isEnd: out bool isEnd);
         }
         else
         {
+            // UI 세팅.
             UpdateUISetting(isInteract: isInteract);
         }
     }
@@ -83,6 +75,20 @@ public class GameManager : MonoBehaviour
         // 활성화된 UI 교체.
         NormalPanel.SetActive(!isInteract);
         InteractPanel.SetActive(isInteract);
+    }
+
+    private void InitializeInteractionData(string name)
+    {
+        if (systemManager.GetNpcIndexByName(name: name, index: out int npcIndex) &&
+            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
+        {
+            this.dialogueSituationNo = 0;
+            this.dialogueSequenceNo = 0;
+            this.dialogueSequenceSubNo = 0;
+            npcName.text = name;
+
+            dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
+        }
     }
 
     public void UpdateInteractionUI(out bool isEnd)

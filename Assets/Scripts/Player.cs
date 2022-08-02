@@ -20,8 +20,10 @@ public class Player : MonoBehaviour
     public bool isConfusion;
     public bool isInteract, wasInteractPreprocess, isInteractPreprocessReady;
 
-    Vector3 respawnPoint, interactPoint;
     public StarterAssetsInputs _input;
+    CharacterController controller;
+    Vector3 respawnPoint, interactPoint;
+    
 
     int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
@@ -41,6 +43,11 @@ public class Player : MonoBehaviour
             playerActivateTimeConfusion: out activateTimeConfusion,
             playerDurationConfusion: out durationConfusion
         );
+    }
+
+    private void Start()
+    {
+        controller = GetComponent<CharacterController>();
     }
 
     private void Update()
@@ -286,10 +293,7 @@ public class Player : MonoBehaviour
             _input.interact)
         {
             // 플레이어 위치 NPC 앞으로 이동.
-            CharacterController controller = GetComponent<CharacterController>();
-            controller.enabled = false;
-            this.transform.position = interactPoint;
-            controller.enabled = true;
+            ForceToMove(point: interactPoint);
 
             // 카메라 위치 조정
             Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
@@ -369,14 +373,18 @@ public class Player : MonoBehaviour
 
     private void Respawn()
     {
-        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
-        CharacterController controller = GetComponent<CharacterController>();
-        controller.enabled = false;
-        this.transform.position = respawnPoint;
-        controller.enabled = true;
+        ForceToMove(point: respawnPoint);
 
         currentHp = maxHp;
         currentLife--;
+    }
+
+    private void ForceToMove(Vector3 point)
+    {
+        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
+        controller.enabled = false;
+        this.transform.position = point;
+        controller.enabled = true;
     }
 
     private void Timer(float tick, ref float time)
