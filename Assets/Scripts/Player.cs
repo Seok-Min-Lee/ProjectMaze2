@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     public StarterAssetsInputs _input { get; private set; }
     CharacterController controller;
     Vector3 respawnPoint, interactPoint;
-    NonPlayerCharacter interactNpc;
+    NPC interactNpc;
 
     int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
         }
         else if(other.tag == NameManager.TAG_NPC_INTERACTION_ZONE)
         {
-            interactNpc = other.GetComponent<NonPlayerCharacter>();
+            interactNpc = other.GetComponent<NPC>();
             isInteractPreprocessReady = true;
             interactPoint = other.transform.position;
         }
@@ -302,7 +302,7 @@ public class Player : MonoBehaviour
             manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
 
             // 카메라 및 UI 업데이트.
-            manager.UpdateUINormalToInteract(isInteract: true, name: interactNpc.name);
+            manager.UpdateUINormalToInteract(isInteract: true, npc: interactNpc);
 
             // 상호작용 준비 상태 업데이트.
             wasInteractPreprocess = true;
@@ -339,7 +339,7 @@ public class Player : MonoBehaviour
             _input.interact)
         {
             // UI 업데이트.
-            manager.UpdateUINormalToInteract(isInteract: false, name: string.Empty);
+            manager.UpdateUINormalToInteract(isInteract: false, npc: new NPC());
 
             // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
             wasInteractPreprocess = false;

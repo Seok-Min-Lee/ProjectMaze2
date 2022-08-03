@@ -42,12 +42,12 @@ public class GameManager : MonoBehaviour
 
     DialogueCollection dialogueCollection;
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
-    string interactNpcName;
-    public void UpdateUINormalToInteract(bool isInteract, string name)
+    NPC interactNpc;
+    public void UpdateUINormalToInteract(bool isInteract, NPC npc)
     {
-        if(!string.Equals(interactNpcName, name))
+        if(!string.Equals(interactNpc.name, npc.name))
         {
-            interactNpcName = name;
+            interactNpc = npc;
         }
             
         if (isInteract)
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
             UpdateUISetting(isInteract: isInteract);
 
             // 상호작용 관련 데이터 초기화.
-            InitializeInteractionData(name: name);
+            InitializeInteractionData(npc: npc);
 
             // 상호작용 호출.
             UpdateInteractionUI(isEnd: out bool isEnd);
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
         InteractPanel.SetActive(isInteract);
     }
 
-    private void InitializeInteractionData(string name)
+    private void InitializeInteractionData(NPC npc)
     {
         if (systemManager.GetNpcIndexByName(name: name, index: out int npcIndex) &&
             systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
             this.dialogueSituationNo = 0;
             this.dialogueSequenceNo = 0;
             this.dialogueSequenceSubNo = 0;
-            npcName.text = name;
+            npcName.text = npc.name;
 
             dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
         }
