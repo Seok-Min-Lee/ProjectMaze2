@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public Text npcName, npcDialogue;
 
     public GameObject miniMap, miniMapPlayer;
+    public bool miniMapVisible;
 
     SystemManager systemManager;
     private void Awake()
@@ -192,5 +193,10 @@ public class GameManager : MonoBehaviour
     {
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
+    }
+
+    private void UpdateMiniMap()
+    {
+        //if () { }
     }
 }

@@ -7,6 +7,7 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public GameManager manager;
+    public GameObject marker;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
     public GameObject[] beads;
 
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
 
     public StarterAssetsInputs _input { get; private set; }
     CharacterController controller;
-    Vector3 respawnPoint, interactPoint;
+    Vector3 respawnPoint, interactPoint, markerPoint;
     NPC interactNpc;
 
     int poisonStack = 0;
@@ -52,6 +53,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        UpdateMinimapMarker();
         //OnDamage();
         Detoxify();
         InteractPreprocess();
@@ -347,6 +349,14 @@ public class Player : MonoBehaviour
             // 상호작용 키 입력 초기화
             _input.interact = false;
         }
+    }
+
+    private void UpdateMinimapMarker()
+    {
+        markerPoint = this.transform.position;
+        markerPoint.y = 0;
+
+        marker.transform.position = markerPoint;
     }
 
     private void ChangeCurrentHp(int value)
