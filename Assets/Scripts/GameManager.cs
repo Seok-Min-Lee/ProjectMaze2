@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera;
     public GameObject NormalPanel, InteractPanel;
-    public GameObject interactChoicePanel;
+    public GameObject interactChoicePanel, nextDialogueSignal;
     public GameObject[] npcChoiceButtons;
     public Text[] npcChoiceTexts;
     public Text npcName, npcDialogue;
@@ -45,18 +45,15 @@ public class GameManager : MonoBehaviour
     NPC interactNpc;
     public void UpdateUINormalToInteract(bool isInteract, NPC npc)
     {
-        if(!string.Equals(interactNpc.name, npc.name))
-        {
-            interactNpc = npc;
-        }
-            
         if (isInteract)
         {
+            interactNpc = npc;
+
             // UI 세팅.
             UpdateUIWhetherInteraction(isInteract: isInteract);
 
             // 상호작용 관련 데이터 초기화.
-            InitializeInteractionData(npc: npc);
+            InitializeInteractionData(npc: interactNpc);
 
             // 상호작용 호출.
             UpdateInteractionUI(isEnd: out bool isEnd);
@@ -80,7 +77,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeInteractionData(NPC npc)
     {
-        if (systemManager.GetNpcIndexByName(name: name, index: out int npcIndex) &&
+        if (systemManager.GetNpcIndexByName(name: npc.name, index: out int npcIndex) &&
             systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
         {
             this.dialogueSituationNo = 0;
@@ -110,6 +107,8 @@ public class GameManager : MonoBehaviour
                     npcChoiceTexts[i].text = options[i].text;
                 }
 
+                nextDialogueSignal.SetActive(false);
+
                 // 상호작용 입력 비활성화
                 player._input.interactEnable = false;
             }
@@ -122,6 +121,12 @@ public class GameManager : MonoBehaviour
                     {
                         button.SetActive(false);
                     }
+                }
+
+                // 
+                if(dialogue.sequenceNo < dialogueLastSequenceNo)
+                {
+                    nextDialogueSignal.SetActive(true);
                 }
 
                 // 상호작용 입력 활성화
