@@ -296,7 +296,7 @@ public class Player : MonoBehaviour
             manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
 
             // 카메라 및 UI 업데이트.
-            manager.UpdateUINormalToInteract(isInteract: true, npc: interactNpc);
+            manager.UpdateUINormalToInteraction(npc: interactNpc);
 
             // 상호작용 준비 상태 업데이트.
             wasInteractPreprocess = true;

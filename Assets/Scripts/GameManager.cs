@@ -8,22 +8,37 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject followCamera, backMirrorCamera, npcInteractionCamera;
-    public GameObject NormalPanel, InteractPanel;
-    public GameObject interactChoicePanel, nextDialogueSignal;
-    public GameObject[] npcChoiceButtons;
-    public Text[] npcChoiceTexts;
-    public Text npcName, npcDialogue;
+    // 카메라
+    public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
-    public GameObject minimap, minimapMarker;
-    public bool minimapVisible;
-    Vector3 minimapMarkerPoint;
+    // 인게임 UI
+    public GameObject NormalPanel, InteractPanel;   // 평상시, 상호작용시
+    public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
+    public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
+    public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
+    public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
+
+    public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
+
+    public Player player;
+    public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
 
     SystemManager systemManager;
+
+    // NPC 상호작용 관련
+    DialogueCollection dialogueCollection;
+    int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
+    NPC interactNpc;
+
+    // 미니맵 관련
+    Vector3 minimapMarkerPoint; // 플레이어 마커 위치
+    bool minimapVisible;
+
     private void Awake()
     {
         systemManager = new SystemManager();
         // DB 데이터 로드 추가
+        // systemManager.GetDbData();
         ActivateMinimap(isActive: minimapVisible);
     }
 
@@ -36,43 +51,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    const int PLAYER_POISON_STACK_MAX = 5, PLAYER_POISON_TIC_DAMAGE = 2;    // 독 최대 스택, 독 스택당 도트 데미지
-    const float PLAYER_ACTIVATE_TIME_DETOX = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
-    const float PLAYER_ACTIVATE_TIME_CONFUSION = 1.0f, PLAYER_DURATION_CONFUSION = 5.0f;  // '공포' 스택 업데이트 시간, '공포' 발현 시 지속 시간
-
-    public void InitializePlayer(
-        out int playerPoisonStackMax,
-        out int playerPoisonTicDamage,
-        out float playerActivateTimeDetox,
-        out float playerActivateTimeConfusion,
-        out float playerDurationConfusion
-    )
+    public void UpdateUINormalToInteraction(NPC npc)
     {
-        playerPoisonStackMax = PLAYER_POISON_STACK_MAX;
-        playerPoisonTicDamage = PLAYER_POISON_TIC_DAMAGE;
-        playerActivateTimeDetox = PLAYER_ACTIVATE_TIME_DETOX;
-        playerActivateTimeConfusion = PLAYER_ACTIVATE_TIME_CONFUSION;
-        playerDurationConfusion = PLAYER_DURATION_CONFUSION;
-    }
+        interactNpc = npc;
 
-    DialogueCollection dialogueCollection;
-    int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
-    NPC interactNpc;
-    public void UpdateUINormalToInteract(bool isInteract, NPC npc)
-    {
-        if (isInteract)
-        {
-            interactNpc = npc;
+        // UI 세팅.
+        UpdateUIWhetherInteraction(isInteract: true);
 
-            // UI 세팅.
-            UpdateUIWhetherInteraction(isInteract: isInteract);
+        // 상호작용 관련 데이터 초기화.
+        InitializeInteractionData(npc: interactNpc);
 
-            // 상호작용 관련 데이터 초기화.
-            InitializeInteractionData(npc: interactNpc);
-
-            // 상호작용 호출.
-            UpdateInteractionUI(isEnd: out bool isEnd);
-        }
+        // 상호작용 호출.
+        UpdateInteractionUI(isEnd: out bool isEnd);
     }
 
     public void UpdateUIWhetherInteraction(bool isInteract)
@@ -88,20 +78,6 @@ public class GameManager : MonoBehaviour
         // 활성화된 UI 교체.
         NormalPanel.SetActive(!isInteract);
         InteractPanel.SetActive(isInteract);
-    }
-
-    private void InitializeInteractionData(NPC npc)
-    {
-        if (systemManager.GetNpcIndexByName(name: npc.name, index: out int npcIndex) &&
-            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
-        {
-            this.dialogueSituationNo = 0;
-            this.dialogueSequenceNo = 0;
-            this.dialogueSequenceSubNo = 0;
-            npcName.text = npc.name;
-
-            dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
-        }
     }
 
     public void UpdateInteractionUI(out bool isEnd)
@@ -154,11 +130,43 @@ public class GameManager : MonoBehaviour
         isEnd = dialogueSequenceNo > dialogueLastSequenceNo ? true : false;
     }
 
+    public void InteractChooseOption(int choiceNo)
+    {
+        dialogueSequenceSubNo = choiceNo;
+        UpdateInteractionUI(isEnd: out bool isEnd);
+    }
+
+    public void ActivateMinimap(bool isActive)
+    {
+        minimapVisible = isActive;
+        minimap.SetActive(minimapVisible);
+        minimapCamera.SetActive(minimapVisible);
+    }
+
+    public void MoveGameObject(GameObject gameObject, Vector3 vector)
+    {
+        gameObject.transform.position = vector;
+    }
+
+    private void InitializeInteractionData(NPC npc)
+    {
+        if (systemManager.GetNpcIndexByName(name: npc.name, index: out int npcIndex) &&
+            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
+        {
+            this.dialogueSituationNo = 0;
+            this.dialogueSequenceNo = 0;
+            this.dialogueSequenceSubNo = 0;
+            npcName.text = npc.name;
+
+            dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
+        }
+    }
+
     private bool TryGetNextDialogue(out Dialogue dialogue)
     {
         DialogueCollection dialogues = new DialogueCollection(dialogueCollection.Where(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo));
 
-        if(dialogues.Count > 0)
+        if (dialogues.Count > 0)
         {
             if (dialogues.Count > 1)
             {
@@ -179,30 +187,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void InteractChooseOption(int choiceNo)
-    {
-        dialogueSequenceSubNo = choiceNo;
-        UpdateInteractionUI(isEnd: out bool isEnd);
-    }
-
-    public void MoveGameObject(GameObject gameObject, Vector3 vector)
-    {
-        gameObject.transform.position = vector;
-    }
-
-    public Player player;
-    public RectTransform playerHpBar, playerConfusionBar;
-
     private void DefaultUIUpadate()
     {
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
-    }
-
-    public void ActivateMinimap(bool isActive)
-    {
-        minimapVisible = isActive;
-        minimap.SetActive(minimapVisible);
     }
 
     private void UpdateMinimap()
@@ -214,5 +202,26 @@ public class GameManager : MonoBehaviour
 
             minimapMarker.transform.position = minimapMarkerPoint;
         }
+    }
+
+
+    // 게임 내 설정 값
+    const int PLAYER_POISON_STACK_MAX = 5, PLAYER_POISON_TIC_DAMAGE = 2;    // 독 최대 스택, 독 스택당 도트 데미지
+    const float PLAYER_ACTIVATE_TIME_DETOX = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
+    const float PLAYER_ACTIVATE_TIME_CONFUSION = 1.0f, PLAYER_DURATION_CONFUSION = 5.0f;  // '공포' 스택 업데이트 시간, '공포' 발현 시 지속 시간
+
+    public void InitializePlayer(
+        out int playerPoisonStackMax,
+        out int playerPoisonTicDamage,
+        out float playerActivateTimeDetox,
+        out float playerActivateTimeConfusion,
+        out float playerDurationConfusion
+    )
+    {
+        playerPoisonStackMax = PLAYER_POISON_STACK_MAX;
+        playerPoisonTicDamage = PLAYER_POISON_TIC_DAMAGE;
+        playerActivateTimeDetox = PLAYER_ACTIVATE_TIME_DETOX;
+        playerActivateTimeConfusion = PLAYER_ACTIVATE_TIME_CONFUSION;
+        playerDurationConfusion = PLAYER_DURATION_CONFUSION;
     }
 }
