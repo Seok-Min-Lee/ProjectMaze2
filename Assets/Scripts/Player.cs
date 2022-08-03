@@ -339,7 +339,7 @@ public class Player : MonoBehaviour
             _input.interact)
         {
             // UI 업데이트.
-            manager.UpdateUINormalToInteract(isInteract: false, npc: new NPC());
+            manager.UpdateUIWhetherInteraction(isInteract: false);
 
             // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
             wasInteractPreprocess = false;

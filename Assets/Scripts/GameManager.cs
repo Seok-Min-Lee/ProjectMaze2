@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
         if (isInteract)
         {
             // UI 세팅.
-            UpdateUISetting(isInteract: isInteract);
+            UpdateUIWhetherInteraction(isInteract: isInteract);
 
             // 상호작용 관련 데이터 초기화.
             InitializeInteractionData(npc: npc);
@@ -61,14 +61,9 @@ public class GameManager : MonoBehaviour
             // 상호작용 호출.
             UpdateInteractionUI(isEnd: out bool isEnd);
         }
-        else
-        {
-            // UI 세팅.
-            UpdateUISetting(isInteract: isInteract);
-        }
     }
 
-    private void UpdateUISetting(bool isInteract)
+    public void UpdateUIWhetherInteraction(bool isInteract)
     {
         // 활성화된 카메라 교체.
         followCamera.gameObject.SetActive(!isInteract);
