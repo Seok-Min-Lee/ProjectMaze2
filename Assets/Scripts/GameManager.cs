@@ -15,13 +15,25 @@ public class GameManager : MonoBehaviour
     public Text[] npcChoiceTexts;
     public Text npcName, npcDialogue;
 
-    public GameObject miniMap, miniMapPlayer;
-    public bool miniMapVisible;
+    public GameObject minimap, minimapMarker;
+    public bool minimapVisible;
+    Vector3 minimapMarkerPoint;
 
     SystemManager systemManager;
     private void Awake()
     {
         systemManager = new SystemManager();
+        // DB 데이터 로드 추가
+        ActivateMinimap(isActive: minimapVisible);
+    }
+
+    private void LateUpdate()
+    {
+        if (player != null)
+        {
+            DefaultUIUpadate();
+            UpdateMinimap();
+        }
     }
 
     const int PLAYER_POISON_STACK_MAX = 5, PLAYER_POISON_TIC_DAMAGE = 2;    // 독 최대 스택, 독 스택당 도트 데미지
@@ -178,14 +190,6 @@ public class GameManager : MonoBehaviour
         gameObject.transform.position = vector;
     }
 
-    private void LateUpdate()
-    {
-        if (player != null)
-        {
-            DefaultUIUpadate();
-        }
-    }
-
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;
 
@@ -195,8 +199,20 @@ public class GameManager : MonoBehaviour
         playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
     }
 
-    private void UpdateMiniMap()
+    public void ActivateMinimap(bool isActive)
     {
-        //if () { }
+        minimapVisible = isActive;
+        minimap.SetActive(minimapVisible);
+    }
+
+    private void UpdateMinimap()
+    {
+        if (minimapVisible)
+        {
+            minimapMarkerPoint = player.transform.position;
+            minimapMarkerPoint.y = 0;
+
+            minimapMarker.transform.position = minimapMarkerPoint;
+        }
     }
 }

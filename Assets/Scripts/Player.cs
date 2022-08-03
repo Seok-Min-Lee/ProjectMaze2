@@ -7,14 +7,12 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public GameManager manager;
-    public GameObject marker;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
     public GameObject[] beads;
 
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public int currentConfusion = 0, maxConfusion = 100;
-    public bool enableMinimap;
     public bool[] enableBeads;
 
     public bool isPoison;
@@ -23,7 +21,7 @@ public class Player : MonoBehaviour
 
     public StarterAssetsInputs _input { get; private set; }
     CharacterController controller;
-    Vector3 respawnPoint, interactPoint, markerPoint;
+    Vector3 respawnPoint, interactPoint;
     NPC interactNpc;
 
     int poisonStack = 0;
@@ -53,7 +51,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        UpdateMinimapMarker();
         //OnDamage();
         Detoxify();
         InteractPreprocess();
@@ -148,7 +145,7 @@ public class Player : MonoBehaviour
                 break;
             case ItemType.Map:
                 // 미니맵 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
-                ActivateMinimap();
+                manager.ActivateMinimap(isActive: true);
                 break;
             case ItemType.Bead:
                 // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
@@ -157,11 +154,6 @@ public class Player : MonoBehaviour
         }
 
         gameObject.SetActive(false);
-    }
-
-    private void ActivateMinimap()
-    {
-        enableMinimap = true;
     }
 
     private void ActivateBead(int index)
@@ -349,14 +341,6 @@ public class Player : MonoBehaviour
             // 상호작용 키 입력 초기화
             _input.interact = false;
         }
-    }
-
-    private void UpdateMinimapMarker()
-    {
-        markerPoint = this.transform.position;
-        markerPoint.y = 0;
-
-        marker.transform.position = markerPoint;
     }
 
     private void ChangeCurrentHp(int value)
