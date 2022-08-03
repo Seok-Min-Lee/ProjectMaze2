@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public Text[] npcChoiceTexts;
     public Text npcName, npcDialogue;
 
+    public GameObject miniMap, miniMapPlayer;
+
     SystemManager systemManager;
     private void Awake()
     {
