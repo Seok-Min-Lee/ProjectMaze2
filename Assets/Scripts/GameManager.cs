@@ -42,8 +42,14 @@ public class GameManager : MonoBehaviour
 
     DialogueCollection dialogueCollection;
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
-    public void UpdateUINormalToInteract(bool isInteract, string name = NameManager.NPC_NAME_HUMAN_OLD_MAN)
+    string interactNpcName;
+    public void UpdateUINormalToInteract(bool isInteract, string name)
     {
+        if(!string.Equals(interactNpcName, name))
+        {
+            interactNpcName = name;
+        }
+            
         if (isInteract)
         {
             // UI ¼¼ÆÃ.

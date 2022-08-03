@@ -30,4 +30,48 @@ public static class NameManager
     public const string NPC_NAME_HUMAN_YOUNG_MAN = "인간 청년";
     public const string NPC_NAME_HUMAN_OLD_MAN = "인간 노인";
     public const string NPC_NAME_NONAME = "인게임 NPC";
+
+    public static bool TryConvertNpcTypeToName(NpcType type, out string name)
+    {
+        name = string.Empty;
+
+        switch (type)
+        {
+            case NpcType.HumanGatekeeper:
+                name = NPC_NAME_HUMAN_GATEKEEPER;
+                break;
+            case NpcType.FairyChild:
+                name = NPC_NAME_FAIRY_CHILD;
+                break;
+            case NpcType.FairyOldMan:
+                name = NPC_NAME_FAIRY_OLD_MAN;
+                break;
+            case NpcType.GiantStoneStatue:
+                name = NPC_NAME_GIANT_STONE_STATUE;
+                break;
+            case NpcType.GiantTwinA:
+                name = NPC_NAME_GIANT_TWIN_A;
+                break;
+            case NpcType.GiantTwinB:
+                name = NPC_NAME_GIANT_TWIN_B;
+                break;
+            case NpcType.HumanYoungMan:
+                name = NPC_NAME_HUMAN_YOUNG_MAN;
+                break;
+            case NpcType.HumanOldMan:
+                name = NPC_NAME_HUMAN_OLD_MAN;
+                break;
+            case NpcType.Noname:
+                name = NPC_NAME_NONAME;
+                break;
+        }
+
+        if(string.Equals(name, string.Empty))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+
 }
