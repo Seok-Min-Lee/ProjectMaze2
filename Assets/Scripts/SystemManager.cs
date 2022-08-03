@@ -162,6 +162,18 @@ public class SystemManager
                 text: "B를 선택했군"
             ));
 
+            dialogueSequenceNo++;
+
+            dialogueRaws.Add(new Dialogue(
+                id: dialogueIndex++,
+                npcId: npcIndex,
+                situationNo: 0,
+                sequenceNo: dialogueSequenceNo,
+                sequenceSubNo: 0,
+                type: DialogueType.Reaction,
+                text: "이야기는 끝이네."
+            ));
+
             dialogueSequenceNo = 0;
 
             dialogueRaws.Add(new Dialogue(

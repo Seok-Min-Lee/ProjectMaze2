@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         InitializeInteractionData(npc: interactNpc);
 
         // 상호작용 호출.
-        UpdateInteractionUI(isEnd: out bool isEnd);
+        TryUpdateInteractionUI();
     }
 
     public void UpdateUIWhetherInteraction(bool isInteract)
@@ -80,9 +80,10 @@ public class GameManager : MonoBehaviour
         InteractPanel.SetActive(isInteract);
     }
 
-    public void UpdateInteractionUI(out bool isEnd)
+    public bool TryUpdateInteractionUI()
     {
         Dialogue dialogue;
+
         if (TryGetNextDialogue(dialogue: out dialogue))
         {
             npcDialogue.text = dialogue.text;
@@ -114,10 +115,14 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                // 
+                // 다음 스크립트 여부 표시.
                 if(dialogue.sequenceNo < dialogueLastSequenceNo)
                 {
                     nextDialogueSignal.SetActive(true);
+                }
+                else
+                {
+                    nextDialogueSignal.SetActive(false);
                 }
 
                 // 상호작용 입력 활성화
@@ -127,13 +132,13 @@ public class GameManager : MonoBehaviour
             dialogueSequenceNo++;
         }
 
-        isEnd = dialogueSequenceNo > dialogueLastSequenceNo ? true : false;
+        return dialogueSequenceNo > dialogueLastSequenceNo ? true : false;
     }
 
     public void InteractChooseOption(int choiceNo)
     {
         dialogueSequenceSubNo = choiceNo;
-        UpdateInteractionUI(isEnd: out bool isEnd);
+        TryUpdateInteractionUI();
     }
 
     public void ActivateMinimap(bool isActive)
@@ -151,14 +156,16 @@ public class GameManager : MonoBehaviour
     private void InitializeInteractionData(NPC npc)
     {
         if (systemManager.GetNpcIndexByName(name: npc.name, index: out int npcIndex) &&
-            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out dialogueCollection))
+            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
         {
             this.dialogueSituationNo = 0;
             this.dialogueSequenceNo = 0;
             this.dialogueSequenceSubNo = 0;
-            npcName.text = npc.name;
 
-            dialogueLastSequenceNo = dialogueCollection.LastOrDefault().sequenceNo;
+            dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
+            this.dialogueLastSequenceNo = dialogueCollection.OrderBy(dialogue => dialogue.sequenceNo).LastOrDefault().sequenceNo;
+
+            npcName.text = npc.name;
         }
     }
 

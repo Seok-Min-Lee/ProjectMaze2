@@ -308,18 +308,20 @@ public class Player : MonoBehaviour
 
     private void Interact()
     {
+        //InteractPreprocess();
+
         if (wasInteractPreprocess && isInteract)
         {
             // 상호작용 과정
             if (_input.interact)
             {
-                manager.UpdateInteractionUI(isEnd: out bool isEnd);
-
-                isInteract = isEnd ? false : true;
+                isInteract = !manager.TryUpdateInteractionUI();
 
                 _input.interact = false;
             }
         }
+
+        //InteractPostProcess();
     }
 
     private void InteractPostProcess()
