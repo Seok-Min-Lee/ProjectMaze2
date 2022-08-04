@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     NPC interactNpc;
 
     // 미니맵 관련
-    Vector3 minimapMarkerPoint; // 플레이어 마커 위치
+    Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
     bool minimapVisible;
 
     private void Awake()
@@ -208,6 +208,10 @@ public class GameManager : MonoBehaviour
             minimapMarkerPoint.y = 0;
 
             minimapMarker.transform.position = minimapMarkerPoint;
+
+            minimapCameraPoint = minimapMarkerPoint;
+            minimapCameraPoint.y = minimapCamera.transform.position.y;
+            minimapCamera.transform.position = minimapCameraPoint;
         }
     }
 
