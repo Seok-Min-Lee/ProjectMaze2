@@ -8,8 +8,6 @@ public class TrapActivator : MonoBehaviour
     public TrapDeactivator deactivator;
     public bool isVolatility;
 
-    GameObject deactivatorObject;
-
     public void ActivateTrap(Player player = null)
     {
         foreach(GameObject trap in traps)
