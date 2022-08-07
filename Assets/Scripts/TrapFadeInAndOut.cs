@@ -22,13 +22,13 @@ public class TrapFadeInAndOut : Trap
         updateTime = (float)1 / (updateCount * durationFade);
     }
 
-    public override void ActivateEvent()
+    public override void ActivateEvent(Player player = null)
     {
         StopCoroutine(ActiaveAfterWatting());
         StartCoroutine(ActiaveAfterWatting());
     }
 
-    public override void DeactivateEvent()
+    public override void DeactivateEvent(Player player = null)
     {
         isActive = false;
     }

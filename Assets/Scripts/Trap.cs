@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
-    public virtual void ActivateEvent()
+    public virtual void ActivateEvent(Player player = null)
     {
 
     }
 
-    public virtual void DeactivateEvent()
+    public virtual void DeactivateEvent(Player player = null)
     {
 
     }

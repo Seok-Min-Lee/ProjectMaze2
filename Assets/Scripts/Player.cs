@@ -85,11 +85,11 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_TRAP_ACTIVATOR:
-                other.GetComponentInParent<TrapActivator>().ActivateTrap();
+                other.GetComponentInParent<TrapActivator>().ActivateTrap(player: this);
                 break;
 
             case NameManager.TAG_TRAP_DEACTIVATOR:
-                other.GetComponentInParent<TrapDeactivator>().CallDeactivateTrap();
+                other.GetComponentInParent<TrapDeactivator>().CallDeactivateTrap(player: this);
                 break;
         }
     }
@@ -386,7 +386,7 @@ public class Player : MonoBehaviour
         _input.InteractInput(newInteractState: false);
     }
 
-    private void ForceToMove(Vector3 point)
+    public void ForceToMove(Vector3 point)
     {
         // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
         controller.enabled = false;

@@ -6,10 +6,13 @@ public class TrapDeactivator : MonoBehaviour
 {
     public TrapActivator activator;
 
-    public void CallDeactivateTrap()
+    public void CallDeactivateTrap(Player player = null)
     {
-        activator.DeactivateTrap();
+        activator.DeactivateTrap(player: player);
 
-        this.gameObject.SetActive(false);
+        if (activator.isVolatility)
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 }

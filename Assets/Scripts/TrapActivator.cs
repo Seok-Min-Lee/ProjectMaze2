@@ -10,11 +10,11 @@ public class TrapActivator : MonoBehaviour
 
     GameObject deactivatorObject;
 
-    public void ActivateTrap()
+    public void ActivateTrap(Player player = null)
     {
         foreach(GameObject trap in traps)
         {
-            trap.GetComponent<Trap>().ActivateEvent();
+            trap.GetComponent<Trap>().ActivateEvent(player: player);
         }
         
         if (isVolatility)
@@ -28,11 +28,11 @@ public class TrapActivator : MonoBehaviour
         }
     }
 
-    public void DeactivateTrap()
+    public void DeactivateTrap(Player player = null)
     {
         foreach (GameObject trap in traps)
         {
-            trap.GetComponent<Trap>().DeactivateEvent();
+            trap.GetComponent<Trap>().DeactivateEvent(player: player);
         }
     }
 }
