@@ -287,8 +287,10 @@ public class Player : MonoBehaviour
             isInteractPreprocessReady && 
             _input.interact)
         {
-            // 플레이어 위치 NPC 앞으로 이동.
+            // 플레이어 위치 NPC 앞으로 이동 및 정지
+            // NPC 바라보도록 추후 보완.
             ForceToMove(point: interactPoint);
+            StopPlayerMotion();
 
             // 카메라 위치 조정
             Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
@@ -374,6 +376,14 @@ public class Player : MonoBehaviour
 
         currentHp = maxHp;
         currentLife--;
+    }
+
+    private void StopPlayerMotion()
+    {
+        _input.MoveInput(newMoveDirection: Vector2.zero);
+        _input.JumpInput(newJumpState: false);
+        _input.SprintInput(newSprintState: false);
+        _input.InteractInput(newInteractState: false);
     }
 
     private void ForceToMove(Vector3 point)
