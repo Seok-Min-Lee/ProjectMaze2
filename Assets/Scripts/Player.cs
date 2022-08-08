@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
     int poisonStackMax, poisonTicDamage;
     float activateTimeDetox, activateTimeConfusion, durationConfusion;
 
+    #region ##### 유니티 내장 함주 #####
+    
     private void Awake()
     {
         _input = GetComponent<StarterAssetsInputs>();
@@ -132,6 +134,10 @@ public class Player : MonoBehaviour
             isInteract = false;
         }
     }
+
+    #endregion
+
+    #region ##### 실질 기능 함수 #####
 
     private void GetItem(GameObject gameObject)
     {
@@ -258,23 +264,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator Confuse()
-    {
-        isConfusion = true;
-        _input.isReverse = true;
-
-        // 플레이어 이펙트 활성화 추가
-        confusionEffect.SetActive(true);
-        yield return new WaitForSeconds(durationConfusion);
-
-        //플레이어 이펙트 비활성화 추가
-        confusionEffect.SetActive(false);
-        _input.isReverse = false;
-        isConfusion = false;
-
-        currentConfusion = 0;
-    }
-
     private void InteractPreprocess()
     {
         // 상호작용 전 한 번만 실행하기 위한 조건 세팅
@@ -347,6 +336,34 @@ public class Player : MonoBehaviour
         }
     }
 
+    IEnumerator Confuse()
+    {
+        isConfusion = true;
+        _input.isReverse = true;
+
+        // 플레이어 이펙트 활성화 추가
+        confusionEffect.SetActive(true);
+        yield return new WaitForSeconds(durationConfusion);
+
+        //플레이어 이펙트 비활성화 추가
+        confusionEffect.SetActive(false);
+        _input.isReverse = false;
+        isConfusion = false;
+
+        currentConfusion = 0;
+    }
+    #endregion
+
+    #region ##### 다용도 함수 #####
+
+    public void ForceToMove(Vector3 point)
+    {
+        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
+        controller.enabled = false;
+        this.transform.position = point;
+        controller.enabled = true;
+    }
+
     private void ChangeCurrentHp(int value)
     {
         currentHp += value;
@@ -386,14 +403,6 @@ public class Player : MonoBehaviour
         _input.InteractInput(newInteractState: false);
     }
 
-    public void ForceToMove(Vector3 point)
-    {
-        // CharacterController 가 활성화되어 있으면 Transform.position 값을 변경해도 적용되지 않는다.
-        controller.enabled = false;
-        this.transform.position = point;
-        controller.enabled = true;
-    }
-
     private void Timer(float tick, ref float time)
     {
         time += tick;
@@ -405,4 +414,6 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(duration);
         effect.SetActive(false);
     }
+
+    #endregion
 }
