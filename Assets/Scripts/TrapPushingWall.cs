@@ -7,26 +7,33 @@ public class TrapPushingWall : Trap
     public float pushingPower;
     
     Player player;
+    Vector3 forceVec;
     bool isActivate;
-    float positionModifyValue = 6f;
+
+    private void Start()
+    {
+        forceVec = this.transform.forward * pushingPower * Time.deltaTime;
+    }
 
     private void Update()
     {
         if (isActivate && player != null)
         {
-            player.ForceToMove(player.transform.position + this.transform.forward * pushingPower * Time.deltaTime);
+            player.ForceToMove(player.transform.position + forceVec);
         }
     }
 
     public override void ActivateEvent(Player player = null)
     {
-        isActivate = true;
-        this.player = player;
+        if(!isActivate && player != null)
+        {
+            Vector3 initVec = this.transform.position;
+            initVec.y = player.transform.position.y;
+            player.ForceToMove(point: initVec);
 
-        Vector3 initVec = this.transform.position;
-        initVec.y = player.transform.position.y;
-        initVec += this.transform.forward * positionModifyValue;
-        player.ForceToMove(point: initVec);
+            isActivate = true;
+            this.player = player;
+        }
     }
 
     public override void DeactivateEvent(Player player = null)
