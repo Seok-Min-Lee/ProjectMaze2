@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     int poisonStackMax, poisonTicDamage;
     float activateTimeDetox, activateTimeConfusion, durationConfusion;
 
-    #region ##### 유니티 내장 함주 #####
+    #region ##### 유니티 내장 함수 #####
     
     private void Awake()
     {
@@ -364,7 +364,17 @@ public class Player : MonoBehaviour
         controller.enabled = true;
     }
 
-    private void ChangeCurrentHp(int value)
+    public bool IsMoving()
+    {
+        if(_input.jump || _input.move != Vector2.zero)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void ChangeCurrentHp(int value)
     {
         currentHp += value;
 
@@ -387,20 +397,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Respawn()
-    {
-        ForceToMove(point: respawnPoint);
-
-        currentHp = maxHp;
-        currentLife--;
-    }
-
     private void StopPlayerMotion()
     {
         _input.MoveInput(newMoveDirection: Vector2.zero);
         _input.JumpInput(newJumpState: false);
         _input.SprintInput(newSprintState: false);
         _input.InteractInput(newInteractState: false);
+    }
+
+    private void Respawn()
+    {
+        ForceToMove(point: respawnPoint);
+
+        currentHp = maxHp;
+        currentLife--;
     }
 
     private void Timer(float tick, ref float time)

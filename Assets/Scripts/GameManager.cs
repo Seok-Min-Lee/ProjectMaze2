@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
     // 인게임 UI
-    public GameObject NormalPanel, InteractPanel;   // 평상시, 상호작용시
+    public GameObject normalPanel, interactPanel;   // 평상시, 상호작용시
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour
 
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
+
+    public GameObject trafficLightPanel;
+    public GameObject[] trafficLights;
 
     SystemManager systemManager;
 
@@ -76,8 +79,8 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = isInteract ? CursorLockMode.Confined : CursorLockMode.Locked;
 
         // 활성화된 UI 교체.
-        NormalPanel.SetActive(!isInteract);
-        InteractPanel.SetActive(isInteract);
+        normalPanel.SetActive(!isInteract);
+        interactPanel.SetActive(isInteract);
     }
 
     public bool TryUpdateInteractionUI()
@@ -148,6 +151,26 @@ public class GameManager : MonoBehaviour
         minimapCamera.SetActive(minimapVisible);
     }
 
+    public void ActivateTrafficLight(bool isActivate)
+    {
+        trafficLightPanel.SetActive(isActivate);
+    }
+
+    public void UpdateTrafficLightByType(TrapTrafficLightType type)
+    {
+        for (int i = 0; i < trafficLights.Length; i++)
+        {
+            if (i == (int)type)
+            {
+                trafficLights[i].SetActive(true);
+            }
+            else
+            {
+                trafficLights[i].SetActive(false);
+            }
+        }
+    }
+
     public void MoveGameObject(GameObject gameObject, Vector3 vector)
     {
         gameObject.transform.position = vector;
@@ -214,7 +237,6 @@ public class GameManager : MonoBehaviour
             minimapCamera.transform.position = minimapCameraPoint;
         }
     }
-
 
     // 게임 내 설정 값
     const int PLAYER_POISON_STACK_MAX = 5, PLAYER_POISON_TIC_DAMAGE = 2;    // 독 최대 스택, 독 스택당 도트 데미지
