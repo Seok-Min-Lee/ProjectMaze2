@@ -8,7 +8,7 @@ public class TrapTrafficLight : Trap
     public TrapTrafficLightType type { get; private set; }
     public int damage;
 
-    TrapTrafficLightType lastType;
+    TrapTrafficLightType latestType;
     Player player;
     bool isActive;
 
@@ -18,9 +18,9 @@ public class TrapTrafficLight : Trap
         {
             isActive = true;
 
-            lastType = TrapTrafficLightType.None;
-            this.player = player;
+            latestType = TrapTrafficLightType.Green;
             type = TrapTrafficLightType.Green;
+            this.player = player;
 
             // UI 업데이트
             manager.ActivateTrafficLight(isActivate: true);
@@ -33,14 +33,16 @@ public class TrapTrafficLight : Trap
 
     public override void DeactivateEvent(Player player = null)
     {
+        isActive = false;
+        StopAllCoroutines();
         manager.ActivateTrafficLight(isActivate: false);
     }
 
     private void Update()
     {
-        if(type != lastType)
+        if(type != latestType)
         {
-            lastType = type;
+            latestType = type;
             manager.UpdateTrafficLightByType(type);
         }
     }

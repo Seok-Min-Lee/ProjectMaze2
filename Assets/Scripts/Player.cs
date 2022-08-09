@@ -98,30 +98,36 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag == NameManager.TAG_NEAGTIVE_EFFECT)
+        switch (other.tag)
         {
-            if (!isConfusion)
-            {
-                Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
-                if (countTimeConfusion >= activateTimeConfusion)
+            case NameManager.TAG_NEAGTIVE_EFFECT:
+                if (!isConfusion)
                 {
-                    StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
-
-                    currentConfusion += other.GetComponent<NegativeEffectZone>().value;
-                    countTimeConfusion = 0f;
-
-                    if(currentConfusion >= maxConfusion)
+                    Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
+                    if (countTimeConfusion >= activateTimeConfusion)
                     {
-                        StartCoroutine(routine: Confuse());
+                        StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
+
+                        currentConfusion += other.GetComponent<NegativeEffectZone>().value;
+                        countTimeConfusion = 0f;
+
+                        if (currentConfusion >= maxConfusion)
+                        {
+                            StartCoroutine(routine: Confuse());
+                        }
                     }
                 }
-            }
-        }
-        else if(other.tag == NameManager.TAG_NPC_INTERACTION_ZONE)
-        {
-            interactNpc = other.GetComponent<NPC>();
-            isInteractPreprocessReady = true;
-            interactPoint = other.transform.position;
+                break;
+
+            case NameManager.TAG_NPC_INTERACTION_ZONE:
+                interactNpc = other.GetComponent<NPC>();
+                isInteractPreprocessReady = true;
+                interactPoint = other.transform.position;
+                break;
+
+            case NameManager.TAG_TRAP:
+                OnTriggerStayInTrap(trapGameObject: other.gameObject);
+                break;
         }
     }
 
@@ -232,6 +238,17 @@ public class Player : MonoBehaviour
                 isPoison = false;
                 ChangePoisonEffect(isAddict: isPoison);
             }
+        }
+    }
+
+    private void OnTriggerStayInTrap(GameObject trapGameObject)
+    {
+        TrapTrafficLight trap = trapGameObject.GetComponent<TrapTrafficLight>();
+        if (trap.type == TrapTrafficLightType.Red &&
+            IsMoving())
+        {
+            Respawn();
+            trap.DeactivateEvent(player: this);
         }
     }
 
