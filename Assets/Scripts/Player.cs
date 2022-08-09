@@ -6,6 +6,8 @@ using StarterAssets;
 
 public class Player : MonoBehaviour
 {
+    public StarterAssetsInputs _input { get; private set; }
+
     public GameManager manager;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
     public GameObject[] beads;
@@ -19,7 +21,6 @@ public class Player : MonoBehaviour
     public bool isConfusion;
     public bool isInteract, wasInteractPreprocess, isInteractPreprocessReady;
 
-    public StarterAssetsInputs _input { get; private set; }
     CharacterController controller;
     Vector3 respawnPoint, interactPoint;
     NPC interactNpc;
