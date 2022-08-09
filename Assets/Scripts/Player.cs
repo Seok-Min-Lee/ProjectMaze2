@@ -101,28 +101,11 @@ public class Player : MonoBehaviour
         switch (other.tag)
         {
             case NameManager.TAG_NEAGTIVE_EFFECT:
-                if (!isConfusion)
-                {
-                    Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
-                    if (countTimeConfusion >= activateTimeConfusion)
-                    {
-                        StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
-
-                        currentConfusion += other.GetComponent<NegativeEffectZone>().value;
-                        countTimeConfusion = 0f;
-
-                        if (currentConfusion >= maxConfusion)
-                        {
-                            StartCoroutine(routine: Confuse());
-                        }
-                    }
-                }
+                OnTriggerStayInNegativeEffectZone(negativeEffect: other.GetComponent<NegativeEffectZone>());
                 break;
 
             case NameManager.TAG_NPC_INTERACTION_ZONE:
-                interactNpc = other.GetComponent<NPC>();
-                isInteractPreprocessReady = true;
-                interactPoint = other.transform.position;
+                OnTriggerStayInNpcInteractionZone(npc: other.GetComponent<NPC>());
                 break;
 
             case NameManager.TAG_TRAP:
@@ -133,11 +116,11 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == NameManager.TAG_NPC_INTERACTION_ZONE)
+        switch (other.tag)
         {
-            isInteractPreprocessReady = false;
-            wasInteractPreprocess = false;
-            isInteract = false;
+            case NameManager.TAG_NPC_INTERACTION_ZONE:
+                OnTriggerExitFromNpcInteractionZone();
+                break;
         }
     }
 
@@ -241,6 +224,33 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerStayInNegativeEffectZone(NegativeEffectZone negativeEffect)
+    {
+        if (!isConfusion)
+        {
+            Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
+            if (countTimeConfusion >= activateTimeConfusion)
+            {
+                StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
+
+                currentConfusion += negativeEffect.value;
+                countTimeConfusion = 0f;
+
+                if (currentConfusion >= maxConfusion)
+                {
+                    StartCoroutine(routine: Confuse());
+                }
+            }
+        }
+    }
+
+    private void OnTriggerStayInNpcInteractionZone(NPC npc)
+    {
+        interactNpc = npc;
+        isInteractPreprocessReady = true;
+        interactPoint = npc.transform.position;
+    }
+
     private void OnTriggerStayInTrap(GameObject trapGameObject)
     {
         TrapTrafficLight trap = trapGameObject.GetComponent<TrapTrafficLight>();
@@ -250,6 +260,13 @@ public class Player : MonoBehaviour
             Respawn();
             trap.DeactivateEvent(player: this);
         }
+    }
+
+    private void OnTriggerExitFromNpcInteractionZone()
+    {
+        isInteractPreprocessReady = false;
+        wasInteractPreprocess = false;
+        isInteract = false;
     }
 
     private void UpdateCountTimeDetox()
