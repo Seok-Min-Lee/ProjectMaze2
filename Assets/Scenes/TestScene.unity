@@ -1283,8 +1283,8 @@ MonoBehaviour:
   backMirrorCamera: {fileID: 1774323754}
   npcInteractionCamera: {fileID: 1724966328}
   minimapCamera: {fileID: 911493450}
-  normalPanel: {fileID: 0}
-  interactPanel: {fileID: 0}
+  normalPanel: {fileID: 1943965072}
+  interactPanel: {fileID: 780261581}
   interactChoicePanel: {fileID: 35737071}
   nextDialogueSignal: {fileID: 1673518643}
   npcChoiceButtons:
@@ -2063,6 +2063,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4567250623388128417, guid: 87d79895aadcb0c478ad0ffb0d7678b5, type: 3}
+      propertyPath: type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6404383166504904006, guid: 87d79895aadcb0c478ad0ffb0d7678b5, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -25158,7 +25162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1943965073
 RectTransform:
   m_ObjectHideFlags: 0
