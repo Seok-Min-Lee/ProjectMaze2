@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPC : MonoBehaviour
+public class NPCInteractionZone : MonoBehaviour
 {
     public NpcType type;
     public GameObject effect;
-    public string name { get; private set; }
+    public string npcName { get; private set; }
     
     private void Start()
     {
         if(NameManager.TryConvertNpcTypeToName(type: type, name: out string nameString))
         {
-            name = nameString;
+            npcName = nameString;
         }
         else
         {

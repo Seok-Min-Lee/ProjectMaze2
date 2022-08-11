@@ -1,5 +1,15 @@
 public static class NameManager
 {
+    public const string JSON_COLUMN_ID = "id";
+    public const string JSON_COLUMN_NAME = "name";
+    public const string JSON_COLUMN_NPC_ID = "npcid";
+    public const string JSON_COLUMN_NPC_NAME = "npcname";
+    public const string JSON_COLUMN_SITUATION_NO = "situationno";
+    public const string JSON_COLUMN_SEQUENCE_NO = "sequenceno";
+    public const string JSON_COLUMN_SEQUENCE_SUB_NO = "sequencesubno";
+    public const string JSON_COLUMN_DIALOGUE_TYPE = "dialoguetype";
+    public const string JSON_COLUMN_TEXT = "text";
+
     public const string TAG_PLAYER = "Player";
     public const string TAG_ITEM = "Item";
     public const string TAG_PLAYER_RESPAWN = "PlayerRespawn";
@@ -22,13 +32,13 @@ public static class NameManager
     public const string ANIMATION_PARAMETER_DO_DIE = "DoDie";
 
     public const string NPC_NAME_HUMAN_GATEKEEPER = "문지기";
-    public const string NPC_NAME_FAIRY_CHILD = "요정 아이";
-    public const string NPC_NAME_FAIRY_OLD_MAN = "요정 장로";
-    public const string NPC_NAME_GIANT_STONE_STATUE = "거인 석상";
+    public const string NPC_NAME_FAIRY_CHILD = "소인족 아이";
+    public const string NPC_NAME_FAIRY_ADULT = "소인족 청년";
+    public const string NPC_NAME_GIANT_STONE_STATUE = "거인족 석상";
     public const string NPC_NAME_GIANT_TWIN_A = "쌍둥이 거인 A";
     public const string NPC_NAME_GIANT_TWIN_B = "쌍둥이 거인 B";
-    public const string NPC_NAME_HUMAN_YOUNG_MAN = "인간 청년";
-    public const string NPC_NAME_HUMAN_OLD_MAN = "인간 노인";
+    public const string NPC_NAME_HUMAN_CHILD = "인간 아이";
+    public const string NPC_NAME_HUMAN_ADULT = "인간 청년";
     public const string NPC_NAME_NONAME = "인게임 NPC";
 
     public static bool TryConvertNpcTypeToName(NpcType type, out string name)
@@ -43,8 +53,8 @@ public static class NameManager
             case NpcType.FairyChild:
                 name = NPC_NAME_FAIRY_CHILD;
                 break;
-            case NpcType.FairyOldMan:
-                name = NPC_NAME_FAIRY_OLD_MAN;
+            case NpcType.FairyAdult:
+                name = NPC_NAME_FAIRY_ADULT;
                 break;
             case NpcType.GiantStoneStatue:
                 name = NPC_NAME_GIANT_STONE_STATUE;
@@ -55,11 +65,11 @@ public static class NameManager
             case NpcType.GiantTwinB:
                 name = NPC_NAME_GIANT_TWIN_B;
                 break;
-            case NpcType.HumanYoungMan:
-                name = NPC_NAME_HUMAN_YOUNG_MAN;
+            case NpcType.HumanChild:
+                name = NPC_NAME_HUMAN_CHILD;
                 break;
-            case NpcType.HumanOldMan:
-                name = NPC_NAME_HUMAN_OLD_MAN;
+            case NpcType.HumanAdult:
+                name = NPC_NAME_HUMAN_ADULT;
                 break;
             case NpcType.Noname:
                 name = NPC_NAME_NONAME;

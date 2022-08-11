@@ -2,23 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using LitJson;
+using System.IO;
+using System;
 
 public class SystemManager
 {
-    List<string> npcNames;
+    const string NPC_JSON_PATH = "/Resources/tb_npc_test.json";
+    const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
+
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
-
+    
     public SystemManager()
     {
-        InitializeNpc(
-            names: out npcNames, 
-            indexNameDictionary: out npcIndexNameDictionary, 
-            nameIndexDictionary: out npcNameIndexDictionary
+        // 딕셔너리 생성
+        npcIndexNameDictionary = new Dictionary<int, string>();
+        npcNameIndexDictionary = new Dictionary<string, int>();
+        npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+
+        // Json 형식 데이터 로드
+        JsonData npcRaws, dialogueRaws;
+        LoadJsonRawData(
+            npcDataPath: Application.dataPath + NPC_JSON_PATH, 
+            dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
+            npcRaws: out npcRaws,
+            dialogueRaws: out dialogueRaws
         );
 
-        InitializeDialogue(indexDialogueListDictionary: out npcIndexDialogueListDictionary);
+        // 구조체 형식에 맞게 변환 및 객체 생성
+        NpcCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
+        foreach (NPC raw in npcs)
+        {
+            npcNameIndexDictionary.Add(key: raw.name, value: raw.id);
+        }
+
+        DialogueCollection dialogues = ConvertJsonDataToDialogue(data: dialogueRaws);
+        foreach(IGrouping<int, Dialogue> dialogueGroup in dialogues.GroupBy(dialogue => dialogue.npcId))
+        {
+            npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
+        }
     }
 
     public bool GetNpcIndexByName(string name, out int index)
@@ -51,165 +75,70 @@ public class SystemManager
         return false;
     }
 
-    private void InitializeNpc(out List<string> names, out Dictionary<int, string> indexNameDictionary, out Dictionary<string, int> nameIndexDictionary)
+    private void LoadJsonRawData(
+        string npcDataPath, 
+        string dialogueDataPath,
+        out JsonData npcRaws, 
+        out JsonData dialogueRaws
+    )
     {
-        string[] nameList = {
-            NameManager.NPC_NAME_FAIRY_CHILD,
-            NameManager.NPC_NAME_FAIRY_OLD_MAN,
-            NameManager.NPC_NAME_GIANT_STONE_STATUE,
-            NameManager.NPC_NAME_GIANT_TWIN_A,
-            NameManager.NPC_NAME_GIANT_TWIN_B,
-            NameManager.NPC_NAME_HUMAN_GATEKEEPER,
-            NameManager.NPC_NAME_HUMAN_OLD_MAN,
-            NameManager.NPC_NAME_HUMAN_YOUNG_MAN,
-            NameManager.NPC_NAME_NONAME
-        };
-
-        names = new List<string>();
-        names.AddRange(nameList);
-
-
-        indexNameDictionary = new Dictionary<int, string>();
-        nameIndexDictionary = new Dictionary<string, int>();
-        for (int i = 0; i < names.Count; i++)
-        {
-            indexNameDictionary.Add(i, npcNames[i]);
-            nameIndexDictionary.Add(npcNames[i], i);
-        }
+        npcRaws = LoadJsonData(path: npcDataPath);
+        dialogueRaws = LoadJsonData(path: dialogueDataPath);
     }
 
-    private void InitializeDialogue(out Dictionary<int, DialogueCollection> indexDialogueListDictionary)
+    private JsonData LoadJsonData(string path)
     {
-        indexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
-        int dialogueIndex = 0;
-        int npcIndex;
-        Dialogue dialogue;
+        string json = File.ReadAllText(path);
 
-        if (GetNpcIndexByName(name: NameManager.NPC_NAME_HUMAN_OLD_MAN, index: out npcIndex))
+        return JsonMapper.ToObject(json);
+    }
+
+    private NpcCollection ConvertJsonDataToNPC(JsonData data)
+    {
+        NpcCollection raws = new NpcCollection();
+
+        foreach (JsonData datum in data)
         {
-            DialogueCollection dialogueRaws = new DialogueCollection();
-            int dialogueSequenceNo = 0;
+            string _id = datum[NameManager.JSON_COLUMN_ID].ToString();
+            string _name = datum[NameManager.JSON_COLUMN_NAME].ToString();
 
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo++,
-                sequenceSubNo: 0,
-                type: DialogueType.Normal,
-                text: "당신은 모르겠지만 하늘이 닿힌 것이 마냥 나쁜 것은 아니야.."
+            raws.Add(new NPC(
+                id: Int32.Parse(_id),
+                name: _name
             ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo++,
-                sequenceSubNo: 0,
-                type: DialogueType.Normal,
-                text: "이것은 테스트"
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 0,
-                type: DialogueType.Question,
-                text: "골라라"
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 0,
-                type: DialogueType.Option,
-                text: "선택지 A"
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 1,
-                type: DialogueType.Option,
-                text: "선택지 B"
-            ));
-
-            dialogueSequenceNo++;
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 0,
-                type: DialogueType.Reaction,
-                text: "A를 선택했구만"
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 1,
-                type: DialogueType.Reaction,
-                text: "B를 선택했군"
-            ));
-
-            dialogueSequenceNo++;
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 0,
-                sequenceNo: dialogueSequenceNo,
-                sequenceSubNo: 0,
-                type: DialogueType.Reaction,
-                text: "이야기는 끝이네."
-            ));
-
-            dialogueSequenceNo = 0;
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 1,
-                sequenceNo: dialogueSequenceNo++,
-                sequenceSubNo: 0,
-                type: DialogueType.Normal,
-                text: "결국 하늘이 열렸어.."
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 1,
-                sequenceNo: dialogueSequenceNo++,
-                sequenceSubNo: 0,
-                type: DialogueType.Normal,
-                text: "(기쁘지 않아 보인다.)"
-            ));
-
-            dialogueRaws.Add(new Dialogue(
-                id: dialogueIndex++,
-                npcId: npcIndex,
-                situationNo: 1,
-                sequenceNo: dialogueSequenceNo++,
-                sequenceSubNo: 0,
-                type: DialogueType.Normal,
-                text: "거인들의 왕의 분노로 닿혔던 하늘이 열렸지만.. 그의 분노가 사라졌다고 할 수 없지 않은가.."
-            ));
-
-
-            DialogueCollection dialogueList = new DialogueCollection(dialogueRaws.OrderBy(dialogue => dialogue.situationNo).ThenBy(dialogue => dialogue.sequenceNo).ThenBy(dialogue => dialogue.sequenceSubNo));
-            indexDialogueListDictionary.Add(key: npcIndex, value: dialogueList);
         }
 
+        return raws;
+    }
+
+    private DialogueCollection ConvertJsonDataToDialogue(JsonData data)
+    {
+        DialogueCollection raws = new DialogueCollection();
+
+        foreach (JsonData datum in data)
+        {
+            string _id = datum[NameManager.JSON_COLUMN_ID].ToString();
+            string _npcName = datum[NameManager.JSON_COLUMN_NPC_NAME].ToString();
+            string _situationNo = datum[NameManager.JSON_COLUMN_SITUATION_NO].ToString();
+            string _sequenceNo = datum[NameManager.JSON_COLUMN_SEQUENCE_NO].ToString();
+            string _sequenceSubNo = datum[NameManager.JSON_COLUMN_SEQUENCE_SUB_NO].ToString();
+            string _dialogueType = datum[NameManager.JSON_COLUMN_DIALOGUE_TYPE].ToString();
+            string _text = datum[NameManager.JSON_COLUMN_TEXT].ToString();
+
+            if(this.npcNameIndexDictionary.TryGetValue(key: _npcName, value: out int _npcId))
+            {
+                raws.Add(new Dialogue(
+                    id: Int32.Parse(_id),
+                    npcId: _npcId,
+                    situationNo: Int32.Parse(_situationNo),
+                    sequenceNo: Int32.Parse(_sequenceNo),
+                    sequenceSubNo: Int32.Parse(_sequenceSubNo),
+                    type: (DialogueType)Int32.Parse(_dialogueType),
+                    text: _text
+                ));
+            }
+        }
+
+        return raws;
     }
 }

@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
 
     CharacterController controller;
     Vector3 respawnPoint, interactPoint;
-    NPC interactNpc;
+    NPCInteractionZone interactNpc;
 
     int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_NPC_INTERACTION_ZONE:
-                OnTriggerStayInNpcInteractionZone(npc: other.GetComponent<NPC>());
+                OnTriggerStayInNpcInteractionZone(npc: other.GetComponent<NPCInteractionZone>());
                 break;
 
             case NameManager.TAG_TRAP:
@@ -245,7 +245,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerStayInNpcInteractionZone(NPC npc)
+    private void OnTriggerStayInNpcInteractionZone(NPCInteractionZone npc)
     {
         interactNpc = npc;
         isInteractPreprocessReady = true;

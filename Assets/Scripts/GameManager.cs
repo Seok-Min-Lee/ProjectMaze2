@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     // NPC 상호작용 관련
     DialogueCollection dialogueCollection;
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
-    NPC interactNpc;
+    NPCInteractionZone interactNpc;
 
     // 미니맵 관련
     Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdateUINormalToInteraction(NPC npc)
+    public void UpdateUINormalToInteraction(NPCInteractionZone npc)
     {
         interactNpc = npc;
 
@@ -176,9 +176,9 @@ public class GameManager : MonoBehaviour
         gameObject.transform.position = vector;
     }
 
-    private void InitializeInteractionData(NPC npc)
+    private void InitializeInteractionData(NPCInteractionZone npc)
     {
-        if (systemManager.GetNpcIndexByName(name: npc.name, index: out int npcIndex) &&
+        if (systemManager.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
             systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
         {
             this.dialogueSituationNo = 0;
@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
             dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
             this.dialogueLastSequenceNo = dialogueCollection.OrderBy(dialogue => dialogue.sequenceNo).LastOrDefault().sequenceNo;
 
-            npcName.text = npc.name;
+            npcName.text = npc.npcName;
         }
     }
 

@@ -6,11 +6,11 @@ public enum NpcType
 {
     HumanGatekeeper,
     FairyChild,
-    FairyOldMan,
+    FairyAdult,
     GiantStoneStatue,
     GiantTwinA,
     GiantTwinB,
-    HumanYoungMan,
-    HumanOldMan,
+    HumanChild,
+    HumanAdult,
     Noname,
 }

@@ -19,7 +19,6 @@ public struct Dialogue
         this.sequenceSubNo = sequenceSubNo;
         this.type = type;
         this.text = text;
-
     }
 
     public int id { get; private set; }

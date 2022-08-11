@@ -4,8 +4,9 @@ using UnityEngine;
 
 public enum DialogueType
 {
-    Normal,
-    Question,
-    Option,
-    Reaction,
+    None = 0,
+    Normal = 1,
+    Question = 2,
+    Option = 3,
+    Reaction = 4,
 }

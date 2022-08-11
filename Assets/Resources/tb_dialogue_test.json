@@ -1,0 +1,14 @@
+[
+{"id":1,"npcname":"문지기","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":2,"text":"아, 오셨군요."}
+,{"id":2,"npcname":"문지기","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":3,"text":"전설에 대해서"}
+,{"id":3,"npcname":"문지기","situationno":0,"sequenceno":0,"sequencesubno":1,"dialoguetype":3,"text":"들어가기"}
+,{"id":4,"npcname":"문지기","situationno":0,"sequenceno":0,"sequencesubno":2,"dialoguetype":3,"text":"대화하기"}
+,{"id":5,"npcname":"문지기","situationno":0,"sequenceno":1,"sequencesubno":0,"dialoguetype":1,"text":"오래 전부터 전해져오던 전설이 하나 있습니다. "}
+,{"id":6,"npcname":"문지기","situationno":0,"sequenceno":2,"sequencesubno":0,"dialoguetype":1,"text":"\"거인족들은 태양을 받치고 있었다. 어느날 크게 분노한 거인족들은 깊은 잠에 들었다.\"\\n\"쌍둥이 거인족의 영역에 3개의 구슬을 숨겨두었다. 용기와 지혜를 모두 갖춘 자만이 모든 구슬을 찾아 태양을 되찾을 것이다.\"\\n\"이 말을 남기고 거인족과 태양은 사라졌다.\""}
+,{"id":7,"npcname":"문지기","situationno":0,"sequenceno":3,"sequencesubno":0,"dialoguetype":1,"text":"마을의 쌍둥이 거인족 석상을 보셨나요? 전설 속 장소가 바로 이 곳 미로 입니다."}
+,{"id":8,"npcname":"문지기","situationno":0,"sequenceno":1,"sequencesubno":1,"dialoguetype":1,"text":"좋습니다. 안내해드리겠습니다."}
+,{"id":9,"npcname":"문지기","situationno":0,"sequenceno":1,"sequencesubno":2,"dialoguetype":1,"text":"태양이 사라지고 많은 사람들이 선택했습니다."}
+,{"id":10,"npcname":"문지기","situationno":0,"sequenceno":2,"sequencesubno":2,"dialoguetype":1,"text":"미로에 도전할지... 어디에 있을지 모르는 낙원을 찾아 떠날지..."}
+,{"id":11,"npcname":"문지기","situationno":0,"sequenceno":3,"sequencesubno":2,"dialoguetype":1,"text":"무엇을 선택했든 어느 쪽도 돌아온 사람은 없었습니다."}
+,{"id":12,"npcname":"문지기","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"석상이 아니라... 진짜 거인족이었을 줄이야..."}
+]
