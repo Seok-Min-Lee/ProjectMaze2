@@ -1,5 +1,7 @@
 public static class NameManager
 {
+    public const string JSON_COLUMN_ACCOUNT = "account";
+    public const string JSON_COLUMN_PASSWORD = "password";
     public const string JSON_COLUMN_ID = "id";
     public const string JSON_COLUMN_NAME = "name";
     public const string JSON_COLUMN_NPC_ID = "npcid";

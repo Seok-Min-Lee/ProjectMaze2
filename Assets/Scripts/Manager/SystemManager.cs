@@ -8,15 +8,20 @@ using System;
 
 public class SystemManager
 {
+    const string USER_JSON_PATH = "/Resources/tb_user_test.json";
     const string NPC_JSON_PATH = "/Resources/tb_npc_test.json";
     const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
 
+    Dictionary<string, string> userAccountPasswordDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
     
     public SystemManager()
     {
+        userAccountPasswordDictionary = new Dictionary<string, string>();
+        LoadUserData(path: Application.dataPath + USER_JSON_PATH);
+
         // µñ¼Å³Ê¸® »ý¼º
         npcIndexNameDictionary = new Dictionary<int, string>();
         npcNameIndexDictionary = new Dictionary<string, int>();
@@ -43,6 +48,19 @@ public class SystemManager
         {
             npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
+    }
+
+    public bool TryLogin(string account, string password)
+    {
+        string _password;
+
+        if(userAccountPasswordDictionary.TryGetValue(key: account, value: out _password) &&
+           string.Compare(strA: password, strB: _password) == 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public bool GetNpcIndexByName(string name, out int index)
@@ -73,6 +91,16 @@ public class SystemManager
         }
 
         return false;
+    }
+
+    private void LoadUserData(string path)
+    {
+        JsonData data = LoadJsonData(path: path);
+
+        foreach(JsonData datum in data)
+        {
+            userAccountPasswordDictionary.Add(key: datum[NameManager.JSON_COLUMN_ACCOUNT].ToString(), value: datum[NameManager.JSON_COLUMN_PASSWORD].ToString());
+        }
     }
 
     private void LoadJsonRawData(
