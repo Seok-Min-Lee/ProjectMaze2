@@ -8,6 +8,6 @@ public class CircleRotation : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(axis: Vector3.up, angle: rotateSpeed);
+        transform.Rotate(axis: Vector3.up, angle: rotateSpeed * Time.deltaTime);
     }
 }
