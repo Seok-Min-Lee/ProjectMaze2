@@ -260,7 +260,8 @@ public class Player : MonoBehaviour
     private void OnTriggerStayInTrap(GameObject trapGameObject)
     {
         TrapTrafficLight trap = trapGameObject.GetComponent<TrapTrafficLight>();
-        if (trap.type == TrapTrafficLightType.Red &&
+        if (trap != null &&
+            trap.type == TrapTrafficLightType.Red &&
             IsMoving())
         {
             Respawn();

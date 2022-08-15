@@ -16,6 +16,7 @@ public class TrapTrafficLight : Trap
     {
         if (!isActive)
         {
+            this.gameObject.SetActive(true);
             isActive = true;
 
             latestType = TrapTrafficLightType.Green;
