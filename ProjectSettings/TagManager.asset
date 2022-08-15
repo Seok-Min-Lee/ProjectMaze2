@@ -19,6 +19,7 @@ TagManager:
   - Trap
   - NPC
   - NpcInteractionZone
+  - Portal
   layers:
   - Default
   - TransparentFX

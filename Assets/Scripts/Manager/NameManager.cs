@@ -12,6 +12,12 @@ public static class NameManager
     public const string JSON_COLUMN_DIALOGUE_TYPE = "dialoguetype";
     public const string JSON_COLUMN_TEXT = "text";
 
+    public const string SCENE_LOBBY = "Lobby";
+    public const string SCENE_VILLAGE = "Village";
+    public const string SCENE_STAGE_1 = "Stage 1";
+    public const string SCENE_STAGE_2 = "Stage 2";
+    public const string SCENE_STAGE_3 = "Stage 3";
+
     public const string TAG_PLAYER = "Player";
     public const string TAG_ITEM = "Item";
     public const string TAG_PLAYER_RESPAWN = "PlayerRespawn";
@@ -25,6 +31,7 @@ public static class NameManager
     public const string TAG_TRAP = "Trap";
     public const string TAG_NPC = "NPC";
     public const string TAG_NPC_INTERACTION_ZONE = "NpcInteractionZone";
+    public const string TAG_PORTAL = "Portal";
 
     public const string LAYER_PLAYER = "Player";
 

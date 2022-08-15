@@ -94,6 +94,11 @@ public class Player : MonoBehaviour
             case NameManager.TAG_TRAP_DEACTIVATOR:
                 other.GetComponentInParent<TrapDeactivator>().CallDeactivateTrap(player: this);
                 break;
+
+            case NameManager.TAG_PORTAL:
+                Portal portal = other.GetComponentInParent<Portal>();
+                manager.UpdateScene(sceneType: portal.nextSceneType);
+                break;
         }
     }
 

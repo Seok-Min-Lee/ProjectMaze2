@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -171,6 +172,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UpdateScene(SceneType sceneType)
+    {
+        string sceneName = ConvertSceneTypeToString(sceneType: sceneType);
+        SceneManager.LoadScene(sceneName: sceneName);
+    }
+
     public void MoveGameObject(GameObject gameObject, Vector3 vector)
     {
         gameObject.transform.position = vector;
@@ -236,6 +243,35 @@ public class GameManager : MonoBehaviour
             minimapCameraPoint.y = minimapCamera.transform.position.y;
             minimapCamera.transform.position = minimapCameraPoint;
         }
+    }
+
+    private string ConvertSceneTypeToString(SceneType sceneType)
+    {
+        string result;
+
+        switch (sceneType)
+        {
+            case SceneType.Lobby:
+                result = NameManager.SCENE_LOBBY;
+                break;
+            case SceneType.Village:
+                result = NameManager.SCENE_VILLAGE;
+                break;
+            case SceneType.Stage1:
+                result = NameManager.SCENE_STAGE_1;
+                break;
+            case SceneType.Stage2:
+                result = NameManager.SCENE_STAGE_2;
+                break;
+            case SceneType.Stage3:
+                result = NameManager.SCENE_STAGE_3;
+                break;
+            default:
+                result = string.Empty;
+                break;
+        }
+
+        return result;
     }
 
     // 게임 내 설정 값
