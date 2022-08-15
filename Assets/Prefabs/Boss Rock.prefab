@@ -160,5 +160,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angularPowerMaxValue: 1000
-  scaleValueMaxValue: 1
+  scaleValueMaxValue: 2
   damage: 0
