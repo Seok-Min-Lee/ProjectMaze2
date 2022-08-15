@@ -131,7 +131,7 @@ public class SystemManager
             string _name = datum[NameManager.JSON_COLUMN_NAME].ToString();
 
             raws.Add(new NPC(
-                id: Int32.Parse(_id),
+                id: ConvertManager.ConvertStringToInt(input: _id),
                 name: _name
             ));
         }
@@ -156,12 +156,12 @@ public class SystemManager
             if(this.npcNameIndexDictionary.TryGetValue(key: _npcName, value: out int _npcId))
             {
                 raws.Add(new Dialogue(
-                    id: Int32.Parse(_id),
+                    id: ConvertManager.ConvertStringToInt(input: _id),
                     npcId: _npcId,
-                    situationNo: Int32.Parse(_situationNo),
-                    sequenceNo: Int32.Parse(_sequenceNo),
-                    sequenceSubNo: Int32.Parse(_sequenceSubNo),
-                    type: (DialogueType)Int32.Parse(_dialogueType),
+                    situationNo: ConvertManager.ConvertStringToInt(input: _situationNo),
+                    sequenceNo: ConvertManager.ConvertStringToInt(input: _sequenceNo),
+                    sequenceSubNo: ConvertManager.ConvertStringToInt(input: _sequenceSubNo),
+                    type: (DialogueType)ConvertManager.ConvertStringToInt(input: _dialogueType),
                     text: _text
                 ));
             }
