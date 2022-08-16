@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: ac7209f6157608342bfc1e7398446a9f, type: 2}
 --- !u!1 &39531657
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +139,7 @@ GameObject:
   m_Name: Wall Small Long X (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &39531658
@@ -520,7 +520,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5710786204676965642, guid: 1c4726ea8a2b4fe43a5f2a391bb33a67, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5710786204676965642, guid: 1c4726ea8a2b4fe43a5f2a391bb33a67, type: 3}
       propertyPath: m_LocalPosition.x
@@ -685,7 +685,7 @@ GameObject:
   m_Name: Wall Small Long X (8)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &109585150
@@ -864,7 +864,7 @@ GameObject:
   m_Name: Wall Small Long Z
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &145830804
@@ -1447,7 +1447,7 @@ GameObject:
   m_Name: Wall Small Long Z (14)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &213079065
@@ -1544,7 +1544,7 @@ GameObject:
   m_Name: Wall Small Square (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &235127541
@@ -1641,7 +1641,7 @@ GameObject:
   m_Name: Wall Small Square (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &238832482
@@ -1913,69 +1913,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295805514}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &316482467
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 316482469}
-  - component: {fileID: 316482468}
-  m_Layer: 0
-  m_Name: GameManger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &316482468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 316482467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 057e98067ab50e14f9bc159ec750f92d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  followCamera: {fileID: 0}
-  backMirrorCamera: {fileID: 0}
-  npcInteractionCamera: {fileID: 0}
-  minimapCamera: {fileID: 0}
-  normalPanel: {fileID: 0}
-  interactPanel: {fileID: 0}
-  interactChoicePanel: {fileID: 0}
-  nextDialogueSignal: {fileID: 0}
-  npcChoiceButtons: []
-  npcChoiceTexts: []
-  npcName: {fileID: 0}
-  npcDialogue: {fileID: 0}
-  minimap: {fileID: 0}
-  minimapMarker: {fileID: 0}
-  player: {fileID: 0}
-  playerHpBar: {fileID: 0}
-  playerConfusionBar: {fileID: 0}
-  trafficLightPanel: {fileID: 0}
-  trafficLights: []
---- !u!4 &316482469
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 316482467}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50.12091, y: 25.587029, z: -45.80317}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &336676303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2089,7 +2026,7 @@ GameObject:
   m_Name: Wall Small Long X (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &347077071
@@ -2183,7 +2120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8536434733140599795, guid: 33e02051d8641dd49989ecf56226ad47, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8536434733140599795, guid: 33e02051d8641dd49989ecf56226ad47, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2236,7 +2173,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 414415919020106421, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 414415919020106421, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2280,11 +2217,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2719917232996447297, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.9297183
+      value: 4.0000005
       objectReference: {fileID: 0}
     - target: {fileID: 2719917232996447297, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.19999719
+      value: 0.20000124
       objectReference: {fileID: 0}
     - target: {fileID: 3657716788413674156, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_Name
@@ -2292,19 +2229,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4981785116461661923, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.9297183
+      value: 4.0000005
       objectReference: {fileID: 0}
     - target: {fileID: 4981785116461661923, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.19999719
+      value: 0.20000124
+      objectReference: {fileID: 0}
+    - target: {fileID: 6458087771054995337, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+      propertyPath: rotateSpeed
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771417288063, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 90.3
+      value: 57.37
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771417288063, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -180.9
+      value: -140.84
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771417288063, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2740,7 +2681,7 @@ GameObject:
   m_Name: Wall Small Square (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &452939296
@@ -2837,7 +2778,7 @@ GameObject:
   m_Name: Wall Small Square
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &456547002
@@ -2979,7 +2920,7 @@ GameObject:
   m_Name: Wall Small Long Z
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &476836900
@@ -3133,7 +3074,7 @@ GameObject:
   m_Name: Wall Small Long Z (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &522014446
@@ -3325,7 +3266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3975824033770312384, guid: 25336d01a59156b499fca6d84603fef6, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3975824033770312384, guid: 25336d01a59156b499fca6d84603fef6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3385,7 +3326,7 @@ GameObject:
   m_Name: Wall Small Long X (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &546713132
@@ -3495,11 +3436,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7835272226654751442, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7835272226654751442, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
       propertyPath: m_LocalPosition.z
       value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7835272226654751443, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
+      propertyPath: m_NavMeshLayer
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7835272227281111788, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
       propertyPath: m_RootOrder
@@ -3679,7 +3624,7 @@ GameObject:
   m_Name: Wall Small Long X (9)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &612643911
@@ -3776,7 +3721,7 @@ GameObject:
   m_Name: Wall Small Long Z (9)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &622643352
@@ -3963,7 +3908,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5710786204676965642, guid: 1c4726ea8a2b4fe43a5f2a391bb33a67, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5710786204676965642, guid: 1c4726ea8a2b4fe43a5f2a391bb33a67, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4125,7 +4070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8097654355301537517, guid: c305e2717d5e02e4ea70c62296150fe3, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8097654355301537517, guid: c305e2717d5e02e4ea70c62296150fe3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4283,7 +4228,7 @@ GameObject:
   m_Name: Wall Small Long X (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &730943697
@@ -4373,7 +4318,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2283935708415948098, guid: d00d96bf35feb5d48b5efb268c6b8c46, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2283935708415948098, guid: d00d96bf35feb5d48b5efb268c6b8c46, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4728,7 +4673,7 @@ GameObject:
   m_Name: Wall Small Long X (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &835461468
@@ -5019,7 +4964,7 @@ GameObject:
   m_Name: Wall Small Long Z (15)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &856218919
@@ -5116,7 +5061,7 @@ GameObject:
   m_Name: Wall Small Long Z (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &899233918
@@ -5504,7 +5449,7 @@ GameObject:
   m_Name: Wall Small Long Z (8)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &948655225
@@ -5601,7 +5546,7 @@ GameObject:
   m_Name: Wall Small Long Z (11)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &969160747
@@ -5698,7 +5643,7 @@ GameObject:
   m_Name: Wall Small Long Z (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &979883714
@@ -5795,7 +5740,7 @@ GameObject:
   m_Name: Wall Small Long Z (10)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &981476220
@@ -6560,7 +6505,7 @@ GameObject:
   m_Name: Wall Small Long X (10)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1214509338
@@ -6650,7 +6595,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6512893925393166926, guid: c737d4e882b05d7478332fe460490710, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6512893925393166926, guid: c737d4e882b05d7478332fe460490710, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6796,7 +6741,7 @@ GameObject:
   m_Name: Wall Small Long X (12)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1262209533
@@ -7184,7 +7129,7 @@ GameObject:
   m_Name: Wall Small Long Z (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1326151855
@@ -7378,7 +7323,7 @@ GameObject:
   m_Name: Wall Small Square (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1379687773
@@ -7475,7 +7420,7 @@ GameObject:
   m_Name: Wall Small Long X (14)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1391366311
@@ -8154,7 +8099,7 @@ GameObject:
   m_Name: Wall Small Long Z (7)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1487757625
@@ -8366,7 +8311,7 @@ Transform:
   - {fileID: 1515061646}
   - {fileID: 596798568}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1515061645
 PrefabInstance:
@@ -8450,7 +8395,7 @@ GameObject:
   m_Name: Wall Small Long X (13)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1530897422
@@ -8838,7 +8783,7 @@ GameObject:
   m_Name: Wall Small Square (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1653139223
@@ -8935,7 +8880,7 @@ GameObject:
   m_Name: Wall Small Long Z (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1673254820
@@ -9032,7 +8977,7 @@ GameObject:
   m_Name: Wall Small Long Z (16)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1689518993
@@ -9323,7 +9268,7 @@ GameObject:
   m_Name: Wall Small Long X (11)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1848522715
@@ -9420,7 +9365,7 @@ GameObject:
   m_Name: Wall Small Long Z (18)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1851403221
@@ -9517,7 +9462,7 @@ GameObject:
   m_Name: Wall Small Square (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1852630673
@@ -9614,7 +9559,7 @@ GameObject:
   m_Name: Wall Small Long X (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1883109332
@@ -10002,7 +9947,7 @@ GameObject:
   m_Name: Wall Small Long X (7)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &1964952371
@@ -10096,7 +10041,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8097654355301537517, guid: c305e2717d5e02e4ea70c62296150fe3, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8097654355301537517, guid: c305e2717d5e02e4ea70c62296150fe3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10515,7 +10460,7 @@ GameObject:
   m_Name: Wall Small Long Z (17)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &2067495883
@@ -10612,7 +10557,7 @@ GameObject:
   m_Name: Wall Small Long Z (13)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &2081313839
@@ -10709,7 +10654,7 @@ GameObject:
   m_Name: Wall Small Long Z (12)
   m_TagString: Wall
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 1
+  m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &2115789535

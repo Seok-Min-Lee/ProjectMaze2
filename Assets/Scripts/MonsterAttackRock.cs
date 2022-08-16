@@ -56,7 +56,6 @@ public class MonsterAttackRock : MonoBehaviour
             }
 
             transform.localScale = Vector3.one * scaleValue;
-            Debug.Log(transform.localScale);
             rigid.AddTorque(torque: transform.right * angularPower, mode: ForceMode.Acceleration);
 
             yield return null;
