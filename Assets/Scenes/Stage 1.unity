@@ -333,6 +333,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3011829237757579295, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ecc1e313aa0a4746873f9c03fd9eadf, type: 2}
     - target: {fileID: 3011829238119651976, guid: 444a3284a7a65e542803eb087755986c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 70
@@ -2095,6 +2099,10 @@ PrefabInstance:
     - target: {fileID: 3657716788413674156, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_Name
       value: Essential Objects
+      objectReference: {fileID: 0}
+    - target: {fileID: 6458087771301105899, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771421202376, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: minimapCamera
