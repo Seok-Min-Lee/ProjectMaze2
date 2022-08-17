@@ -11,4 +11,44 @@
 ,{"id":10,"npcname":"문지기","situationno":0,"sequenceno":2,"sequencesubno":2,"dialoguetype":1,"text":"미로에 도전할지... 어디에 있을지 모르는 낙원을 찾아 떠날지..."}
 ,{"id":11,"npcname":"문지기","situationno":0,"sequenceno":3,"sequencesubno":2,"dialoguetype":1,"text":"무엇을 선택했든 어느 쪽도 돌아온 사람은 없었습니다."}
 ,{"id":12,"npcname":"문지기","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"석상이 아니라... 진짜 거인족이었을 줄이야..."}
+,{"id":13,"npcname":"소인족 아이","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"먼 옛날 태양이 사라지기 전에는 하늘에 거대한 날개 달린 뱀들이 있었데요!"}
+,{"id":14,"npcname":"소인족 아이","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"태양이 돌아왔데요!! 그럼 날개 달린 뱀들도 볼 수 있겠죠?"}
+,{"id":15,"npcname":"소인족 청년","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"저기 당신… 크기를 보면 소인족은 아닌데, 그렇다고 인간이라고 하기도 애매하군.."}
+,{"id":16,"npcname":"소인족 청년","situationno":0,"sequenceno":1,"sequencesubno":0,"dialoguetype":1,"text":"내 말은 알아듣고 있는 것인가?"}
+,{"id":17,"npcname":"소인족 청년","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":2,"text":"태양이 돌아올 거라고는 생각 못 했는데..."}
+,{"id":18,"npcname":"소인족 청년","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":3,"text":"(도깨비에 대해서)"}
+,{"id":19,"npcname":"소인족 청년","situationno":1,"sequenceno":1,"sequencesubno":0,"dialoguetype":1,"text":"도깨비라.. 직접 본 적은 없지만 관련된 이야기는 알고 있지"}
+,{"id":20,"npcname":"소인족 청년","situationno":1,"sequenceno":2,"sequencesubno":0,"dialoguetype":1,"text":"지금은 마법이라 부르는 힘들은 과거에 도깨비라는 자들에 의해 만들어졌네. 하지만 그들은 태양과 함께 사라졌다고 전해지네.."}
+,{"id":21,"npcname":"인간 아이","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"어른들한테 태양이 무엇인지 물어봐도 알려주질 않아요.. 사실 어른들도 모르는 게 아닐까요?"}
+,{"id":22,"npcname":"인간 아이","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"너무 눈부셔요.. 그래도 너무 예뻐요!"}
+,{"id":23,"npcname":"인간 청년","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"아이들한테는 태양을 뭐라고 설명해 주어야 할지 모르겠어."}
+,{"id":24,"npcname":"인간 청년","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":2,"text":"태양이 돌아왔어..."}
+,{"id":25,"npcname":"인간 청년","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":3,"text":"(기쁘지 않아 보인다)"}
+,{"id":26,"npcname":"인간 청년","situationno":1,"sequenceno":1,"sequencesubno":0,"dialoguetype":1,"text":"사라진 태양이 돌아왔지만.. 그들의 분노가 가라앉은 걸까..?"}
+,{"id":27,"npcname":"거인족 석상","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"(거대하다.. 단순한 석상은 아닌 것 같은데…?)"}
+,{"id":28,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"당신인가…"}
+,{"id":29,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":1,"sequencesubno":0,"dialoguetype":2,"text":"우리는 드래곤들로부터 숨기 위해 태양을 숨겼다.. 태양을 되찾은 너에게 선택을 맡기겠다."}
+,{"id":30,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":1,"sequencesubno":0,"dialoguetype":3,"text":"(다시 태양을 감춘다.)"}
+,{"id":31,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":1,"sequencesubno":1,"dialoguetype":3,"text":"(감추지 않는다.)"}
+,{"id":32,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":2,"sequencesubno":0,"dialoguetype":1,"text":"[System] 다음 패치를 기다려주세요."}
+,{"id":33,"npcname":"쌍둥이 거인A","situationno":1,"sequenceno":2,"sequencesubno":1,"dialoguetype":1,"text":"[System] 다음 패치를 기다려주세요."}
+,{"id":34,"npcname":"쌍둥이 거인B","situationno":1,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"이제 하늘을 보면 당신에게도 그 녀석들이 보일지도 모르겠군."}
+,{"id":35,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":0,"dialoguetype":1,"text":"벌레 괴물에게 당했을 때는 독이 멈출 때까지 가만히 있어! 움직이면 오히려 더 위험해!"}
+,{"id":36,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":1,"dialoguetype":1,"text":"의외로 좀비는 공격하지 않아. 하지만 혼란상태에 빠지면 몸이 뜻대로 움직이지 않을 수도 있어."}
+,{"id":37,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":2,"dialoguetype":1,"text":"함정은 보통 발동시키는 트리거와 해제하는 트리거가 존재해."}
+,{"id":38,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":3,"dialoguetype":1,"text":"가끔 벽이 사라지거나 생기는 경우가 있을 거야. 그렇게 만들어진 곳이니 당황하지 마."}
+,{"id":39,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":4,"dialoguetype":1,"text":"눈치가 빠르다면 알아챘을 테지만 하나 말해주자면…"}
+,{"id":40,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":4,"dialoguetype":1,"text":"확실한 것은 우리를 만났다는 것은 이쪽 길은 출구가 아니라는 거지…"}
+,{"id":41,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":5,"dialoguetype":1,"text":"소원을 들어주는 용을 만들 수 있었다면 구슬은 3개가 아니라 7개가 됐을 텐데…"}
+,{"id":42,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":6,"dialoguetype":1,"text":"이곳에서 우리들을 만나면 10가지 정보를 얻을 수 있어."}
+,{"id":43,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":6,"dialoguetype":1,"text":"도움이 될 수도 안 될 수도 있지."}
+,{"id":44,"npcname":"도깨비","situationno":0,"sequenceno":2,"sequencesubno":6,"dialoguetype":1,"text":"자 그럼 이 정보는 그 10가지에 포함이 될까? 안 될까?"}
+,{"id":45,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":7,"dialoguetype":1,"text":"이 세상의 이름은 'Project Maze 2' 인데 그럼 'Project Maze 1' 의 세상은 어땠을까?"}
+,{"id":46,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":7,"dialoguetype":1,"text":"끝내 만들어지지는 않았지만 앞이 잘 보이지 않을 정도로 어둡고 귀신도 나오는 그런 곳이었지.."}
+,{"id":47,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":8,"dialoguetype":1,"text":"가끔 나를 마주친다면 말을 걸어보는 것이 너에게도 도움이 될 수도 있어. '마법'이라는 것을 보여줄 수 있거든.."}
+,{"id":48,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":8,"dialoguetype":1,"text":"'아무 효과 없는 마법' 말 그대로 아무 효과 없는 마법이야. "}
+,{"id":49,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":9,"dialoguetype":1,"text":"거인족들은 거대한 덩치로 웬만한 공격에는 피해를 입지 않지. 거기서 영감을 받은 마법을 자네에게 시험해 봐도 되겠나!?"}
+,{"id":50,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":9,"dialoguetype":1,"text":"'거인족의 기백' 어떤 생물도 자네에게 해를 입히지 못 할 거야."}
+,{"id":51,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":10,"dialoguetype":1,"text":"소인족들은 매우 빠른 발을 가지고 있지.. 그건 그들이 가진 마법의 힘이네."}
+,{"id":52,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":10,"dialoguetype":1,"text":"'소인족의 발걸음' 이제 더 높고 더 빠르게 뛸 수 있을 거야."}
 ]
