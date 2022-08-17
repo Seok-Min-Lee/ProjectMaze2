@@ -2102,7 +2102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771301105899, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6458087771421202376, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: minimapCamera

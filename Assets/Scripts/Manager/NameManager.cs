@@ -44,53 +44,9 @@ public static class NameManager
     public const string NPC_NAME_FAIRY_CHILD = "소인족 아이";
     public const string NPC_NAME_FAIRY_ADULT = "소인족 청년";
     public const string NPC_NAME_GIANT_STONE_STATUE = "거인족 석상";
-    public const string NPC_NAME_GIANT_TWIN_A = "쌍둥이 거인 A";
-    public const string NPC_NAME_GIANT_TWIN_B = "쌍둥이 거인 B";
+    public const string NPC_NAME_GIANT_TWIN_A = "쌍둥이 거인A";
+    public const string NPC_NAME_GIANT_TWIN_B = "쌍둥이 거인B";
     public const string NPC_NAME_HUMAN_CHILD = "인간 아이";
     public const string NPC_NAME_HUMAN_ADULT = "인간 청년";
-    public const string NPC_NAME_NONAME = "인게임 NPC";
-
-    public static bool TryConvertNpcTypeToName(NpcType type, out string name)
-    {
-        name = string.Empty;
-
-        switch (type)
-        {
-            case NpcType.HumanGatekeeper:
-                name = NPC_NAME_HUMAN_GATEKEEPER;
-                break;
-            case NpcType.FairyChild:
-                name = NPC_NAME_FAIRY_CHILD;
-                break;
-            case NpcType.FairyAdult:
-                name = NPC_NAME_FAIRY_ADULT;
-                break;
-            case NpcType.GiantStoneStatue:
-                name = NPC_NAME_GIANT_STONE_STATUE;
-                break;
-            case NpcType.GiantTwinA:
-                name = NPC_NAME_GIANT_TWIN_A;
-                break;
-            case NpcType.GiantTwinB:
-                name = NPC_NAME_GIANT_TWIN_B;
-                break;
-            case NpcType.HumanChild:
-                name = NPC_NAME_HUMAN_CHILD;
-                break;
-            case NpcType.HumanAdult:
-                name = NPC_NAME_HUMAN_ADULT;
-                break;
-            case NpcType.Noname:
-                name = NPC_NAME_NONAME;
-                break;
-        }
-
-        if(string.Equals(name, string.Empty))
-        {
-            return false;
-        }
-        
-        return true;
-    }
-
+    public const string NPC_NAME_GOBLIN = "도깨비";
 }

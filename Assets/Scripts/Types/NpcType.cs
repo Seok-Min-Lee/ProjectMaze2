@@ -12,5 +12,5 @@ public enum NpcType
     GiantTwinB,
     HumanChild,
     HumanAdult,
-    Noname,
+    Goblin,
 }
