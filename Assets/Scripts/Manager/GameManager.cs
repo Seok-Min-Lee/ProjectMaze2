@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
 
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;   // HP, »•∂ı ∞‘¿Ã¡ˆ
+    public GameObject[] playerBeadCovers;
 
     public GameObject trafficLightPanel;
     public GameObject[] trafficLights;
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
 
         minimapVisible = GetMinimapVisibilityBySceneName(sceneName: this.currentSceneName);
         ActivateMinimap(isActive: minimapVisible);
+        UpdateUIActivedBeads(isActives: this.isActivePlayerBeads);
     }
 
     private void Start()
@@ -196,6 +198,14 @@ public class GameManager : MonoBehaviour
             {
                 trafficLights[i].SetActive(false);
             }
+        }
+    }
+
+    public void UpdateUIActivedBeads(bool[] isActives)
+    {
+        for(int i=0; i< playerBeadCovers.Count(); i++)
+        {
+            playerBeadCovers[i].SetActive(!isActives[i]);
         }
     }
 

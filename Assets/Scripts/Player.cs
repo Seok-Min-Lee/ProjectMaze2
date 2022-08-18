@@ -165,6 +165,7 @@ public class Player : MonoBehaviour
         {
             beads[i].SetActive(isActiveBeads[i]);
         }
+        manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
     private void GetItem(GameObject gameObject)
@@ -197,6 +198,7 @@ public class Player : MonoBehaviour
             isActiveBeads[index] = true;
             beads[index].SetActive(true);
         }
+        manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
     private void OnDamage(Monster monster)
