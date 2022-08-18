@@ -34,10 +34,11 @@ public class GameManager : MonoBehaviour
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
 
-    string currentSceneName;
     // 미니맵 관련
     Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
     bool minimapVisible;
+
+    string currentSceneName;
 
     private void Awake()
     {
@@ -301,10 +302,13 @@ public class GameManager : MonoBehaviour
     }
 
     // 게임 내 설정 값
+
+    // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
     bool[] isActivePlayerBeads;
     bool[] isActivePlayerMinimaps;
     bool isActivePlayerMagicFairy, isActivePlayerMagicGiant, isActivePlayerMagicHuman;
     int playerLife, playerCurrentHp, playerCurrentConfusion, playerPoisonStack;
+
     private void SetIngameAttributes()
     {
         isActivePlayerBeads = new bool[3];
