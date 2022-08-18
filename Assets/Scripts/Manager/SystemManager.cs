@@ -11,13 +11,16 @@ public class SystemManager
     const string USER_JSON_PATH = "/Resources/tb_user_test.json";
     const string NPC_JSON_PATH = "/Resources/tb_npc_test.json";
     const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
+    const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute_test.json";
+
+    public IngameAttributeCollection ingameAttributeCollection { get; private set; }
 
     Dictionary<string, string> userAccountPasswordDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
-    
-    public SystemManager()
+
+    public SystemManager(int userId = 0)
     {
         userAccountPasswordDictionary = new Dictionary<string, string>();
         LoadUserData(path: Application.dataPath + USER_JSON_PATH);
@@ -28,12 +31,14 @@ public class SystemManager
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
 
         // Json 형식 데이터 로드
-        JsonData npcRaws, dialogueRaws;
+        JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
         LoadJsonRawData(
             npcDataPath: Application.dataPath + NPC_JSON_PATH, 
             dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
+            ingameAttributePath: Application.dataPath + INGAME_ATTRIBUTE_PATH,
             npcRaws: out npcRaws,
-            dialogueRaws: out dialogueRaws
+            dialogueRaws: out dialogueRaws,
+            ingameAttributeRaws: out ingameAttributeRaws
         );
 
         // 구조체 형식에 맞게 변환 및 객체 생성
@@ -48,6 +53,8 @@ public class SystemManager
         {
             npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
+
+        ingameAttributeCollection = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: userId);
     }
 
     public bool TryLogin(string account, string password)
@@ -106,12 +113,15 @@ public class SystemManager
     private void LoadJsonRawData(
         string npcDataPath, 
         string dialogueDataPath,
+        string ingameAttributePath,
         out JsonData npcRaws, 
-        out JsonData dialogueRaws
+        out JsonData dialogueRaws,
+        out JsonData ingameAttributeRaws
     )
     {
         npcRaws = LoadJsonData(path: npcDataPath);
         dialogueRaws = LoadJsonData(path: dialogueDataPath);
+        ingameAttributeRaws = LoadJsonData(path: ingameAttributePath);
     }
 
     private JsonData LoadJsonData(string path)
@@ -168,5 +178,37 @@ public class SystemManager
         }
 
         return raws;
+    }
+
+    private IngameAttributeCollection ConvertJsonDataToIngameAttribute(JsonData data, int userId)
+    {
+        IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
+
+        int index = 0;
+        foreach(JsonData datum in data)
+        {
+            int _userId = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLIMN_USER_ID].ToString());
+
+            if(userId == _userId)
+            {
+                string _attributeName = datum[NameManager.JSON_COLUMN_ATTRIBUTE_NAME].ToString();
+                int _value = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_VALUE].ToString());
+
+                ingameAttributes.Add(new IngameAttribute(
+                    id: index++,
+                    attributeName: _attributeName,
+                    value: _value
+                ));
+            }
+        }
+
+        return ingameAttributes;
+    }
+    
+    public void WriteIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
+    {
+        JsonData data = JsonMapper.ToJson(ingameAttributes);
+
+        File.WriteAllText(path: Application.dataPath + INGAME_ATTRIBUTE_PATH + "2", contents: data.ToString());
     }
 }

@@ -15,7 +15,8 @@ public class Player : MonoBehaviour
     public int currentHp, maxHp;
     public int currentLife, maxLife;
     public int currentConfusion = 0, maxConfusion = 100;
-    public bool[] enableBeads;
+    public bool[] isActiveBeads;
+    public bool isActiveMinimap, isActiveMagicFairy, isActiveMagicGiant, isActiveMagicHuman;
 
     public bool isPoison;
     public bool isConfusion;
@@ -36,7 +37,6 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<StarterAssetsInputs>();
-        enableBeads = new bool[3];
 
         manager.InitializePlayer(
             playerPoisonStackMax: out poisonStackMax,
@@ -50,6 +50,20 @@ public class Player : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+
+        manager.SetPlayerIngameAttributes(
+            isActiveBeads: out this.isActiveBeads,
+            isActiveMinimap: out this.isActiveMinimap,
+            isActiveMagicFairy: out this.isActiveMagicFairy,
+            isActiveMagicGiant: out this.isActiveMagicGiant,
+            isActiveMagicHuman: out this.isActiveMagicHuman,
+            life: out this.currentLife,
+            currentHp: out this.currentHp,
+            currentConfusion: out this.currentConfusion,
+            poisonStack: out this.poisonStack
+        );
+
+        UpdateBeadVisibility();
     }
 
     private void Update()
@@ -97,6 +111,17 @@ public class Player : MonoBehaviour
 
             case NameManager.TAG_PORTAL:
                 Portal portal = other.GetComponentInParent<Portal>();
+                manager.UpdatePlayerIngameAttributes(
+                    isActiveBeads: this.isActiveBeads,
+                    isActiveMinimap: this.isActiveMinimap,
+                    isActiveMagicFairy: this.isActiveMagicFairy,
+                    isActiveMagicGiant: this.isActiveMagicGiant,
+                    isActiveMagicHuman: this.isActiveMagicHuman,
+                    life: this.currentLife,
+                    currentHp: this.currentHp,
+                    currentConfusion: this.currentConfusion,
+                    poisonStack: this.poisonStack
+                );
                 manager.UpdateScene(sceneType: portal.nextSceneType);
                 break;
         }
@@ -134,6 +159,14 @@ public class Player : MonoBehaviour
 
     #region ##### 실질 기능 함수 #####
 
+    private void UpdateBeadVisibility()
+    {
+        for(int i=0; i<isActiveBeads.Length; i++)
+        {
+            beads[i].SetActive(isActiveBeads[i]);
+        }
+    }
+
     private void GetItem(GameObject gameObject)
     {
         Item item = gameObject.GetComponent<Item>();
@@ -150,18 +183,18 @@ public class Player : MonoBehaviour
                 break;
             case ItemType.Bead:
                 // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
-                ActivateBead(index: item.value);
+                ActivateBeadByIndex(index: item.value);
                 break;
         }
 
         gameObject.SetActive(false);
     }
 
-    private void ActivateBead(int index)
+    private void ActivateBeadByIndex(int index)
     {
-        if(index >= 0 && index < enableBeads.Length)
+        if(index >= 0 && index < isActiveBeads.Length)
         {
-            enableBeads[index] = true;
+            isActiveBeads[index] = true;
             beads[index].SetActive(true);
         }
     }

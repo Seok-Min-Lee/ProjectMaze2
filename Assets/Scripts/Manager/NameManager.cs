@@ -11,6 +11,23 @@ public static class NameManager
     public const string JSON_COLUMN_SEQUENCE_SUB_NO = "sequencesubno";
     public const string JSON_COLUMN_DIALOGUE_TYPE = "dialoguetype";
     public const string JSON_COLUMN_TEXT = "text";
+    public const string JSON_COLUMN_ATTRIBUTE_NAME = "attributename";
+    public const string JSON_COLUMN_VALUE = "value";
+    public const string JSON_COLIMN_USER_ID = "userid";
+
+    public const string INGAME_ATTRIBUTE_NAME_BEAD_1 = "bead1";
+    public const string INGAME_ATTRIBUTE_NAME_BEAD_2 = "bead2";
+    public const string INGAME_ATTRIBUTE_NAME_BEAD_3 = "bead3";
+    public const string INGAME_ATTRIBUTE_NAME_LIFE = "life";
+    public const string INGAME_ATTRIBUTE_NAME_CURRENT_HP = "currentHp";
+    public const string INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION = "currentConfusion";
+    public const string INGAME_ATTRIBUTE_NAME_MAGIC_GIANT = "magicGiant";
+    public const string INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY = "magicFairy";
+    public const string INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN = "magicHuman";
+    public const string INGAME_ATTRIBUTE_NAME_POISON_STACK = "poisonStack";
+    public const string INGAME_ATTRIBUTE_NAME_MINIMAP_1 = "minimap1";
+    public const string INGAME_ATTRIBUTE_NAME_MINIMAP_2 = "minimap2";
+    public const string INGAME_ATTRIBUTE_NAME_MINIMAP_3 = "minimap3";
 
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_VILLAGE = "Village";
