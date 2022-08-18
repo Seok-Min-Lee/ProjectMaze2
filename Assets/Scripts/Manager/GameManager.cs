@@ -147,9 +147,12 @@ public class GameManager : MonoBehaviour
 
     public void ActivateMinimap(bool isActive)
     {
-        minimapVisible = isActive;
-        minimap.SetActive(minimapVisible);
-        minimapCamera.SetActive(minimapVisible);
+        if(minimapCamera != null)
+        {
+            minimapVisible = isActive;
+            minimap.SetActive(minimapVisible);
+            minimapCamera.SetActive(minimapVisible);
+        }
     }
 
     public void ActivateTrafficLight(bool isActivate)
@@ -232,7 +235,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMinimap()
     {
-        if (minimapVisible)
+        if (minimapCamera != null && minimapVisible)
         {
             minimapMarkerPoint = player.transform.position;
             minimapMarkerPoint.y = 0;
