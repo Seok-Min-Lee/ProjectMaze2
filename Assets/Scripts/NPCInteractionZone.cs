@@ -10,7 +10,7 @@ public class NPCInteractionZone : MonoBehaviour
     
     private void Start()
     {
-        if(NameManager.TryConvertNpcTypeToName(type: type, name: out string nameString))
+        if(ConvertManager.TryConvertNpcTypeToName(type: type, name: out string nameString))
         {
             npcName = nameString;
         }
