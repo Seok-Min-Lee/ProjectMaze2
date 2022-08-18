@@ -9,7 +9,7 @@ public class Item : MonoBehaviour
 
     public Transform mesh;
 
-    float rotateSpeed = 0.3f;
+    float rotateSpeed = 60f;
 
     private void Start()
     {
