@@ -41,6 +41,8 @@ public class TrapMachPairManager : Trap
         columnValueCountDictionary = new Dictionary<TrapMachPairType, int>();
         machCount = 0;
         maxMachCount = leftColumns.Length;
+
+        reward.SetActive(false);
     }
 
     private void Update()
