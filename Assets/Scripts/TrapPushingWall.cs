@@ -8,7 +8,6 @@ public class TrapPushingWall : Trap
     
     Player player;
     Vector3 forceVec;
-    bool isActivate;
 
     private void Start()
     {
@@ -17,7 +16,7 @@ public class TrapPushingWall : Trap
 
     private void Update()
     {
-        if (isActivate && player != null)
+        if (isActive && player != null)
         {
             player.ForceToMove(player.transform.position + forceVec);
         }
@@ -25,20 +24,20 @@ public class TrapPushingWall : Trap
 
     public override void ActivateEvent(Player player = null)
     {
-        if(!isActivate && player != null)
+        if(!isActive && player != null)
         {
             Vector3 initVec = this.transform.position;
             initVec.y = player.transform.position.y;
             player.ForceToMove(point: initVec);
 
-            isActivate = true;
+            isActive = true;
             this.player = player;
         }
     }
 
     public override void DeactivateEvent(Player player = null)
     {
-        isActivate = false;
+        isActive = false;
         this.player = null;
     }
 }

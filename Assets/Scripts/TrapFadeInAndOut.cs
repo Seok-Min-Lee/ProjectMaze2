@@ -6,8 +6,6 @@ public class TrapFadeInAndOut : Trap
 {
     public float waittingTime;
 
-    bool isActive;
-
     Renderer renderer;
     Color updateColor;
 
@@ -24,8 +22,13 @@ public class TrapFadeInAndOut : Trap
 
     public override void ActivateEvent(Player player = null)
     {
-        StopCoroutine(ActiaveAfterWatting());
-        StartCoroutine(ActiaveAfterWatting());
+        if (!isActive)
+        {
+            StopCoroutine(ActiaveAfterWatting());
+            StartCoroutine(ActiaveAfterWatting());
+
+            isActive = true;
+        }
     }
 
     public override void DeactivateEvent(Player player = null)
@@ -37,7 +40,6 @@ public class TrapFadeInAndOut : Trap
     {
         yield return new WaitForSeconds(waittingTime);
         
-        isActive = true;
         StopCoroutine(FadeInAndOut());
         StartCoroutine(FadeInAndOut());
     }

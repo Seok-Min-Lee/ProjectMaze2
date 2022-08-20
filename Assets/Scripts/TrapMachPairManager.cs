@@ -12,7 +12,7 @@ public class TrapMachPairManager : Trap
 
     Player player;
     TrapMachPairType machTypeFirst, machTypeSecond;
-    bool isActive, isMaching;
+    bool isMaching;
     int machCount, maxMachCount;
 
     public override void ActivateEvent(Player player = null)

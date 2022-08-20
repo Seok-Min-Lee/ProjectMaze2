@@ -5,12 +5,11 @@ using UnityEngine;
 public class TrapTrafficLight : Trap
 {
     public GameManager manager;
-    public TrapTrafficLightType type { get; private set; }
+    public TrapTrafficLightType trafficLightType { get; private set; }
     public int damage;
 
     TrapTrafficLightType latestType;
     Player player;
-    bool isActive;
 
     public override void ActivateEvent(Player player = null)
     {
@@ -20,12 +19,12 @@ public class TrapTrafficLight : Trap
             isActive = true;
 
             latestType = TrapTrafficLightType.Green;
-            type = TrapTrafficLightType.Green;
+            trafficLightType = TrapTrafficLightType.Green;
             this.player = player;
 
             // UI 업데이트
             manager.ActivateTrafficLight(isActivate: true);
-            manager.UpdateTrafficLightByType(type: this.type);
+            manager.UpdateTrafficLightByType(type: this.trafficLightType);
 
             StopCoroutine(Timer());
             StartCoroutine(Timer());
@@ -41,10 +40,10 @@ public class TrapTrafficLight : Trap
 
     private void Update()
     {
-        if(type != latestType)
+        if(trafficLightType != latestType)
         {
-            latestType = type;
-            manager.UpdateTrafficLightByType(type);
+            latestType = trafficLightType;
+            manager.UpdateTrafficLightByType(trafficLightType);
         }
     }
 
@@ -61,16 +60,16 @@ public class TrapTrafficLight : Trap
     {
         if(player != null)
         {
-            type = TrapTrafficLightType.Green;
+            trafficLightType = TrapTrafficLightType.Green;
             yield return new WaitForSeconds(2f);
 
-            type = TrapTrafficLightType.Orange;
+            trafficLightType = TrapTrafficLightType.Orange;
             yield return new WaitForSeconds(0.5f);
 
-            type = TrapTrafficLightType.Red;
+            trafficLightType = TrapTrafficLightType.Red;
             yield return new WaitForSeconds(2f);
 
-            type = TrapTrafficLightType.Orange;
+            trafficLightType = TrapTrafficLightType.Orange;
             yield return new WaitForSeconds(0.5f);
 
             StartCoroutine(Timer());

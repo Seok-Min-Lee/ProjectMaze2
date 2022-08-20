@@ -10,7 +10,7 @@ public class TrapMachPairColumn : Trap
     public TrapMachPairType machType;
     public float speed;
 
-    bool isActive, isRising;
+    bool isRising;
     float positionY;
     Vector3 positionVector;
 

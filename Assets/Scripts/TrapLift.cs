@@ -6,7 +6,7 @@ public class TrapLift : Trap
 {
     public float speed;
 
-    bool isActive, isRising;
+    bool isRising;
     float positionY;
     Vector3 positionVector;
 
