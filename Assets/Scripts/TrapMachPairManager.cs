@@ -6,12 +6,14 @@ public class TrapMachPairManager : Trap
 {
     public TrapMachPairColumn[] leftColumns;
     public TrapMachPairColumn[] rightColumns;
+    public GameObject reward;
 
     Dictionary<TrapMachPairType, int> columnValueCountDictionary;
 
     Player player;
-    bool isActive, isMaching;
     TrapMachPairType machTypeFirst, machTypeSecond;
+    bool isActive, isMaching;
+    int machCount, maxMachCount;
 
     public override void ActivateEvent(Player player = null)
     {
@@ -37,6 +39,13 @@ public class TrapMachPairManager : Trap
     private void Start()
     {
         columnValueCountDictionary = new Dictionary<TrapMachPairType, int>();
+        machCount = 0;
+        maxMachCount = leftColumns.Length;
+    }
+
+    private void Update()
+    {
+        MachEnd();
     }
 
     public void MachPair(TrapMachPairType type)
@@ -54,6 +63,7 @@ public class TrapMachPairManager : Trap
                 MachPairFail();
             }
 
+            machCount++;
             isMaching = false;
         }
         else
@@ -67,13 +77,21 @@ public class TrapMachPairManager : Trap
 
     private void MachPairSuccess()
     {
-        Debug.Log("Success");
+        Debug.Log("Mach Pair Success");
     }
 
     private void MachPairFail()
     {
-        Debug.Log("Fail");
+        Debug.Log("Mach Pair Fail");
         player.currentHp -= 33;
+    }
+
+    private void MachEnd()
+    {
+        if (machCount >= maxMachCount)
+        {
+            reward.SetActive(true);
+        }
     }
 
     private void SetPair()
