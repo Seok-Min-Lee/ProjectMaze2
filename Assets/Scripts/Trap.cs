@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
+    public TrapType type;
+
     public virtual void ActivateEvent(Player player = null)
     {
 

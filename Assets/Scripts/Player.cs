@@ -109,6 +109,10 @@ public class Player : MonoBehaviour
                 other.GetComponentInParent<TrapDeactivator>().CallDeactivateTrap(player: this);
                 break;
 
+            case NameManager.TAG_TRAP:
+                OnTriggerEnterToTrap(trap: other.GetComponentInParent<Trap>());
+                break;
+
             case NameManager.TAG_PORTAL:
                 Portal portal = other.GetComponentInParent<Portal>();
                 manager.UpdatePlayerIngameAttributes(
@@ -309,6 +313,16 @@ public class Player : MonoBehaviour
         isInteractPreprocessReady = false;
         wasInteractPreprocess = false;
         isInteract = false;
+    }
+
+    private void OnTriggerEnterToTrap(Trap trap)
+    {
+        switch (trap.type)
+        {
+            case TrapType.MachPair:
+                trap.GetComponent<TrapMachPairColumn>().DetectPlayer();
+                break;
+        }
     }
 
     private void UpdateCountTimeDetox()
