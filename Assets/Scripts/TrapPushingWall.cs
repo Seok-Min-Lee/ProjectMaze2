@@ -5,6 +5,7 @@ using UnityEngine;
 public class TrapPushingWall : Trap
 {
     public float pushingPower;
+    public GameObject mark;
     
     Player player;
     Vector3 forceVec;
@@ -39,5 +40,7 @@ public class TrapPushingWall : Trap
     {
         isActive = false;
         this.player = null;
+        
+        mark.SetActive(false);
     }
 }
