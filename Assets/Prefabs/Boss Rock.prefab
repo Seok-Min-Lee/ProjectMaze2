@@ -163,7 +163,7 @@ MonoBehaviour:
   mesh: {fileID: 5701835845959439375}
   explosionEffect: {fileID: 570876390237840988}
   angularPowerMaxValue: 1000
-  scaleValueMaxValue: 2
+  scaleValueMaxValue: 2.4
   damage: 0
   lifeTime: 8
 --- !u!1001 &1287398034880643613

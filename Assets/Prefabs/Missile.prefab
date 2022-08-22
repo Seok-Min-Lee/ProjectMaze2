@@ -4976,7 +4976,7 @@ MonoBehaviour:
   mesh: {fileID: 397973083686168978}
   boosterEffect: {fileID: 2202472487292331953}
   explosionEffect: {fileID: 3198837994123747374}
-  speed: 10
+  speed: 25
   damage: 0
 --- !u!1001 &4203378567537788015
 PrefabInstance:
