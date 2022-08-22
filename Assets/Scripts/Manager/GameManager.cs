@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     // NPC 상호작용 관련
 
     DialogueCollection dialogueCollection;
-    int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
+    int dialogueSituationNo, dialogueSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
 
     // 미니맵 관련
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
         InitializeInteractionData(npc: interactNpc);
 
         // 상호작용 호출.
-        TryUpdateInteractionUI();
+        //TryUpdateInteractionUI();
     }
 
     public void UpdateUIWhetherInteraction(bool isInteract)
@@ -98,13 +98,15 @@ public class GameManager : MonoBehaviour
         interactPanel.SetActive(isInteract);
     }
 
-    public bool TryUpdateInteractionUI()
+    public void UpdateInteractionUI(out bool isContinuable)
     {
         Dialogue dialogue;
+        bool isLast;
 
         if (TryGetNextDialogue(dialogue: out dialogue))
         {
             npcDialogue.text = dialogue.text;
+            isLast = systemManager.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
 
             if (dialogue.type == DialogueType.Question)
             {
@@ -134,29 +136,30 @@ public class GameManager : MonoBehaviour
                 }
 
                 // 다음 스크립트 여부 표시.
-                if(dialogue.sequenceNo < dialogueLastSequenceNo)
-                {
-                    nextDialogueSignal.SetActive(true);
-                }
-                else
-                {
-                    nextDialogueSignal.SetActive(false);
-                }
+                nextDialogueSignal.SetActive(!isLast);
 
                 // 상호작용 입력 활성화
                 player._input.interactEnable = true;
             }
 
             dialogueSequenceNo++;
-        }
 
-        return dialogueSequenceNo > dialogueLastSequenceNo ? true : false;
+            isContinuable = !isLast;
+        }
+        else
+        {
+            isContinuable = false;
+        }
     }
 
     public void InteractChooseOption(int choiceNo)
     {
         dialogueSequenceSubNo = choiceNo;
-        TryUpdateInteractionUI();
+
+        // 선택지 선택이 상호작용 키 입력을 대체하고
+        // Player 클래스에 작성된 상호작용에 대한 로직을 따라가기 위해 아래와 같이 처리함.
+        player._input.interact = true;
+        player.Interact();
     }
 
     public void ActivateMinimap(bool isActive)
@@ -237,7 +240,6 @@ public class GameManager : MonoBehaviour
             this.dialogueSequenceSubNo = 0;
 
             dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
-            this.dialogueLastSequenceNo = dialogueCollection.OrderBy(dialogue => dialogue.sequenceNo).LastOrDefault().sequenceNo;
 
             npcName.text = npc.npcName;
         }
@@ -249,16 +251,14 @@ public class GameManager : MonoBehaviour
 
         if (dialogues.Count > 0)
         {
-            if (dialogues.Count > 1)
+            dialogue = dialogues.Where(dialogue => dialogue.sequenceSubNo == dialogueSequenceSubNo).FirstOrDefault();
+
+            if(!string.IsNullOrEmpty(dialogue.text))
             {
-                dialogue = dialogues.Where(dialogue => dialogue.sequenceSubNo == dialogueSequenceSubNo).FirstOrDefault();
-            }
-            else
-            {
-                dialogue = dialogues.FirstOrDefault();
+                return true;
             }
 
-            return true;
+            return false;
         }
         else
         {

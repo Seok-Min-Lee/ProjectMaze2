@@ -70,9 +70,7 @@ public class Player : MonoBehaviour
     {
         //OnDamage();
         Detoxify();
-        InteractPreprocess();
         Interact();
-        InteractPostProcess();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -265,28 +263,28 @@ public class Player : MonoBehaviour
         StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
     }
 
-    private void OnDamage(Monster monster)
-    {
-        KnockBack();    // 내용 추가 필요.
+    //private void OnDamage(Monster monster)
+    //{
+    //    KnockBack();    // 내용 추가 필요.
 
-        // monster 별 업데이트 할 것.
-        switch (monster.type)
-        {
-            case MonsterType.Insect:
-                OnDamageByInsect(damage: monster.damage);
-                break;
-            case MonsterType.Zombie:
-                break;
-            case MonsterType.Range:
-                break;
-            case MonsterType.Catapult:
-                break;
-            default:
-                break;
-        }
+    //    // monster 별 업데이트 할 것.
+    //    switch (monster.type)
+    //    {
+    //        case MonsterType.Insect:
+    //            OnDamageByInsect(damage: monster.damage);
+    //            break;
+    //        case MonsterType.Zombie:
+    //            break;
+    //        case MonsterType.Range:
+    //            break;
+    //        case MonsterType.Catapult:
+    //            break;
+    //        default:
+    //            break;
+    //    }
 
-        StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
-    }
+    //    StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
+    //}
 
     private void KnockBack()
     {
@@ -433,9 +431,6 @@ public class Player : MonoBehaviour
             this.transform.LookAt(target: interactNpc.transform);
 
             // 카메라 위치 조정
-            //Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
-            //cameraPosition.x = this.transform.position.x;
-            //manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
             manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: interactNpc.cameraPoint.position);
             manager.npcInteractionCamera.transform.rotation = interactNpc.cameraPoint.rotation;
 
@@ -445,27 +440,25 @@ public class Player : MonoBehaviour
             // 상호작용 준비 상태 업데이트.
             wasInteractPreprocess = true;
             isInteract = true;
-
-            _input.interact = false;
         }
     }
 
-    private void Interact()
+    public void Interact()
     {
-        //InteractPreprocess();
+        InteractPreprocess();
 
-        if (wasInteractPreprocess && isInteract)
+        if (wasInteractPreprocess && 
+            isInteract &&
+            _input.interact)
         {
-            // 상호작용 과정
-            if (_input.interact)
-            {
-                isInteract = !manager.TryUpdateInteractionUI();
+            // 상호작용 및 다음 스크립트 존재 여부에 따라 상호작용 상태 업데이트.
+            manager.UpdateInteractionUI(isContinuable: out isInteract);
 
-                _input.interact = false;
-            }
+            // 키 입력 초기화.
+            _input.interact = false;
         }
 
-        //InteractPostProcess();
+        InteractPostProcess();
     }
 
     private void InteractPostProcess()
@@ -563,7 +556,6 @@ public class Player : MonoBehaviour
         _input.MoveInput(newMoveDirection: Vector2.zero);
         _input.JumpInput(newJumpState: false);
         _input.SprintInput(newSprintState: false);
-        _input.InteractInput(newInteractState: false);
     }
 
     private void Respawn()

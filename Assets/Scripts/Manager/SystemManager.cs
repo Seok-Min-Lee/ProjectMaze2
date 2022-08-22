@@ -14,6 +14,7 @@ public class SystemManager
     const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute_test.json";
 
     public IngameAttributeCollection ingameAttributeCollection { get; private set; }
+    public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
 
     Dictionary<string, string> userAccountPasswordDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
@@ -29,6 +30,8 @@ public class SystemManager
         npcIndexNameDictionary = new Dictionary<int, string>();
         npcNameIndexDictionary = new Dictionary<string, int>();
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+
+        lastDialogueIndexDictionary = new Dictionary<int, int>();
 
         // Json 형식 데이터 로드
         JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
@@ -49,8 +52,22 @@ public class SystemManager
         }
 
         DialogueCollection dialogues = ConvertJsonDataToDialogue(data: dialogueRaws);
-        foreach(IGrouping<int, Dialogue> dialogueGroup in dialogues.GroupBy(dialogue => dialogue.npcId))
+        foreach (IGrouping<int, Dialogue> dialogueGroup in dialogues.GroupBy(dialogue => dialogue.npcId))
         {
+            foreach(IGrouping<int, Dialogue> dialogueSituationNoGroup in dialogueGroup.GroupBy(dialogue => dialogue.situationNo))
+            {
+                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type == DialogueType.Normal || dialogue.type == DialogueType.Reaction).GroupBy(dialogue => dialogue.sequenceSubNo))
+                {
+                    int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
+
+                    if (!lastDialogueIndexDictionary.ContainsKey(lastIndex))
+                    {
+                        lastDialogueIndexDictionary.Add(lastIndex, lastIndex);
+                    }
+                }
+            }
+            
+
             npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
 
