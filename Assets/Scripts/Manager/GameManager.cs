@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     // 인게임 UI
     public GameObject normalPanel, interactPanel;   // 평상시, 상호작용시
+    public GameObject interactableAlram;
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     SystemManager systemManager;
 
     // NPC 상호작용 관련
+    
     DialogueCollection dialogueCollection;
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
@@ -53,10 +55,6 @@ public class GameManager : MonoBehaviour
         minimapVisible = GetMinimapVisibilityBySceneName(sceneName: this.currentSceneName);
         ActivateMinimap(isActive: minimapVisible);
         UpdateUIActivedBeads(isActives: this.isActivePlayerBeads);
-    }
-
-    private void Start()
-    {
     }
 
     private void LateUpdate()
@@ -271,6 +269,9 @@ public class GameManager : MonoBehaviour
     {
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
+
+
+        interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
     }
 
     private void UpdateMinimap()
