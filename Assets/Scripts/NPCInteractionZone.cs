@@ -6,6 +6,7 @@ public class NPCInteractionZone : MonoBehaviour
 {
     public NpcType type;
     public GameObject effect;
+    public Transform cameraPoint;
     public string npcName { get; private set; }
     
     private void Start()

@@ -370,11 +370,14 @@ public class Player : MonoBehaviour
             // NPC 바라보도록 추후 보완.
             ForceToMove(point: interactPoint);
             StopPlayerMotion();
+            this.transform.LookAt(target: interactNpc.transform);
 
             // 카메라 위치 조정
-            Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
-            cameraPosition.x = this.transform.position.x;
-            manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
+            //Vector3 cameraPosition = manager.npcInteractionCamera.gameObject.transform.position;
+            //cameraPosition.x = this.transform.position.x;
+            //manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: cameraPosition);
+            manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: interactNpc.cameraPoint.position);
+            manager.npcInteractionCamera.transform.rotation = interactNpc.cameraPoint.rotation;
 
             // 카메라 및 UI 업데이트.
             manager.UpdateUINormalToInteraction(npc: interactNpc);
