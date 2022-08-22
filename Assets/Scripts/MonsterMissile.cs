@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MonsterMissile : MonoBehaviour
 {
+    public GameObject mesh, boosterEffect, explosionEffect;
     public int speed;
     public int damage;
 
@@ -28,5 +29,17 @@ public class MonsterMissile : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+    }
+
+    public void ExplosionDestroy()
+    {
+        rigid.angularVelocity = Vector3.zero;
+        rigid.velocity = Vector3.zero;
+
+        mesh.SetActive(false);
+        boosterEffect.SetActive(false);
+        explosionEffect.SetActive(true);
+
+        Destroy(obj: this.gameObject, t: 1f);
     }
 }

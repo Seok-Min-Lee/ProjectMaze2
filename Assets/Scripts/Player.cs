@@ -247,6 +247,7 @@ public class Player : MonoBehaviour
             if (rock != null)
             {
                 ChangeCurrentHp(value: rock.damage, isDamage: true);
+                rock.ExplosionDestroy();
             }
             else
             {
@@ -255,6 +256,7 @@ public class Player : MonoBehaviour
                 if (missile != null)
                 {
                     ChangeCurrentHp(value: missile.damage, isDamage: true);
+                    missile.ExplosionDestroy();
                 }
             }
             

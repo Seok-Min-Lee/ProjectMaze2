@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MonsterAttackRock : MonoBehaviour
 {
+    public GameObject mesh, explosionEffect;
     public float angularPowerMaxValue, scaleValueMaxValue; // 운동량과 스케일의 최대값
     public int damage;
     public float lifeTime;
@@ -39,6 +40,17 @@ public class MonsterAttackRock : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+    }
+
+    public void ExplosionDestroy()
+    {
+        rigid.angularVelocity = Vector3.zero;
+        rigid.velocity = Vector3.zero;
+
+        mesh.SetActive(false);
+        explosionEffect.SetActive(true);
+
+        Destroy(obj: this.gameObject, t: 1f);
     }
 
     IEnumerator GainPowerTimer()
