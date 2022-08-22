@@ -90,11 +90,11 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_FALL:
-                Respawn();
+                ChangeCurrentHp(value: maxHp, isDamage: true);
                 break;
 
             case NameManager.TAG_MONSTER_ATTACK:
-                OnDamage(monster: other.GetComponentInParent<Monster>());
+                OnDamage(obj: gameObject);
                 break;
 
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
@@ -159,6 +159,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        GameObject gameObject = collision.gameObject;
+        switch (gameObject.tag)
+        {
+            case NameManager.TAG_MONSTER_ATTACK:
+                OnDamage(obj: gameObject);
+                break;
+        }
+    }
+
     #endregion
 
     #region ##### 실질 기능 함수 #####
@@ -180,7 +191,7 @@ public class Player : MonoBehaviour
         {
             case ItemType.Heal:
                 // hp, life 둘다 0 인 경우 GameOver 추가 필요.
-                ChangeCurrentHp(value: item.value);
+                ChangeCurrentHp(value: item.value, isDamage: false);
                 break;
             case ItemType.Map:
                 // 미니맵 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
@@ -205,6 +216,53 @@ public class Player : MonoBehaviour
         manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
+    private void OnDamage(GameObject obj)
+    {
+        KnockBack();    // 내용 추가 필요.
+
+        // monster 별 업데이트 할 것.
+        Monster monster = obj.gameObject.GetComponent<Monster>();
+
+        if (monster != null)
+        {
+            switch (monster.type)
+            {
+                case MonsterType.Insect:
+                    OnDamageByInsect(damage: monster.damage);
+                    break;
+                case MonsterType.Zombie:
+                    break;
+                case MonsterType.Range:
+                    break;
+                case MonsterType.Catapult:
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            MonsterAttackRock rock = obj.gameObject.GetComponent<MonsterAttackRock>();
+
+            if (rock != null)
+            {
+                ChangeCurrentHp(value: rock.damage, isDamage: true);
+            }
+            else
+            {
+                MonsterMissile missile = obj.gameObject.GetComponent<MonsterMissile>();
+
+                if (missile != null)
+                {
+                    ChangeCurrentHp(value: missile.damage, isDamage: true);
+                }
+            }
+            
+        }
+
+        StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
+    }
+
     private void OnDamage(Monster monster)
     {
         KnockBack();    // 내용 추가 필요.
@@ -225,7 +283,7 @@ public class Player : MonoBehaviour
                 break;
         }
 
-        StartCoroutine(routine: Addict(summaryDamage: -poisonTicDamage * poisonStack));
+        StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
     }
 
     private void KnockBack()
@@ -248,7 +306,7 @@ public class Player : MonoBehaviour
     {
         if (isPoison)
         {
-            ChangeCurrentHp(value: summaryDamage);
+            ChangeCurrentHp(value: summaryDamage, isDamage: true);
         }
 
         yield return new WaitForSeconds(1f);
@@ -467,27 +525,35 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    public void ChangeCurrentHp(int value)
+    public void ChangeCurrentHp(int value, bool isDamage)
     {
-        currentHp += value;
-
-        if (currentHp > maxHp)
+        if (isDamage)
         {
-            currentHp = maxHp;
-        }
-        else if (currentHp < 0)
-        {
-            currentHp = 0;
+            currentHp -= value;
 
-            if (currentLife > 0)
+            if (currentHp <= 0)
             {
-                Respawn();
-            }
-            else
-            {
-                //Gameover 추가.
+                currentHp = 0;
+
+                if (currentLife > 0)
+                {
+                    Respawn();
+                }
+                else
+                {
+                    //Gameover 추가.
+                }
             }
         }
+        else
+        {
+            currentHp += value;
+
+            if (currentHp > maxHp)
+            {
+                currentHp = maxHp;
+            }
+        }        
     }
 
     private void StopPlayerMotion()

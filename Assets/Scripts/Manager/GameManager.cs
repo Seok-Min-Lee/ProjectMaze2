@@ -9,11 +9,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    const string PREFIX_PLAYER_LIFE = "X ";
+
     // 카메라
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
     // 인게임 UI
-    public GameObject normalPanel, interactPanel;   // 평상시, 상호작용시
+    public GameObject normalPanel, interactPanel, deathPanel;   // 평상시, 상호작용시
     public GameObject interactableAlram;
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
+    public Text playerLifeText;
     public GameObject[] playerBeadCovers;
 
     public GameObject trafficLightPanel;
@@ -32,7 +35,7 @@ public class GameManager : MonoBehaviour
     SystemManager systemManager;
 
     // NPC 상호작용 관련
-    
+
     DialogueCollection dialogueCollection;
     int dialogueSituationNo, dialogueSequenceNo, dialogueLastSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
@@ -267,11 +270,16 @@ public class GameManager : MonoBehaviour
 
     private void DefaultUIUpadate()
     {
+        playerLifeText.text = PREFIX_PLAYER_LIFE + player.currentLife.ToString();
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.currentConfusion / player.maxConfusion, 1, 1);
 
-
         interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
+
+        if (player.currentLife <= 0 && player.currentHp <= 0)
+        {
+            deathPanel.SetActive(true);
+        }
     }
 
     private void UpdateMinimap()
