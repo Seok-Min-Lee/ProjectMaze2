@@ -36,6 +36,7 @@ public static class NameManager
     public const string SCENE_STAGE_3 = "Stage 3";
 
     public const string TAG_PLAYER = "Player";
+    public const string TAG_WALL = "Wall";
     public const string TAG_ITEM = "Item";
     public const string TAG_PLAYER_RESPAWN = "PlayerRespawn";
     public const string TAG_FALL = "Fall";

@@ -271,7 +271,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStayInNegativeEffectZone(NegativeEffectZone negativeEffect)
     {
-        if (!isConfusion)
+        if (negativeEffect.type == NegativeEffectType.Confusion && !isConfusion)
         {
             Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
             if (countTimeConfusion >= activateTimeConfusion)

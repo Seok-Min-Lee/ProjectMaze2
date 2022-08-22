@@ -21,4 +21,12 @@ public class MonsterMissile : MonoBehaviour
         //rigid.AddForce(force: Vector3.right * speed, mode: ForceMode.Impulse);
         transform.Rotate(axis: Vector3.forward, angle: rotateSpeed);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == NameManager.TAG_WALL)
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }
