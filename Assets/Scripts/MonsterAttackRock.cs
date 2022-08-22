@@ -6,12 +6,12 @@ public class MonsterAttackRock : MonoBehaviour
 {
     public float angularPowerMaxValue, scaleValueMaxValue; // 운동량과 스케일의 최대값
     public int damage;
+    public float lifeTime;
 
     Rigidbody rigid;
 
     float angularPower, scaleValue; // 운동량과 스케일
     float angularPowerIncrementValue, scaleValueIncrementValue; // 운동량과 스케일의 증가값
-    float delayDestroy;
     bool isShoot;
 
     float gainPowerTime = 2f;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
@@ -26,13 +26,19 @@ public class MonsterAttackRock : MonoBehaviour
         scaleValue = 0.05f;
         angularPowerIncrementValue = 0.05f;
         scaleValueIncrementValue = 0.01f;
-
-        delayDestroy = 4f;
     }
 
     private void Start()
     {
-        Destroy(obj: this.gameObject, t: delayDestroy);
+        Destroy(obj: this.gameObject, t: lifeTime);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == NameManager.TAG_WALL)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     IEnumerator GainPowerTimer()

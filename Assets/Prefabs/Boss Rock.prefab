@@ -162,3 +162,4 @@ MonoBehaviour:
   angularPowerMaxValue: 1000
   scaleValueMaxValue: 2
   damage: 0
+  lifeTime: 8
