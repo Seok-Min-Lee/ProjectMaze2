@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     // 미니맵 관련
     Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
-    bool minimapEnabled, minimapVisible;
+    bool minimapVisible;
 
     string currentSceneName;
 
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
         currentSceneName = SceneManager.GetActiveScene().name;
         SetIngameAttributes();
 
-        if(TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, isEnabled: out this.minimapEnabled, index: out int minimapIndex))
+        if(TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
             minimapVisible = this.isActivePlayerMinimaps[minimapIndex];
         }
@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     public void ActivateMinimap(bool isActive)
     {
-        if(minimapEnabled && minimapCamera != null)
+        if(minimapCamera != null)
         {
             minimapVisible = isActive;
             minimap.SetActive(minimapVisible);
@@ -310,7 +310,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMinimap()
     {
-        if (minimapEnabled && minimapVisible && minimapCamera != null)
+        if (minimapVisible && minimapCamera != null)
         {
             minimapMarkerPoint = player.transform.position;
             minimapMarkerPoint.y = 0;
@@ -323,33 +323,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool TryGetMinimapAttributesBySceneName(string sceneName, out bool isEnabled, out int index)
+    private bool TryGetMinimapAttributesBySceneName(string sceneName, out int index)
     {
-        // isEnabled 해당 씬의 미니맵 존재 여부 파악하기 위한 bool 값
         // index 플레이어의 인게임 속성에서 미니맵에 대한 값이 배열이기 때문에 원하는 값을 찾기 위한 인덱스
-        // 이후 위 두 값을 이용하여 해당 씬의 미니맵 표시 여부를 결정하기 때문에 isEnabled 값을 반환해도 무방하다.
+        // isVisible 현재 씬에 미니맵의 존재 여부
+
+
+        bool isVisible;
 
         switch (sceneName)
         {
             case NameManager.SCENE_STAGE_1:
                 index = 0;
-                isEnabled = true;
+                isVisible = true;
                 break;
             case NameManager.SCENE_STAGE_2:
                 index = 1;
-                isEnabled = true;
+                isVisible = true;
                 break;
             case NameManager.SCENE_STAGE_3:
                 index = 2;
-                isEnabled = true;
+                isVisible = true;
                 break;
             default:
                 index = -1;
-                isEnabled = false;
+                isVisible = false;
                 break;
         }
 
-        return isEnabled;
+        return isVisible;
     }
 
     // 게임 내 설정 값
