@@ -197,7 +197,8 @@ public class Player : MonoBehaviour
                 break;
             case ItemType.Map:
                 // 미니맵 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
-                manager.ActivateMinimap(isActive: true);
+                this.isActiveMinimap = true;
+                manager.ActivateMinimap(isActive: this.isActiveMinimap);
                 break;
             case ItemType.Bead:
                 // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
