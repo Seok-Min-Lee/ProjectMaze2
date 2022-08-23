@@ -7,6 +7,7 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public StarterAssetsInputs _input { get; private set; }
+    ThirdPersonController _controller;
 
     public GameManager manager;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
@@ -37,6 +38,9 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<StarterAssetsInputs>();
+        _controller = GetComponent<ThirdPersonController>();
+        _controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
+        _controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
 
         manager.InitializePlayer(
             playerPoisonStackMax: out poisonStackMax,
