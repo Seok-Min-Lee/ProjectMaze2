@@ -143,6 +143,9 @@ public class GameManager : MonoBehaviour
                 // 다음 스크립트 여부 표시.
                 nextDialogueSignal.SetActive(!isLast);
 
+                // 이벤트 타입인 경우 해당 이벤트 발생
+                OccurDialogueEvent(dialogue: dialogue);
+
                 // 상호작용 입력 활성화
                 player._input.interactEnable = true;
             }
@@ -261,12 +264,47 @@ public class GameManager : MonoBehaviour
 
     private int GetGoblinInteracionDialogueSequenceSubNo(IEnumerable<Dialogue> dialogues)
     {
+        // 다이럴로그 타입을 결정한다.
+        float randomTypeValue = UnityEngine.Random.Range(minInclusive: 0, maxExclusive:10);
+        DialogueType dialogueType = randomTypeValue > 4 ? DialogueType.Normal : DialogueType.Event;
+
+        // 다이얼로그 SequenceSubNo 의 최대 최소값 구한다.
+        DialogueCollection _dialogueCollection;
         int sequenceSubNo;
+        if (dialogueType == DialogueType.Event)
+        {
+            if (player.isActiveMagicHuman)
+            {
+                if (player.isActiveMagicFairy)
+                {
+                    sequenceSubNo = systemManager.dialogueMagicGiantSequenceSubNo;
+                }
+                else
+                {
+                    if (UnityEngine.Random.Range(minInclusive: 0, maxExclusive: 2) > 1)
+                    {
+                        sequenceSubNo = systemManager.dialogueMagicFairySequenceSubNo;
+                    }
+                    else
+                    {
+                        sequenceSubNo = systemManager.dialogueMagicGiantSequenceSubNo;
+                    }
+                }
+            }
+            else
+            {
+                sequenceSubNo = systemManager.dialogueMagicHumanSequenceSubNo;
+            }
+        }
+        else
+        {
+            _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.type == dialogueType).OrderBy(dialogue => dialogue.sequenceSubNo));
 
-        int maxSequenceSubNo = dialogues.OrderByDescending(dialogue => dialogue.sequenceSubNo).FirstOrDefault().sequenceSubNo;
+            int randomMinValue = _dialogueCollection.FirstOrDefault().sequenceSubNo;
+            int randomMaxValue = _dialogueCollection.LastOrDefault().sequenceSubNo;
 
-        sequenceSubNo = (int)UnityEngine.Random.Range(minInclusive: 0, maxExclusive: maxSequenceSubNo + 1);
-        // 완전 랜덤이 목표는 아니기 때문에 조건 로직 추가.
+            sequenceSubNo = (int)UnityEngine.Random.Range(minInclusive: randomMinValue, maxExclusive: randomMaxValue + 1);
+        }
 
         return sequenceSubNo;
     }
@@ -291,6 +329,25 @@ public class GameManager : MonoBehaviour
             dialogue = new Dialogue();
 
             return false;
+        }
+    }
+
+    private void OccurDialogueEvent(Dialogue dialogue)
+    {
+        if(dialogue.type == DialogueType.Event)
+        {
+            if(!player.isActiveMagicFairy && dialogue.sequenceSubNo == systemManager.dialogueMagicFairySequenceSubNo)
+            {
+                player.isActiveMagicFairy = true;
+            }
+            else if(player.magicGiantStack <= ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX && dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
+            {
+                player.magicGiantStack++;
+            }
+            else if(!player.isActiveMagicHuman && dialogue.sequenceSubNo == systemManager.dialogueMagicHumanSequenceSubNo)
+            {
+                player.isActiveMagicHuman = true;
+            }
         }
     }
 
@@ -359,8 +416,8 @@ public class GameManager : MonoBehaviour
     // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
     bool[] isActivePlayerBeads;
     bool[] isActivePlayerMinimaps;
-    bool isActivePlayerMagicFairy, isActivePlayerMagicGiant, isActivePlayerMagicHuman;
-    int playerLife, playerCurrentHp, playerCurrentConfusion, playerPoisonStack;
+    bool isActivePlayerMagicFairy, isActivePlayerMagicHuman;
+    int playerLife, playerCurrentHp, playerCurrentConfusion, playerMagicGiantStack, playerPoisonStack;
 
     private void SetIngameAttributes()
     {
@@ -395,7 +452,7 @@ public class GameManager : MonoBehaviour
                     isActivePlayerMagicFairy = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT:
-                    isActivePlayerMagicGiant = attribute.value == 0 ? false : true;
+                    playerMagicGiantStack = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN:
                     isActivePlayerMagicHuman = attribute.value == 0 ? false : true;
@@ -439,11 +496,11 @@ public class GameManager : MonoBehaviour
         out bool[] isActiveBeads,
         out bool isActiveMinimap,
         out bool isActiveMagicFairy,
-        out bool isActiveMagicGiant,
         out bool isActiveMagicHuman,
         out int life,
         out int currentHp,
         out int currentConfusion,
+        out int magicGiantStack,
         out int poisonStack
     )
     {
@@ -465,11 +522,11 @@ public class GameManager : MonoBehaviour
 
         isActiveBeads = this.isActivePlayerBeads;
         isActiveMagicFairy = this.isActivePlayerMagicFairy;
-        isActiveMagicGiant = this.isActivePlayerMagicGiant;
         isActiveMagicHuman = this.isActivePlayerMagicHuman;
         life = this.playerLife;
         currentHp = this.playerCurrentHp;
         currentConfusion = this.playerCurrentConfusion;
+        magicGiantStack = this.playerMagicGiantStack;
         poisonStack = this.playerPoisonStack;
     }
 
@@ -477,11 +534,11 @@ public class GameManager : MonoBehaviour
         bool[] isActiveBeads,
         bool isActiveMinimap,
         bool isActiveMagicFairy,
-        bool isActiveMagicGiant,
         bool isActiveMagicHuman,
         int life,
         int currentHp,
         int currentConfusion,
+        int magicGiantStack,
         int poisonStack
     )
     {
@@ -500,11 +557,11 @@ public class GameManager : MonoBehaviour
 
         this.isActivePlayerBeads = isActiveBeads;
         this.isActivePlayerMagicFairy = isActiveMagicFairy;
-        this.isActivePlayerMagicGiant = isActiveMagicGiant;
         this.isActivePlayerMagicHuman = isActiveMagicHuman;
         this.playerLife = life;
         this.playerCurrentHp = currentHp;
         this.playerCurrentConfusion = currentConfusion;
+        this.playerMagicGiantStack = magicGiantStack;
         this.playerPoisonStack = poisonStack;
     }
 
@@ -551,7 +608,7 @@ public class GameManager : MonoBehaviour
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT,
-            value: this.isActivePlayerMagicGiant == true ? 1 : 0
+            value: this.playerMagicGiantStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,

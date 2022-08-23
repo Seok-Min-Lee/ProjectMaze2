@@ -15,12 +15,13 @@ public class SystemManager
 
     public IngameAttributeCollection ingameAttributeCollection { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
+    public int dialogueMagicHumanSequenceSubNo, dialogueMagicFairySequenceSubNo, dialogueMagicGiantSequenceSubNo;
 
     Dictionary<string, string> userAccountPasswordDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
-
+    
     public SystemManager(int userId = 0)
     {
         userAccountPasswordDictionary = new Dictionary<string, string>();
@@ -56,7 +57,7 @@ public class SystemManager
         {
             foreach(IGrouping<int, Dialogue> dialogueSituationNoGroup in dialogueGroup.GroupBy(dialogue => dialogue.situationNo))
             {
-                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type == DialogueType.Normal || dialogue.type == DialogueType.Reaction).GroupBy(dialogue => dialogue.sequenceSubNo))
+                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type != DialogueType.Option).GroupBy(dialogue => dialogue.sequenceSubNo))
                 {
                     int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
 
@@ -180,17 +181,39 @@ public class SystemManager
             string _dialogueType = datum[NameManager.JSON_COLUMN_DIALOGUE_TYPE].ToString();
             string _text = datum[NameManager.JSON_COLUMN_TEXT].ToString();
 
+            int sequenceSubNo;
+            DialogueType dialogueType;
             if(this.npcNameIndexDictionary.TryGetValue(key: _npcName, value: out int _npcId))
             {
+                sequenceSubNo = ConvertManager.ConvertStringToInt(input: _sequenceSubNo);
+                dialogueType = (DialogueType)ConvertManager.ConvertStringToInt(input: _dialogueType);
+
                 raws.Add(new Dialogue(
                     id: ConvertManager.ConvertStringToInt(input: _id),
                     npcId: _npcId,
                     situationNo: ConvertManager.ConvertStringToInt(input: _situationNo),
                     sequenceNo: ConvertManager.ConvertStringToInt(input: _sequenceNo),
-                    sequenceSubNo: ConvertManager.ConvertStringToInt(input: _sequenceSubNo),
-                    type: (DialogueType)ConvertManager.ConvertStringToInt(input: _dialogueType),
+                    sequenceSubNo: sequenceSubNo,
+                    type: dialogueType,
                     text: _text
                 ));
+
+                // 특정 다이얼로그의 id 를 저장하기 위함.
+                if (dialogueType == DialogueType.Event)
+                {
+                    if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_FAIRY))
+                    {
+                        dialogueMagicFairySequenceSubNo = sequenceSubNo;
+                    }
+                    else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_GIANT))
+                    {
+                        dialogueMagicGiantSequenceSubNo = sequenceSubNo;
+                    }
+                    else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_HUMAN))
+                    {
+                        dialogueMagicHumanSequenceSubNo = sequenceSubNo;
+                    }
+                }
             }
         }
 

@@ -45,10 +45,10 @@
 ,{"id":44,"npcname":"도깨비","situationno":0,"sequenceno":2,"sequencesubno":6,"dialoguetype":1,"text":"자 그럼 이 정보는 그 10가지에 포함이 될까? 안 될까?"}
 ,{"id":45,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":7,"dialoguetype":1,"text":"이 세상의 이름은 'Project Maze 2' 인데 그럼 'Project Maze 1' 의 세상은 어땠을까?"}
 ,{"id":46,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":7,"dialoguetype":1,"text":"끝내 만들어지지는 않았지만 앞이 잘 보이지 않을 정도로 어둡고 귀신도 나오는 그런 곳이었지.."}
-,{"id":47,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":8,"dialoguetype":1,"text":"가끔 나를 마주친다면 말을 걸어보는 것이 너에게도 도움이 될 수도 있어. '마법'이라는 것을 보여줄 수 있거든.."}
-,{"id":48,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":8,"dialoguetype":1,"text":"'아무 효과 없는 마법' 말 그대로 아무 효과 없는 마법이야. "}
-,{"id":49,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":9,"dialoguetype":1,"text":"거인족들은 거대한 덩치로 웬만한 공격에는 피해를 입지 않지. 거기서 영감을 받은 마법을 자네에게 시험해 봐도 되겠나!?"}
-,{"id":50,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":9,"dialoguetype":1,"text":"'거인족의 기백' 어떤 생물도 자네에게 해를 입히지 못 할 거야."}
-,{"id":51,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":10,"dialoguetype":1,"text":"소인족들은 매우 빠른 발을 가지고 있지.. 그건 그들이 가진 마법의 힘이네."}
-,{"id":52,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":10,"dialoguetype":1,"text":"'소인족의 발걸음' 이제 더 높고 더 빠르게 뛸 수 있을 거야."}
+,{"id":47,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":8,"dialoguetype":4,"text":"가끔 나를 마주친다면 말을 걸어보는 것이 너에게도 도움이 될 수도 있어. '마법'이라는 것을 보여줄 수 있거든.."}
+,{"id":48,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":8,"dialoguetype":4,"text":"'아무 효과 없는 마법' 말 그대로 아무 효과 없는 마법이야. "}
+,{"id":49,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":9,"dialoguetype":4,"text":"거인족들은 거대한 덩치로 웬만한 공격에는 피해를 입지 않지. 거기서 영감을 받은 마법을 자네에게 시험해 봐도 되겠나!?"}
+,{"id":50,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":9,"dialoguetype":4,"text":"'거인족의 기백' 어떤 생물도 자네에게 해를 입히지 못 할 거야."}
+,{"id":51,"npcname":"도깨비","situationno":0,"sequenceno":0,"sequencesubno":10,"dialoguetype":4,"text":"소인족들은 매우 빠른 발을 가지고 있지.. 그건 그들이 가진 마법의 힘이네."}
+,{"id":52,"npcname":"도깨비","situationno":0,"sequenceno":1,"sequencesubno":10,"dialoguetype":4,"text":"'소인족의 발걸음' 이제 더 높고 더 빠르게 뛸 수 있을 거야."}
 ]

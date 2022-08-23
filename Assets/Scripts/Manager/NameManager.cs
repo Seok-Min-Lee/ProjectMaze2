@@ -67,4 +67,8 @@ public static class NameManager
     public const string NPC_NAME_HUMAN_CHILD = "인간 아이";
     public const string NPC_NAME_HUMAN_ADULT = "인간 청년";
     public const string NPC_NAME_GOBLIN = "도깨비";
+
+    public const string DIALOGUE_KEYWORD_MAGIC_FAIRY = "소인족의 발걸음";
+    public const string DIALOGUE_KEYWORD_MAGIC_GIANT = "거인족의 기백";
+    public const string DIALOGUE_KEYWORD_MAGIC_HUMAN = "아무 효과 없는 마법";
 }

@@ -17,7 +17,8 @@ public class Player : MonoBehaviour
     public int currentLife, maxLife;
     public int currentConfusion = 0, maxConfusion = 100;
     public bool[] isActiveBeads;
-    public bool isActiveMinimap, isActiveMagicFairy, isActiveMagicGiant, isActiveMagicHuman;
+    public bool isActiveMinimap, isActiveMagicFairy, isActiveMagicHuman;
+    public int magicGiantStack;
 
     public bool isPoison;
     public bool isConfusion;
@@ -59,11 +60,11 @@ public class Player : MonoBehaviour
             isActiveBeads: out this.isActiveBeads,
             isActiveMinimap: out this.isActiveMinimap,
             isActiveMagicFairy: out this.isActiveMagicFairy,
-            isActiveMagicGiant: out this.isActiveMagicGiant,
             isActiveMagicHuman: out this.isActiveMagicHuman,
             life: out this.currentLife,
             currentHp: out this.currentHp,
             currentConfusion: out this.currentConfusion,
+            magicGiantStack: out this.magicGiantStack,
             poisonStack: out this.poisonStack
         );
 
@@ -121,11 +122,11 @@ public class Player : MonoBehaviour
                     isActiveBeads: this.isActiveBeads,
                     isActiveMinimap: this.isActiveMinimap,
                     isActiveMagicFairy: this.isActiveMagicFairy,
-                    isActiveMagicGiant: this.isActiveMagicGiant,
                     isActiveMagicHuman: this.isActiveMagicHuman,
                     life: this.currentLife,
                     currentHp: this.currentHp,
                     currentConfusion: this.currentConfusion,
+                    magicGiantStack: this.magicGiantStack,
                     poisonStack: this.poisonStack
                 );
                 manager.UpdateScene(sceneType: portal.nextSceneType);
