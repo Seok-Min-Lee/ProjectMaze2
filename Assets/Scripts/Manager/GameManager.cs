@@ -37,7 +37,8 @@ public class GameManager : MonoBehaviour
     // NPC 상호작용 관련
 
     DialogueCollection dialogueCollection;
-    int dialogueSituationNo, dialogueSequenceNo, dialogueSequenceSubNo;
+    public int dialogueSituationNo; // 테스트 끝나면 private 수정.
+    int dialogueSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
 
     // 미니맵 관련
@@ -235,14 +236,35 @@ public class GameManager : MonoBehaviour
         if (systemManager.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
             systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
         {
-            this.dialogueSituationNo = 0;
             this.dialogueSequenceNo = 0;
-            this.dialogueSequenceSubNo = 0;
-
-            dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
-
             npcName.text = npc.npcName;
+
+            DialogueCollection _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
+
+            if (npc.type == NpcType.Goblin)
+            {
+                this.dialogueSequenceSubNo = GetGoblinInteracionDialogueSequenceSubNo(dialogues: _dialogueCollection);
+
+                dialogueCollection = new DialogueCollection(_dialogueCollection.Where(dialogue => dialogue.sequenceSubNo == this.dialogueSequenceSubNo));
+            }
+            else
+            {
+                this.dialogueSequenceSubNo = 0;
+                dialogueCollection = _dialogueCollection;
+            }
         }
+    }
+
+    private int GetGoblinInteracionDialogueSequenceSubNo(IEnumerable<Dialogue> dialogues)
+    {
+        int sequenceSubNo;
+
+        int maxSequenceSubNo = dialogues.OrderByDescending(dialogue => dialogue.sequenceSubNo).FirstOrDefault().sequenceSubNo;
+
+        sequenceSubNo = (int)UnityEngine.Random.Range(minInclusive: 0, maxExclusive: maxSequenceSubNo + 1);
+        // 완전 랜덤이 목표는 아니기 때문에 조건 로직 추가.
+
+        return sequenceSubNo;
     }
 
     private bool TryGetNextDialogue(out Dialogue dialogue)
