@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     const string PREFIX_PLAYER_LIFE = "X ";
+    const string PREFIX_PLAYER_EFFECT_STACK = "X ";
 
     // 카메라
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
     public Text playerLifeText;
+    public GameObject magicFairyImage, magicGiantImage, magicHumanImage, poisonImage, confusionImage;
+    public Text magicGiantStackText, poisonStackText;
     public GameObject[] playerBeadCovers;
 
     public GameObject trafficLightPanel;
@@ -143,8 +146,11 @@ public class GameManager : MonoBehaviour
                 // 다음 스크립트 여부 표시.
                 nextDialogueSignal.SetActive(!isLast);
 
-                // 이벤트 타입인 경우 해당 이벤트 발생
-                OccurDialogueEvent(dialogue: dialogue);
+                // 이벤트 타입인 경우 마지막 다이얼로그에서 해당 이벤트 발생
+                if(isLast)
+                {
+                    OccurDialogueEvent(dialogue: dialogue);
+                }
 
                 // 상호작용 입력 활성화
                 player._input.interactEnable = true;
@@ -271,6 +277,7 @@ public class GameManager : MonoBehaviour
         // 다이얼로그 SequenceSubNo 의 최대 최소값 구한다.
         DialogueCollection _dialogueCollection;
         int sequenceSubNo;
+
         if (dialogueType == DialogueType.Event)
         {
             if (player.isActiveMagicHuman)
@@ -281,7 +288,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (UnityEngine.Random.Range(minInclusive: 0, maxExclusive: 2) > 1)
+                    if (UnityEngine.Random.Range(minInclusive: 0, maxExclusive: 2) > 0)
                     {
                         sequenceSubNo = systemManager.dialogueMagicFairySequenceSubNo;
                     }
@@ -340,7 +347,7 @@ public class GameManager : MonoBehaviour
             {
                 player.isActiveMagicFairy = true;
             }
-            else if(player.magicGiantStack <= ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX && dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
+            else if(player.magicGiantStack < ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX && dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
             {
                 player.magicGiantStack++;
             }
@@ -353,12 +360,28 @@ public class GameManager : MonoBehaviour
 
     private void DefaultUIUpadate()
     {
+        // 체력 및 공포
         playerLifeText.text = PREFIX_PLAYER_LIFE + player.currentLife.ToString();
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.confusionStack / player.confusionStackMax, 1, 1);
 
+        // 마법 효과
+        bool isActiveMagicGiant = player.magicGiantStack > 0;
+        bool isACtivePoision = player.poisonStack > 0;
+
+        magicFairyImage.SetActive(player.isActiveMagicFairy);
+        magicGiantImage.SetActive(isActiveMagicGiant);
+        magicHumanImage.SetActive(player.isActiveMagicHuman);
+        poisonImage.SetActive(isACtivePoision);
+        confusionImage.SetActive(player.isConfusion);
+
+        magicGiantStackText.text = PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
+        poisonStackText.text = PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
+
+        // 상호작용 가능한 경우
         interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
 
+        // 게임오버
         if (player.currentLife <= 0 && player.currentHp <= 0)
         {
             deathPanel.SetActive(true);
@@ -384,7 +407,6 @@ public class GameManager : MonoBehaviour
     {
         // index 플레이어의 인게임 속성에서 미니맵에 대한 값이 배열이기 때문에 원하는 값을 찾기 위한 인덱스
         // isVisible 현재 씬에 미니맵의 존재 여부
-
 
         bool isVisible;
 

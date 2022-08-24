@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
 
     public int currentHp, maxHp;
     public int currentLife, maxLife;
-    
+
     public bool[] isActiveBeads;
     public bool isActiveMinimap;
     public bool isActiveMagicFairy, isActiveMagicHuman;
@@ -31,8 +31,9 @@ public class Player : MonoBehaviour
 
     float countTimeDetox = 0f, countTimeConfusion = 0f;
 
-    int poisonStack, poisonStackMax, poisonTicDamage;
-    int confusionStack, confusionStackMax;
+    public int confusionStack, confusionStackMax;
+    public int poisonStack;
+    int poisonStackMax, poisonTicDamage;
     float detoxActivateTime, confusionActivateTime, confusionDuration;
 
     #region ##### 유니티 내장 함수 #####
