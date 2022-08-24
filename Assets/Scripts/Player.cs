@@ -281,12 +281,13 @@ public class Player : MonoBehaviour
 
     private void ActivateBeadByIndex(int index)
     {
-        if(index >= 0 && index < isActiveBeads.Length)
+        if(index >= 0 && index < this.isActiveBeads.Length)
         {
-            isActiveBeads[index] = true;
+            this.isActiveBeads[index] = true;
             beads[index].SetActive(true);
         }
-        manager.UpdateUIActivedBeads(isActives: isActiveBeads);
+        manager.UpdateUIActivedBeads(isActives: this.isActiveBeads);
+        manager.ActivateSkyboxByPlayerBeads(isActiveBeads: this.isActiveBeads);
     }
 
     private void OnDamageByMonsterAttack(GameObject obj)

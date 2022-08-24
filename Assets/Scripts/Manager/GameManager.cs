@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject trafficLightPanel;
     public GameObject[] trafficLights;
+    public Material[] skyboxMaterials;
 
     SystemManager systemManager;
 
@@ -54,6 +55,8 @@ public class GameManager : MonoBehaviour
 
     Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
+    float skyboxRotation;
+
     private void Awake()
     {
         systemManager = new SystemManager();
@@ -71,6 +74,7 @@ public class GameManager : MonoBehaviour
 
         ActivateMinimap(isActive: minimapVisible);
         UpdateUIActivedBeads(isActives: this.attributeIsActivePlayerBeads);
+        ActivateSkyboxByPlayerBeads(isActiveBeads: this.attributeIsActivePlayerBeads);
     }
 
     private void LateUpdate()
@@ -79,6 +83,9 @@ public class GameManager : MonoBehaviour
         {
             DefaultUIUpadate();
             UpdateMinimap();
+
+            skyboxRotation += Time.deltaTime;
+            RenderSettings.skybox.SetFloat("_Rotation", skyboxRotation);
         }
     }
 
@@ -210,6 +217,32 @@ public class GameManager : MonoBehaviour
 
         player._input.controlEnable = !this.isDisplayGuide;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void ActivateSkyboxByPlayerBeads(bool[] isActiveBeads)
+    {
+        int materialIndex = 0;
+
+        if(isActiveBeads.Length == 3 && isActiveBeads[0])
+        {
+            if (isActiveBeads[1])
+            {
+                if (isActiveBeads[2])
+                {
+                    materialIndex = 3;
+                }
+                else
+                {
+                    materialIndex = 2;
+                }
+            }
+            else
+            {
+                materialIndex = 1;
+            }
+        }
+
+        RenderSettings.skybox = skyboxMaterials[materialIndex];
     }
 
     public void ActivateMinimap(bool isActive)
