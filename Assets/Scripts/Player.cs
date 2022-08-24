@@ -252,7 +252,7 @@ public class Player : MonoBehaviour
         KnockBack();    // 내용 추가 필요.
 
         // monster 별 업데이트 할 것.
-        Monster monster = obj.gameObject.GetComponent<Monster>();
+        Monster monster = obj.gameObject.GetComponentInParent<Monster>();
 
         if (monster != null)
         {
