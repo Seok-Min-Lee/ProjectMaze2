@@ -236,6 +236,7 @@ public class SystemManager
 
                 ingameAttributes.Add(new IngameAttribute(
                     id: index++,
+                    userId: _userId,
                     attributeName: _attributeName,
                     value: _value
                 ));
@@ -249,6 +250,6 @@ public class SystemManager
     {
         JsonData data = JsonMapper.ToJson(ingameAttributes);
 
-        File.WriteAllText(path: Application.dataPath + INGAME_ATTRIBUTE_PATH + "2", contents: data.ToString());
+        File.WriteAllText(path: Application.dataPath + INGAME_ATTRIBUTE_PATH, contents: data.ToString());
     }
 }

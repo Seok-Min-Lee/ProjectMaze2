@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
     float skyboxRotation;
+    int userId;
 
     private void Awake()
     {
@@ -660,71 +661,85 @@ public class GameManager : MonoBehaviour
 
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1,
             value: this.attributeIsActivePlayerBeads[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2,
             value: this.attributeIsActivePlayerBeads[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3,
             value: this.attributeIsActivePlayerBeads[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1,
             value: this.attributeIsActivePlayerMinimaps[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2,
             value: this.attributeIsActivePlayerMinimaps[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3,
             value: this.attributeIsActivePlayerMinimaps[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY,
             value: this.attributeIsActivePlayerMagicFairy == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT,
             value: this.attributePlayerMagicGiantStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN,
             value: this.attributeIsActivePlayerMagicHuman == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_LIFE,
             value: this.attributePlayerLife
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP,
             value: this.attributePlayerCurrentHp
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION,
             value: this.attributePlayerCurrentConfusion
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK,
             value: this.attributePlayerPoisonStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
+            userId: this.userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE,
             value: this.attributeIsDisplayGuide == true ? 1 : 0
         ));

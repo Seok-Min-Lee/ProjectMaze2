@@ -4,16 +4,16 @@ public static class NameManager
     public const string JSON_COLUMN_PASSWORD = "password";
     public const string JSON_COLUMN_ID = "id";
     public const string JSON_COLUMN_NAME = "name";
-    public const string JSON_COLUMN_NPC_ID = "npcid";
-    public const string JSON_COLUMN_NPC_NAME = "npcname";
-    public const string JSON_COLUMN_SITUATION_NO = "situationno";
-    public const string JSON_COLUMN_SEQUENCE_NO = "sequenceno";
-    public const string JSON_COLUMN_SEQUENCE_SUB_NO = "sequencesubno";
-    public const string JSON_COLUMN_DIALOGUE_TYPE = "dialoguetype";
+    public const string JSON_COLUMN_NPC_ID = "npcId";
+    public const string JSON_COLUMN_NPC_NAME = "npcName";
+    public const string JSON_COLUMN_SITUATION_NO = "situationNo";
+    public const string JSON_COLUMN_SEQUENCE_NO = "sequenceNo";
+    public const string JSON_COLUMN_SEQUENCE_SUB_NO = "sequenceSubNo";
+    public const string JSON_COLUMN_DIALOGUE_TYPE = "dialogueType";
     public const string JSON_COLUMN_TEXT = "text";
-    public const string JSON_COLUMN_ATTRIBUTE_NAME = "attributename";
+    public const string JSON_COLUMN_ATTRIBUTE_NAME = "attributeName";
     public const string JSON_COLUMN_VALUE = "value";
-    public const string JSON_COLIMN_USER_ID = "userid";
+    public const string JSON_COLIMN_USER_ID = "userId";
 
     public const string INGAME_ATTRIBUTE_NAME_BEAD_1 = "bead1";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_2 = "bead2";

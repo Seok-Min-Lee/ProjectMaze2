@@ -1,16 +1,1 @@
-[
-    {"id":0,"userid":0,"attributename":"bead1","value":1}
-    ,{"id":1,"userid":0,"attributename":"bead2","value":0}
-    ,{"id":2,"userid":0,"attributename":"bead3","value":0}
-    ,{"id":3,"userid":0,"attributename":"life","value":0}
-    ,{"id":4,"userid":0,"attributename":"currentHp","value":100}
-    ,{"id":5,"userid":0,"attributename":"currentConfusion","value":0}
-    ,{"id":6,"userid":0,"attributename":"magicGiant","value":0}
-    ,{"id":7,"userid":0,"attributename":"magicFairy","value":0}
-    ,{"id":8,"userid":0,"attributename":"magicHuman","value":0}
-    ,{"id":9,"userid":0,"attributename":"poisonStack","value":0}
-    ,{"id":10,"userid":0,"attributename":"minimap1","value":0}
-    ,{"id":11,"userid":0,"attributename":"minimap2","value":0}
-    ,{"id":12,"userid":0,"attributename":"minimap3","value":0}
-    ,{"id":13,"userid":0,"attributename":"displayGuide","value":1}
-]
+[{"id":0,"userId":0,"attributeName":"bead1","value":1},{"id":1,"userId":0,"attributeName":"bead2","value":1},{"id":2,"userId":0,"attributeName":"bead3","value":0},{"id":3,"userId":0,"attributeName":"minimap1","value":1},{"id":4,"userId":0,"attributeName":"minimap2","value":1},{"id":5,"userId":0,"attributeName":"minimap3","value":0},{"id":6,"userId":0,"attributeName":"magicFairy","value":1},{"id":7,"userId":0,"attributeName":"magicGiant","value":1},{"id":8,"userId":0,"attributeName":"magicHuman","value":1},{"id":9,"userId":0,"attributeName":"life","value":0},{"id":10,"userId":0,"attributeName":"currentHp","value":44},{"id":11,"userId":0,"attributeName":"currentConfusion","value":0},{"id":12,"userId":0,"attributeName":"poisonStack","value":0},{"id":13,"userId":0,"attributeName":"displayGuide","value":1}]
