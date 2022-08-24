@@ -372,7 +372,7 @@ public class GameManager : MonoBehaviour
         magicFairyImage.SetActive(player.isActiveMagicFairy);
         magicGiantImage.SetActive(isActiveMagicGiant);
         magicHumanImage.SetActive(player.isActiveMagicHuman);
-        poisonImage.SetActive(isACtivePoision);
+        poisonImage.SetActive(player.isPoison);
         confusionImage.SetActive(player.isConfusion);
 
         magicGiantStackText.text = PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
