@@ -343,17 +343,17 @@ public class GameManager : MonoBehaviour
     {
         if(dialogue.type == DialogueType.Event)
         {
-            if(!player.isActiveMagicFairy && dialogue.sequenceSubNo == systemManager.dialogueMagicFairySequenceSubNo)
+            if(dialogue.sequenceSubNo == systemManager.dialogueMagicFairySequenceSubNo)
             {
-                player.isActiveMagicFairy = true;
+                player.ActivateMagicFairy(isActive: true);
             }
-            else if(player.magicGiantStack < ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX && dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
+            else if(dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
             {
-                player.magicGiantStack++;
+                player.ActivateMagicGiant(isActive: true);
             }
-            else if(!player.isActiveMagicHuman && dialogue.sequenceSubNo == systemManager.dialogueMagicHumanSequenceSubNo)
+            else if(dialogue.sequenceSubNo == systemManager.dialogueMagicHumanSequenceSubNo)
             {
-                player.isActiveMagicHuman = true;
+                player.ActivateMagicHuman(isActive: true);
             }
         }
     }

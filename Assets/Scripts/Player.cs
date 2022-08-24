@@ -18,8 +18,9 @@ public class Player : MonoBehaviour
 
     public bool[] isActiveBeads;
     public bool isActiveMinimap;
-    public bool isActiveMagicFairy, isActiveMagicHuman;
-    public int magicGiantStack;
+    public int magicGiantStack { get; private set; }
+    public bool isActiveMagicFairy { get; private set; }
+    public bool isActiveMagicHuman { get; private set; }
 
     public bool isPoison;
     public bool isConfusion;
@@ -42,8 +43,8 @@ public class Player : MonoBehaviour
     {
         _input = GetComponent<StarterAssetsInputs>();
         _controller = GetComponent<ThirdPersonController>();
-        _controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
-        _controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
+
+        InitializeController();
 
         InitializePlayer(
             poisonStack: out this.poisonStack,
@@ -61,17 +62,22 @@ public class Player : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
+        bool _isActiveMagicFairy, _isActiveMagicHuman;
+        int _magicGiantStack;
         manager.SetPlayerIngameAttributes(
             isActiveBeads: out this.isActiveBeads,
             isActiveMinimap: out this.isActiveMinimap,
-            isActiveMagicFairy: out this.isActiveMagicFairy,
-            isActiveMagicHuman: out this.isActiveMagicHuman,
+            isActiveMagicFairy: out _isActiveMagicFairy,
+            isActiveMagicHuman: out _isActiveMagicHuman,
             life: out this.currentLife,
             currentHp: out this.currentHp,
             currentConfusion: out this.confusionStack,
-            magicGiantStack: out this.magicGiantStack,
+            magicGiantStack: out _magicGiantStack,
             poisonStack: out this.poisonStack
         );
+        this.isActiveMagicFairy = _isActiveMagicFairy;
+        this.isActiveMagicHuman = _isActiveMagicHuman;
+        this.magicGiantStack = _magicGiantStack;
 
         UpdateBeadVisibility();
     }
@@ -98,11 +104,11 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_FALL:
-                ChangeCurrentHp(value: maxHp, isDamage: true);
+                OnDamage(value: maxHp, isAvoidable: false);
                 break;
 
             case NameManager.TAG_MONSTER_ATTACK:
-                OnDamage(obj: gameObject);
+                OnDamageByMonsterAttack(obj: gameObject);
                 break;
 
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
@@ -173,7 +179,7 @@ public class Player : MonoBehaviour
         switch (gameObject.tag)
         {
             case NameManager.TAG_MONSTER_ATTACK:
-                OnDamage(obj: gameObject);
+                OnDamageByMonsterAttack(obj: gameObject);
                 break;
         }
     }
@@ -181,6 +187,39 @@ public class Player : MonoBehaviour
     #endregion
 
     #region ##### 실질 기능 함수 #####
+    public void ActivateMagicFairy(bool isActive)
+    {
+        this.isActiveMagicFairy = isActive;
+        InitializeController();
+    }
+
+    public void ActivateMagicGiant(bool isActive)
+    {
+        if(isActive && magicGiantStack < ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX)
+        {
+            magicGiantStack++;
+        }
+    }
+
+    public void ActivateMagicHuman(bool isActive)
+    {
+        this.isActiveMagicHuman = isActive;
+    }
+
+    private void InitializeController()
+    {
+        if(_controller != null)
+        {
+            _controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
+            _controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
+
+            if (this.isActiveMagicFairy)
+            {
+                _controller.MoveSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+                _controller.SprintSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+            }
+        }
+    }
 
     private void InitializePlayer(
         out int poisonStack,
@@ -247,7 +286,7 @@ public class Player : MonoBehaviour
         manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
-    private void OnDamage(GameObject obj)
+    private void OnDamageByMonsterAttack(GameObject obj)
     {
         KnockBack();    // 내용 추가 필요.
 
@@ -277,7 +316,7 @@ public class Player : MonoBehaviour
 
             if (rock != null)
             {
-                ChangeCurrentHp(value: rock.damage, isDamage: true);
+                OnDamage(value: rock.damage, isAvoidable: true);
                 rock.ExplosionDestroy();
             }
             else
@@ -286,11 +325,11 @@ public class Player : MonoBehaviour
 
                 if (missile != null)
                 {
-                    ChangeCurrentHp(value: missile.damage, isDamage: true);
+                    OnDamage(value: missile.damage, isAvoidable: true);
                     missile.ExplosionDestroy();
                 }
             }
-            
+
         }
 
         StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
@@ -303,7 +342,7 @@ public class Player : MonoBehaviour
 
     private void OnDamageByInsect(int damage)
     {
-        currentHp -= damage;    // 기본공격 데미지
+        OnDamage(value: damage, isAvoidable: true); // 기본공격 데미지
 
         isPoison = true;        // 중독 상태 활성화
         poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
@@ -316,7 +355,7 @@ public class Player : MonoBehaviour
     {
         if (isPoison)
         {
-            ChangeCurrentHp(value: summaryDamage, isDamage: true);
+            OnDamage(value: summaryDamage, isAvoidable: false);
         }
 
         yield return new WaitForSeconds(1f);
@@ -528,6 +567,21 @@ public class Player : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void OnDamage(int value, bool isAvoidable)
+    {
+        // isAvoidable 마법 효과로 피할 수 있는 공격인지에 대한 bool 값.
+
+        if (isAvoidable &&
+            magicGiantStack > 0)
+        {
+            magicGiantStack--;
+        }
+        else
+        {
+            ChangeCurrentHp(value: value, isDamage: true);
+        }
     }
 
     public void ChangeCurrentHp(int value, bool isDamage)
