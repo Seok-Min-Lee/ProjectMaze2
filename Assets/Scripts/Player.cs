@@ -15,9 +15,10 @@ public class Player : MonoBehaviour
 
     public int currentHp, maxHp;
     public int currentLife, maxLife;
-    public int currentConfusion = 0, maxConfusion = 100;
+    
     public bool[] isActiveBeads;
-    public bool isActiveMinimap, isActiveMagicFairy, isActiveMagicHuman;
+    public bool isActiveMinimap;
+    public bool isActiveMagicFairy, isActiveMagicHuman;
     public int magicGiantStack;
 
     public bool isPoison;
@@ -28,11 +29,11 @@ public class Player : MonoBehaviour
     Vector3 respawnPoint, interactPoint;
     NPCInteractionZone interactNpc;
 
-    int poisonStack = 0;
     float countTimeDetox = 0f, countTimeConfusion = 0f;
 
-    int poisonStackMax, poisonTicDamage;
-    float activateTimeDetox, activateTimeConfusion, durationConfusion;
+    int poisonStack, poisonStackMax, poisonTicDamage;
+    int confusionStack, confusionStackMax;
+    float detoxActivateTime, confusionActivateTime, confusionDuration;
 
     #region ##### 유니티 내장 함수 #####
     
@@ -43,12 +44,15 @@ public class Player : MonoBehaviour
         _controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
         _controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
 
-        manager.InitializePlayer(
-            playerPoisonStackMax: out poisonStackMax,
-            playerPoisonTicDamage: out poisonTicDamage,
-            playerActivateTimeDetox: out activateTimeDetox,
-            playerActivateTimeConfusion: out activateTimeConfusion,
-            playerDurationConfusion: out durationConfusion
+        InitializePlayer(
+            poisonStack: out this.poisonStack,
+            confusionStack: out this.confusionStack,
+            poisonStackMax: out this.poisonStackMax,
+            confusionStackMax: out this.confusionStackMax,
+            poisonTicDamage: out this.poisonTicDamage,
+            detoxActivateTime: out this.detoxActivateTime,
+            confusionStackUpdateTime: out this.confusionActivateTime,
+            confusionDuration: out this.confusionDuration
         );
     }
 
@@ -63,7 +67,7 @@ public class Player : MonoBehaviour
             isActiveMagicHuman: out this.isActiveMagicHuman,
             life: out this.currentLife,
             currentHp: out this.currentHp,
-            currentConfusion: out this.currentConfusion,
+            currentConfusion: out this.confusionStack,
             magicGiantStack: out this.magicGiantStack,
             poisonStack: out this.poisonStack
         );
@@ -125,7 +129,7 @@ public class Player : MonoBehaviour
                     isActiveMagicHuman: this.isActiveMagicHuman,
                     life: this.currentLife,
                     currentHp: this.currentHp,
-                    currentConfusion: this.currentConfusion,
+                    currentConfusion: this.confusionStack,
                     magicGiantStack: this.magicGiantStack,
                     poisonStack: this.poisonStack
                 );
@@ -176,6 +180,28 @@ public class Player : MonoBehaviour
     #endregion
 
     #region ##### 실질 기능 함수 #####
+
+    private void InitializePlayer(
+        out int poisonStack,
+        out int confusionStack,
+        out int poisonStackMax,
+        out int confusionStackMax,
+        out int poisonTicDamage,
+        out float detoxActivateTime,
+        out float confusionStackUpdateTime,
+        out float confusionDuration
+    )
+    {
+        poisonStack = 0;
+        confusionStack = 0;
+
+        poisonStackMax = ValueManager.PLAYER_POISON_STACK_MAX;
+        confusionStackMax = ValueManager.PLAYER_CONFUSION_STACK_MAX;
+        poisonTicDamage = ValueManager.PLAYER_POISON_TIC_DAMAGE;
+        detoxActivateTime = ValueManager.PLAYER_DETOX_ACTIVATE_TIME;
+        confusionStackUpdateTime = ValueManager.PLAYER_CONFUSION_STACK_UPDATE_TIME;
+        confusionDuration = ValueManager.PLAYER_CONFUSION_DURATION;
+    }
 
     private void UpdateBeadVisibility()
     {
@@ -269,29 +295,6 @@ public class Player : MonoBehaviour
         StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
     }
 
-    //private void OnDamage(Monster monster)
-    //{
-    //    KnockBack();    // 내용 추가 필요.
-
-    //    // monster 별 업데이트 할 것.
-    //    switch (monster.type)
-    //    {
-    //        case MonsterType.Insect:
-    //            OnDamageByInsect(damage: monster.damage);
-    //            break;
-    //        case MonsterType.Zombie:
-    //            break;
-    //        case MonsterType.Range:
-    //            break;
-    //        case MonsterType.Catapult:
-    //            break;
-    //        default:
-    //            break;
-    //    }
-
-    //    StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
-    //}
-
     private void KnockBack()
     {
 
@@ -325,7 +328,7 @@ public class Player : MonoBehaviour
         {
             UpdateCountTimeDetox();
 
-            if(countTimeDetox > activateTimeDetox)
+            if(countTimeDetox > detoxActivateTime)
             {
                 isPoison = false;
                 ChangePoisonEffect(isAddict: isPoison);
@@ -338,14 +341,14 @@ public class Player : MonoBehaviour
         if (negativeEffect.type == NegativeEffectType.Confusion && !isConfusion)
         {
             Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
-            if (countTimeConfusion >= activateTimeConfusion)
+            if (countTimeConfusion >= confusionActivateTime)
             {
                 StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
 
-                currentConfusion += negativeEffect.value;
+                confusionStack += negativeEffect.value;
                 countTimeConfusion = 0f;
 
-                if (currentConfusion >= maxConfusion)
+                if (confusionStack >= confusionStackMax)
                 {
                     StartCoroutine(routine: Confuse());
                 }
@@ -495,14 +498,14 @@ public class Player : MonoBehaviour
 
         // 플레이어 이펙트 활성화 추가
         confusionEffect.SetActive(true);
-        yield return new WaitForSeconds(durationConfusion);
+        yield return new WaitForSeconds(confusionDuration);
 
         //플레이어 이펙트 비활성화 추가
         confusionEffect.SetActive(false);
         _input.isReverse = false;
         isConfusion = false;
 
-        currentConfusion = 0;
+        confusionStack = 0;
     }
     #endregion
 
