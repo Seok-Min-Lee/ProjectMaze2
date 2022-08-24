@@ -24296,7 +24296,7 @@ GameObject:
   - component: {fileID: 1938203538041926519}
   - component: {fileID: 9093249278045586831}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Actived Effect Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
