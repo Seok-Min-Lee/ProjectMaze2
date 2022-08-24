@@ -16,12 +16,13 @@ public class GameManager : MonoBehaviour
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
     // 인게임 UI
-    public GameObject normalPanel, interactPanel, deathPanel;   // 평상시, 상호작용시
+    public GameObject normalPanel, interactPanel, deathPanel, guidePanel;   // 평상시, 상호작용, 게임오버, 가이드
     public GameObject interactableAlram;
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
     public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
+    public Text guideHead, guideBody;   // 가이드 제목, 설명
 
     public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
 
@@ -49,10 +50,14 @@ public class GameManager : MonoBehaviour
     bool minimapVisible;
 
     string currentSceneName;
+    bool isPause, isDisplayGuide;
+
+    Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
     private void Awake()
     {
         systemManager = new SystemManager();
+        displayedTrapGuideDictionary = new Dictionary<TrapType, bool>();
         // DB 데이터 로드 추가
         // systemManager.GetDbData();
 
@@ -61,11 +66,11 @@ public class GameManager : MonoBehaviour
 
         if(TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
-            minimapVisible = this.isActivePlayerMinimaps[minimapIndex];
+            minimapVisible = this.attributeIsActivePlayerMinimaps[minimapIndex];
         }
 
         ActivateMinimap(isActive: minimapVisible);
-        UpdateUIActivedBeads(isActives: this.isActivePlayerBeads);
+        UpdateUIActivedBeads(isActives: this.attributeIsActivePlayerBeads);
     }
 
     private void LateUpdate()
@@ -166,7 +171,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void InteractChooseOption(int choiceNo)
+    public void DisplayTrapGuide(TrapType type)
+    {
+        if (!this.isDisplayGuide && !displayedTrapGuideDictionary.ContainsKey(type))
+        {
+            this.isDisplayGuide = true;
+
+            SwitchPause();
+            guidePanel.SetActive(this.isDisplayGuide);
+
+            player._input.controlEnable = !this.isDisplayGuide;
+            player.StopPlayerMotion();
+            Cursor.lockState = CursorLockMode.Confined;
+
+            guideHead.text = type.ToString();
+            guideBody.text = "업데이트 필요";
+
+            displayedTrapGuideDictionary.Add(key: type, value: true);
+        }
+    }
+
+    public void OnClickInteractionOption(int choiceNo)
     {
         dialogueSequenceSubNo = choiceNo;
 
@@ -174,6 +199,17 @@ public class GameManager : MonoBehaviour
         // Player 클래스에 작성된 상호작용에 대한 로직을 따라가기 위해 아래와 같이 처리함.
         player._input.interact = true;
         player.Interact();
+    }
+
+    public void OnClickGuideOKButton()
+    {
+        this.isDisplayGuide = false;
+
+        SwitchPause();
+        guidePanel.SetActive(this.isDisplayGuide);
+
+        player._input.controlEnable = !this.isDisplayGuide;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void ActivateMinimap(bool isActive)
@@ -187,13 +223,13 @@ public class GameManager : MonoBehaviour
             switch (currentSceneName)
             {
                 case NameManager.SCENE_STAGE_1:
-                    isActivePlayerMinimaps[0] = true;
+                    attributeIsActivePlayerMinimaps[0] = true;
                     break;
                 case NameManager.SCENE_STAGE_2:
-                    isActivePlayerMinimaps[1] = true;
+                    attributeIsActivePlayerMinimaps[1] = true;
                     break;
                 case NameManager.SCENE_STAGE_3:
-                    isActivePlayerMinimaps[2] = true;
+                    attributeIsActivePlayerMinimaps[2] = true;
                     break;
             }
         }
@@ -433,18 +469,31 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
-    // 게임 내 설정 값
+    private void SwitchPause()
+    {
+        if (!isPause)
+        {
+            Time.timeScale = ValueManager.TIME_SCALE_PASUE;
+            isPause = true;
+        }
+        else
+        {
+            Time.timeScale = ValueManager.TIME_SCALE_PLAY;
+            isPause = false;
+        }
+    }
 
     // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
-    bool[] isActivePlayerBeads;
-    bool[] isActivePlayerMinimaps;
-    bool isActivePlayerMagicFairy, isActivePlayerMagicHuman;
-    int playerLife, playerCurrentHp, playerCurrentConfusion, playerMagicGiantStack, playerPoisonStack;
+    bool[] attributeIsActivePlayerBeads;
+    bool[] attributeIsActivePlayerMinimaps;
+    bool attributeIsDisplayGuide;
+    bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
+    int attributePlayerLife, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
 
     private void SetIngameAttributes()
     {
-        isActivePlayerBeads = new bool[3];
-        isActivePlayerMinimaps = new bool[3];
+        attributeIsActivePlayerBeads = new bool[3];
+        attributeIsActivePlayerMinimaps = new bool[3];
 
         IngameAttributeCollection ingameAttributes = systemManager.ingameAttributeCollection;
 
@@ -453,43 +502,46 @@ public class GameManager : MonoBehaviour
             switch (attribute.attributeName)
             {
                 case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1:
-                    isActivePlayerBeads[0] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerBeads[0] = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2:
-                    isActivePlayerBeads[1] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerBeads[1] = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3:
-                    isActivePlayerBeads[2] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerBeads[2] = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_LIFE:
-                    playerLife = attribute.value;
+                    attributePlayerLife = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP:
-                    playerCurrentHp = attribute.value;
+                    attributePlayerCurrentHp = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION:
-                    playerCurrentConfusion = attribute.value;
+                    attributePlayerCurrentConfusion = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY:
-                    isActivePlayerMagicFairy = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerMagicFairy = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT:
-                    playerMagicGiantStack = attribute.value;
+                    attributePlayerMagicGiantStack = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN:
-                    isActivePlayerMagicHuman = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerMagicHuman = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK:
-                    playerPoisonStack = attribute.value;
+                    attributePlayerPoisonStack = attribute.value;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1:
-                    isActivePlayerMinimaps[0] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerMinimaps[0] = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2:
-                    isActivePlayerMinimaps[1] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerMinimaps[1] = attribute.value == 0 ? false : true;
                     break;
                 case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3:
-                    isActivePlayerMinimaps[2] = attribute.value == 0 ? false : true;
+                    attributeIsActivePlayerMinimaps[2] = attribute.value == 0 ? false : true;
+                    break;
+                case NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE:
+                    attributeIsDisplayGuide = attribute.value == 0 ? false : true;
                     break;
             }
         }
@@ -510,27 +562,27 @@ public class GameManager : MonoBehaviour
         switch (currentSceneName)
         {
             case NameManager.SCENE_STAGE_1:
-                isActiveMinimap = this.isActivePlayerMinimaps[0];
+                isActiveMinimap = this.attributeIsActivePlayerMinimaps[0];
                 break;
             case NameManager.SCENE_STAGE_2:
-                isActiveMinimap = this.isActivePlayerMinimaps[1];
+                isActiveMinimap = this.attributeIsActivePlayerMinimaps[1];
                 break;
             case NameManager.SCENE_STAGE_3:
-                isActiveMinimap = this.isActivePlayerMinimaps[2];
+                isActiveMinimap = this.attributeIsActivePlayerMinimaps[2];
                 break;
             default:
                 isActiveMinimap = false;
                 break;
         }
 
-        isActiveBeads = this.isActivePlayerBeads;
-        isActiveMagicFairy = this.isActivePlayerMagicFairy;
-        isActiveMagicHuman = this.isActivePlayerMagicHuman;
-        life = this.playerLife;
-        currentHp = this.playerCurrentHp;
-        currentConfusion = this.playerCurrentConfusion;
-        magicGiantStack = this.playerMagicGiantStack;
-        poisonStack = this.playerPoisonStack;
+        isActiveBeads = this.attributeIsActivePlayerBeads;
+        isActiveMagicFairy = this.attributeIsActivePlayerMagicFairy;
+        isActiveMagicHuman = this.attributeIsActivePlayerMagicHuman;
+        life = this.attributePlayerLife;
+        currentHp = this.attributePlayerCurrentHp;
+        currentConfusion = this.attributePlayerCurrentConfusion;
+        magicGiantStack = this.attributePlayerMagicGiantStack;
+        poisonStack = this.attributePlayerPoisonStack;
     }
 
     public void UpdatePlayerIngameAttributes(
@@ -548,24 +600,24 @@ public class GameManager : MonoBehaviour
         switch (currentSceneName)
         {
             case NameManager.SCENE_STAGE_1:
-                this.isActivePlayerMinimaps[0] = isActiveMinimap;
+                this.attributeIsActivePlayerMinimaps[0] = isActiveMinimap;
                 break;
             case NameManager.SCENE_STAGE_2:
-                this.isActivePlayerMinimaps[1] = isActiveMinimap;
+                this.attributeIsActivePlayerMinimaps[1] = isActiveMinimap;
                 break;
             case NameManager.SCENE_STAGE_3:
-                this.isActivePlayerMinimaps[2] = isActiveMinimap;
+                this.attributeIsActivePlayerMinimaps[2] = isActiveMinimap;
                 break;
         }
 
-        this.isActivePlayerBeads = isActiveBeads;
-        this.isActivePlayerMagicFairy = isActiveMagicFairy;
-        this.isActivePlayerMagicHuman = isActiveMagicHuman;
-        this.playerLife = life;
-        this.playerCurrentHp = currentHp;
-        this.playerCurrentConfusion = currentConfusion;
-        this.playerMagicGiantStack = magicGiantStack;
-        this.playerPoisonStack = poisonStack;
+        this.attributeIsActivePlayerBeads = isActiveBeads;
+        this.attributeIsActivePlayerMagicFairy = isActiveMagicFairy;
+        this.attributeIsActivePlayerMagicHuman = isActiveMagicHuman;
+        this.attributePlayerLife = life;
+        this.attributePlayerCurrentHp = currentHp;
+        this.attributePlayerCurrentConfusion = currentConfusion;
+        this.attributePlayerMagicGiantStack = magicGiantStack;
+        this.attributePlayerPoisonStack = poisonStack;
     }
 
     private IngameAttributeCollection ConvertPropertyToIngameAttribute()
@@ -576,67 +628,72 @@ public class GameManager : MonoBehaviour
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1,
-            value: this.isActivePlayerBeads[0] == true ? 1 : 0
+            value: this.attributeIsActivePlayerBeads[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2,
-            value: this.isActivePlayerBeads[1] == true ? 1 : 0
+            value: this.attributeIsActivePlayerBeads[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3,
-            value: this.isActivePlayerBeads[2] == true ? 1 : 0
+            value: this.attributeIsActivePlayerBeads[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1,
-            value: this.isActivePlayerMinimaps[0] == true ? 1 : 0
+            value: this.attributeIsActivePlayerMinimaps[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2,
-            value: this.isActivePlayerMinimaps[1] == true ? 1 : 0
+            value: this.attributeIsActivePlayerMinimaps[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3,
-            value: this.isActivePlayerMinimaps[2] == true ? 1 : 0
+            value: this.attributeIsActivePlayerMinimaps[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY,
-            value: this.isActivePlayerMagicFairy == true ? 1 : 0
+            value: this.attributeIsActivePlayerMagicFairy == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT,
-            value: this.playerMagicGiantStack
+            value: this.attributePlayerMagicGiantStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN,
-            value: this.isActivePlayerMagicHuman == true ? 1 : 0
+            value: this.attributeIsActivePlayerMagicHuman == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_LIFE,
-            value: this.playerLife
+            value: this.attributePlayerLife
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP,
-            value: this.playerCurrentHp
+            value: this.attributePlayerCurrentHp
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION,
-            value: this.playerCurrentConfusion
+            value: this.attributePlayerCurrentConfusion
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK,
-            value: this.playerPoisonStack
+            value: this.attributePlayerPoisonStack
+        ));
+        ingameAttributes.Add(new IngameAttribute(
+            id: index++,
+            attributeName: NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE,
+            value: this.attributeIsDisplayGuide == true ? 1 : 0
         ));
 
         return ingameAttributes;

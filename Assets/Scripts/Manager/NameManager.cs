@@ -28,6 +28,7 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_1 = "minimap1";
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_2 = "minimap2";
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_3 = "minimap3";
+    public const string INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE = "displayGuide";
 
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_VILLAGE = "Village";

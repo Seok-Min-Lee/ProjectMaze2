@@ -116,7 +116,10 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_TRAP_ACTIVATOR:
-                other.GetComponentInParent<TrapActivator>().ActivateTrap(player: this);
+                TrapActivator trapActivater = other.GetComponentInParent<TrapActivator>();
+                trapActivater.ActivateTrap(player: this);
+
+                manager.DisplayTrapGuide(trapActivater.traps[0].GetComponent<Trap>().type);
                 break;
 
             case NameManager.TAG_TRAP_DEACTIVATOR:
@@ -615,7 +618,7 @@ public class Player : MonoBehaviour
         }        
     }
 
-    private void StopPlayerMotion()
+    public void StopPlayerMotion()
     {
         _input.MoveInput(newMoveDirection: Vector2.zero);
         _input.JumpInput(newJumpState: false);

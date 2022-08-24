@@ -12,4 +12,5 @@
     ,{"id":10,"userid":0,"attributename":"minimap1","value":0}
     ,{"id":11,"userid":0,"attributename":"minimap2","value":0}
     ,{"id":12,"userid":0,"attributename":"minimap3","value":0}
+    ,{"id":13,"userid":0,"attributename":"displayGuide","value":0}
 ]
