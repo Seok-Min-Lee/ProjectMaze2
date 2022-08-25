@@ -24,7 +24,8 @@ public class LoginManager : MonoBehaviour
 
     public void OnClickExit()
     {
-
+        UnityEditor.EditorApplication.isPlaying = false;
+        //Application.Quit();
     }
 
     public void OnClickSubmit()
@@ -46,15 +47,21 @@ public class LoginManager : MonoBehaviour
 
     public void OnClickNewGame()
     {
-        Debug.Log("새 게임을 시작합니다.");
-        // 인게임 속성들 제거 - 추가
-        SceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
+        SystemManager.instance.ingameAttributes.Clear();
+        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
     }
 
     public void OnClickContinueGame()
     {
-        StopAllCoroutines();
-        StartCoroutine(AlertMessage(text: MODE_FAILURE_MESSAGE));
+        if (SystemManager.instance.ingameAttributes.Count > 0)
+        {
+            LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
+        }
+        else
+        {
+            StopCoroutine(AlertMessage(text: string.Empty));
+            StartCoroutine(AlertMessage(text: MODE_FAILURE_MESSAGE));
+        }
     }
 
     IEnumerator AlertMessage(string text)

@@ -523,52 +523,83 @@ public class GameManager : MonoBehaviour
         attributeIsActivePlayerBeads = new bool[3];
         attributeIsActivePlayerMinimaps = new bool[3];
 
-        foreach (IngameAttribute attribute in SystemManager.instance.ingameAttributes)
+        SetIngameAttributesDefault();
+        SetIngameAttributesBySavedData(ingameAttributes: SystemManager.instance.ingameAttributes);
+    }
+
+    private void SetIngameAttributesDefault()
+    {
+        for(int i = 0; i < attributeIsActivePlayerBeads.Length; i++)
         {
-            switch (attribute.attributeName)
+            attributeIsActivePlayerBeads[i] = false;
+        }
+        for (int i = 0; i < attributeIsActivePlayerMinimaps.Length; i++)
+        {
+            attributeIsActivePlayerMinimaps[i] = false;
+        }
+
+        this.attributeIsDisplayGuide = true;
+        this.attributeIsActivePlayerMagicFairy = false;
+        this.attributeIsActivePlayerMagicHuman = false;
+
+        this.attributePlayerLife = 1;
+        this.attributePlayerCurrentHp = 100;
+        this.attributePlayerCurrentConfusion = 0;
+        this.attributePlayerMagicGiantStack = 0;
+        this.attributePlayerPoisonStack = 0;
+
+    }
+    private void SetIngameAttributesBySavedData(IEnumerable<IngameAttribute> ingameAttributes)
+    {
+        if(ingameAttributes.Count() > 0)
+        {
+            foreach (IngameAttribute attribute in ingameAttributes)
             {
-                case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1:
-                    attributeIsActivePlayerBeads[0] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2:
-                    attributeIsActivePlayerBeads[1] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3:
-                    attributeIsActivePlayerBeads[2] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_LIFE:
-                    attributePlayerLife = attribute.value;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP:
-                    attributePlayerCurrentHp = attribute.value;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION:
-                    attributePlayerCurrentConfusion = attribute.value;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY:
-                    attributeIsActivePlayerMagicFairy = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT:
-                    attributePlayerMagicGiantStack = attribute.value;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN:
-                    attributeIsActivePlayerMagicHuman = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK:
-                    attributePlayerPoisonStack = attribute.value;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1:
-                    attributeIsActivePlayerMinimaps[0] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2:
-                    attributeIsActivePlayerMinimaps[1] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3:
-                    attributeIsActivePlayerMinimaps[2] = attribute.value == 0 ? false : true;
-                    break;
-                case NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE:
-                    attributeIsDisplayGuide = attribute.value == 0 ? false : true;
-                    break;
+                switch (attribute.attributeName)
+                {
+                    case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1:
+                        attributeIsActivePlayerBeads[0] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2:
+                        attributeIsActivePlayerBeads[1] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3:
+                        attributeIsActivePlayerBeads[2] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_LIFE:
+                        attributePlayerLife = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP:
+                        attributePlayerCurrentHp = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION:
+                        attributePlayerCurrentConfusion = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY:
+                        attributeIsActivePlayerMagicFairy = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT:
+                        attributePlayerMagicGiantStack = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN:
+                        attributeIsActivePlayerMagicHuman = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK:
+                        attributePlayerPoisonStack = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1:
+                        attributeIsActivePlayerMinimaps[0] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2:
+                        attributeIsActivePlayerMinimaps[1] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3:
+                        attributeIsActivePlayerMinimaps[2] = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE:
+                        attributeIsDisplayGuide = attribute.value == 0 ? false : true;
+                        break;
+                }
             }
         }
     }
