@@ -16,7 +16,7 @@ public class NPCInteractionZone : MonoBehaviour
         if(ConvertManager.TryConvertNpcTypeToName(type: type, name: out string nameString))
         {
             npcName = nameString;
-            SetVolatilityByNpcType();
+            SetVolatilityByNpcType(type: this.type);
         }
         else
         {
@@ -32,9 +32,9 @@ public class NPCInteractionZone : MonoBehaviour
         }    
     }
 
-    private void SetVolatilityByNpcType()
+    private void SetVolatilityByNpcType(NpcType type)
     {
-        switch (this.type)
+        switch (type)
         {
             case NpcType.Goblin:
                 this.isVolatility = true;
