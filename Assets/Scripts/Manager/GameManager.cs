@@ -99,9 +99,6 @@ public class GameManager : MonoBehaviour
 
         // 상호작용 관련 데이터 초기화.
         InitializeInteractionData(npc: interactNpc);
-
-        // 상호작용 호출.
-        //TryUpdateInteractionUI();
     }
 
     public void UpdateUIWhetherInteraction(bool isInteract)

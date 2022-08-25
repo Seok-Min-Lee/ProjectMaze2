@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
 
         bool _isActiveMagicFairy, _isActiveMagicHuman;
         int _magicGiantStack;
+
         manager.SetPlayerIngameAttributes(
             isActiveBeads: out this.isActiveBeads,
             isActiveMinimap: out this.isActiveMinimap,
@@ -75,6 +76,7 @@ public class Player : MonoBehaviour
             magicGiantStack: out _magicGiantStack,
             poisonStack: out this.poisonStack
         );
+
         this.isActiveMagicFairy = _isActiveMagicFairy;
         this.isActiveMagicHuman = _isActiveMagicHuman;
         this.magicGiantStack = _magicGiantStack;
@@ -524,10 +526,12 @@ public class Player : MonoBehaviour
             wasInteractPreprocess &&
             _input.interact)
         {
-            // UI 업데이트.
+            // UI 및 NPC 업데이트.
             manager.UpdateUIWhetherInteraction(isInteract: false);
+            interactNpc.DisappearByVolatility();
 
             // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
+            isInteractPreprocessReady = false;
             wasInteractPreprocess = false;
 
             // 상호작용 키 입력 초기화

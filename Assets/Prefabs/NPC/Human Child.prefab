@@ -1962,6 +1962,10 @@ PrefabInstance:
       propertyPath: type
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: NPCObject
+      value: 
+      objectReference: {fileID: 6680965857448378550}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_RootOrder
       value: 2

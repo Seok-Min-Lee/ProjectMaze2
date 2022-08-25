@@ -2266,6 +2266,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: NPCObject
+      value: 
+      objectReference: {fileID: 8909251181214821484}
+    - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: cameraPoint
       value: 
       objectReference: {fileID: 4805020303640051242}

@@ -5,8 +5,10 @@ using UnityEngine;
 public class NPCInteractionZone : MonoBehaviour
 {
     public NpcType type;
+    public GameObject NPCObject;
     public GameObject effect;
     public Transform cameraPoint;
+    public bool isVolatility;
     public string npcName { get; private set; }
     
     private void Start()
@@ -19,5 +21,13 @@ public class NPCInteractionZone : MonoBehaviour
         {
             this.gameObject.SetActive(false);
         }
+    }
+
+    public void DisappearByVolatility()
+    {
+        if (isVolatility)
+        {
+            NPCObject.SetActive(false);
+        }    
     }
 }

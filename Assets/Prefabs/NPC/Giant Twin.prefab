@@ -2286,6 +2286,10 @@ PrefabInstance:
       propertyPath: type
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: NPCObject
+      value: 
+      objectReference: {fileID: 586693186336251250}
     - target: {fileID: 5189646867824129383, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.3
