@@ -15,7 +15,7 @@ public class SystemManager : MonoBehaviour
     const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
     const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute_test.json";
 
-    public IngameAttributeCollection ingameAttributeCollection { get; private set; }
+    public IngameAttributeCollection ingameAttributes { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
     public int dialogueMagicHumanSequenceSubNo { get; private set; }
     public int dialogueMagicFairySequenceSubNo { get; private set; }
@@ -67,6 +67,14 @@ public class SystemManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void SaveIngameAttributes(IEnumerable<IngameAttribute> ingameAttributes)
+    {
+        this.ingameAttributes.Clear();
+        this.ingameAttributes.AddRange(ingameAttributes);
+
+        SaveIngameAttributeToJsonData(ingameAttributes: ingameAttributes);
     }
 
     public bool GetNpcIndexByName(string name, out int index)
@@ -139,7 +147,7 @@ public class SystemManager : MonoBehaviour
             npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
 
-        ingameAttributeCollection = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: loginedUser.id);
+        ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: loginedUser.id);
     }
 
     private void LoadUserData(string path)
@@ -284,7 +292,7 @@ public class SystemManager : MonoBehaviour
         return ingameAttributes;
     }
     
-    public void WriteIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
+    public void SaveIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
     {
         JsonData data = JsonMapper.ToJson(ingameAttributes);
 

@@ -297,7 +297,7 @@ public class GameManager : MonoBehaviour
 
         // Player Attribute DB 데이터 업데이트 추가.
         IngameAttributeCollection ingameAttributes = ConvertPropertyToIngameAttribute();
-        SystemManager.instance.WriteIngameAttributeToJsonData(ingameAttributes);
+        SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
         //
 
         SceneManager.LoadScene(sceneName: sceneName);
@@ -523,9 +523,7 @@ public class GameManager : MonoBehaviour
         attributeIsActivePlayerBeads = new bool[3];
         attributeIsActivePlayerMinimaps = new bool[3];
 
-        IngameAttributeCollection ingameAttributes = SystemManager.instance.ingameAttributeCollection;
-
-        foreach (IngameAttribute attribute in ingameAttributes)
+        foreach (IngameAttribute attribute in SystemManager.instance.ingameAttributes)
         {
             switch (attribute.attributeName)
             {
