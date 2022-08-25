@@ -7,7 +7,7 @@ public static class ValueManager
     public const float PLAYER_MOVE_SPEED_DEFAULT = 4f;  // 플레이어 이동 속도 기본값
     public const float PLAYER_SPRINT_SPEED_DEFAULT = 10f;   // 플레이어 달리기 속도 기본값
     public const float PLAYER_DETOX_ACTIVATE_TIME = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
-    public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 1.0f;   //'공포' 스택 업데이트 시간
+    public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 0.5f;   //'공포' 스택 업데이트 시간
     public const float PLAYER_CONFUSION_DURATION = 5.0f;  // '공포' 발현 시 지속 시간
     public const float TIME_SCALE_PASUE = 0f;
     public const float TIME_SCALE_PLAY = 1.0f;

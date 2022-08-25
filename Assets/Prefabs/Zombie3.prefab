@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  value: 10
+  value: 7
 --- !u!135 &202222902691760410
 SphereCollider:
   m_ObjectHideFlags: 0
