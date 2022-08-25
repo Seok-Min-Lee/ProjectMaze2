@@ -31,6 +31,7 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE = "displayGuide";
 
     public const string SCENE_LOBBY = "Lobby";
+    public const string SCENE_LOADING = "LoadingScene";
     public const string SCENE_VILLAGE = "Village";
     public const string SCENE_STAGE_1 = "Stage 1";
     public const string SCENE_STAGE_2 = "Stage 2";

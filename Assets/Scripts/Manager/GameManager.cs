@@ -300,7 +300,7 @@ public class GameManager : MonoBehaviour
         SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
         //
 
-        SceneManager.LoadScene(sceneName: sceneName);
+        LoadingSceneManager.LoadScene(sceneName: sceneName);
     }
 
     public void MoveGameObject(GameObject gameObject, Vector3 vector)
