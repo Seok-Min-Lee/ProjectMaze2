@@ -6,20 +6,18 @@ using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
 {
-    const string LOGIN_FAILURE_MESSAGE = "로그인 실패. 로그인 정보를 확인해주시길 바랍니다.";
-    const string MODE_FAILURE_MESSAGE = "이어하기 실패. 저장된 게임 정보가 없습니다.";
+    const string ERROR_MESSAGE_LOGIN_FAIL = "로그인 실패. 로그인 정보를 확인해주시길 바랍니다.";
+    const string ERROR_MESSAGE_MODE_SELECT_FAIL = "이어하기 실패. 저장된 게임 정보가 없습니다.";
 
     public GameObject inputPanel, modePanel;
     public Text inputAccount, inputPassword, failureText;
-
-    private void Awake()
-    {
-    }
 
     private void Start()
     {
         inputPanel.SetActive(true);
         modePanel.SetActive(false);
+
+        failureText.text = string.Empty;
     }
 
     public void OnClickExit()
@@ -41,7 +39,7 @@ public class LoginManager : MonoBehaviour
         else
         {
             StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: LOGIN_FAILURE_MESSAGE));
+            StartCoroutine(AlertMessage(text: ERROR_MESSAGE_LOGIN_FAIL));
         }
     }
 
@@ -60,7 +58,7 @@ public class LoginManager : MonoBehaviour
         else
         {
             StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: MODE_FAILURE_MESSAGE));
+            StartCoroutine(AlertMessage(text: ERROR_MESSAGE_MODE_SELECT_FAIL));
         }
     }
 
