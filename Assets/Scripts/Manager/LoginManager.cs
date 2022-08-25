@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
@@ -11,12 +12,12 @@ public class LoginManager : MonoBehaviour
     public GameObject inputPanel, modePanel;
     public Text inputAccount, inputPassword, failureText;
 
-    SystemManager systemManager;
-    string account, password;
+    private void Awake()
+    {
+    }
 
     private void Start()
     {
-        systemManager = new SystemManager();
         inputPanel.SetActive(true);
         modePanel.SetActive(false);
     }
@@ -28,10 +29,10 @@ public class LoginManager : MonoBehaviour
 
     public void OnClickSubmit()
     {
-        account = inputAccount.text;
-        password = inputPassword.text;
+        string userAccount = inputAccount.text;
+        string userPassword = inputPassword.text;
 
-        if(systemManager.TryLogin(account: account, password: password))
+        if(SystemManager.instance.TryLogin(account: userAccount, password: userPassword))
         {
             inputPanel.SetActive(false);
             modePanel.SetActive(true);
@@ -46,6 +47,8 @@ public class LoginManager : MonoBehaviour
     public void OnClickNewGame()
     {
         Debug.Log("새 게임을 시작합니다.");
+        // 인게임 속성들 제거 - 추가
+        SceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
     }
 
     public void OnClickContinueGame()

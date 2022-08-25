@@ -6,8 +6,10 @@ using LitJson;
 using System.IO;
 using System;
 
-public class SystemManager
+public class SystemManager : MonoBehaviour
 {
+    public static SystemManager instance;
+
     const string USER_JSON_PATH = "/Resources/tb_user_test.json";
     const string NPC_JSON_PATH = "/Resources/tb_npc_test.json";
     const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
@@ -15,16 +17,34 @@ public class SystemManager
 
     public IngameAttributeCollection ingameAttributeCollection { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
-    public int dialogueMagicHumanSequenceSubNo, dialogueMagicFairySequenceSubNo, dialogueMagicGiantSequenceSubNo;
+    public int dialogueMagicHumanSequenceSubNo { get; private set; }
+    public int dialogueMagicFairySequenceSubNo { get; private set; }
+    public int dialogueMagicGiantSequenceSubNo { get; private set; }
 
-    Dictionary<string, string> userAccountPasswordDictionary;
+    Dictionary<string, User> userAccountUserDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
-    
-    public SystemManager(int userId = 0)
+
+    public User loginedUser { get; private set; }
+
+    private void Awake()
     {
-        userAccountPasswordDictionary = new Dictionary<string, string>();
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void Start()
+    {
+        userAccountUserDictionary = new Dictionary<string, User>();
         LoadUserData(path: Application.dataPath + USER_JSON_PATH);
 
         // 딕셔너리 생성
@@ -33,55 +53,16 @@ public class SystemManager
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
 
         lastDialogueIndexDictionary = new Dictionary<int, int>();
-
-        // Json 형식 데이터 로드
-        JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
-        LoadJsonRawData(
-            npcDataPath: Application.dataPath + NPC_JSON_PATH, 
-            dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
-            ingameAttributePath: Application.dataPath + INGAME_ATTRIBUTE_PATH,
-            npcRaws: out npcRaws,
-            dialogueRaws: out dialogueRaws,
-            ingameAttributeRaws: out ingameAttributeRaws
-        );
-
-        // 구조체 형식에 맞게 변환 및 객체 생성
-        NpcCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
-        foreach (NPC raw in npcs)
-        {
-            npcNameIndexDictionary.Add(key: raw.name, value: raw.id);
-        }
-
-        DialogueCollection dialogues = ConvertJsonDataToDialogue(data: dialogueRaws);
-        foreach (IGrouping<int, Dialogue> dialogueGroup in dialogues.GroupBy(dialogue => dialogue.npcId))
-        {
-            foreach(IGrouping<int, Dialogue> dialogueSituationNoGroup in dialogueGroup.GroupBy(dialogue => dialogue.situationNo))
-            {
-                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type != DialogueType.Option).GroupBy(dialogue => dialogue.sequenceSubNo))
-                {
-                    int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
-
-                    if (!lastDialogueIndexDictionary.ContainsKey(lastIndex))
-                    {
-                        lastDialogueIndexDictionary.Add(lastIndex, lastIndex);
-                    }
-                }
-            }
-            
-
-            npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
-        }
-
-        ingameAttributeCollection = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: userId);
     }
 
     public bool TryLogin(string account, string password)
     {
-        string _password;
-
-        if(userAccountPasswordDictionary.TryGetValue(key: account, value: out _password) &&
-           string.Compare(strA: password, strB: _password) == 0)
+        if(userAccountUserDictionary.TryGetValue(key: account, value: out User _user) &&
+           string.Equals(a: password, b: _user.password))
         {
+            loginedUser = _user;
+            LoadData();
+
             return true;
         }
 
@@ -118,13 +99,70 @@ public class SystemManager
         return false;
     }
 
+    private void LoadData()
+    {
+        // Json 형식 데이터 로드
+        JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
+        LoadJsonRawData(
+            npcDataPath: Application.dataPath + NPC_JSON_PATH,
+            dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
+            ingameAttributePath: Application.dataPath + INGAME_ATTRIBUTE_PATH,
+            npcRaws: out npcRaws,
+            dialogueRaws: out dialogueRaws,
+            ingameAttributeRaws: out ingameAttributeRaws
+        );
+
+        // 구조체 형식에 맞게 변환 및 객체 생성
+        NpcCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
+        foreach (NPC raw in npcs)
+        {
+            npcNameIndexDictionary.Add(key: raw.name, value: raw.id);
+        }
+
+        DialogueCollection dialogues = ConvertJsonDataToDialogue(data: dialogueRaws);
+        foreach (IGrouping<int, Dialogue> dialogueGroup in dialogues.GroupBy(dialogue => dialogue.npcId))
+        {
+            foreach (IGrouping<int, Dialogue> dialogueSituationNoGroup in dialogueGroup.GroupBy(dialogue => dialogue.situationNo))
+            {
+                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type != DialogueType.Option).GroupBy(dialogue => dialogue.sequenceSubNo))
+                {
+                    int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
+
+                    if (!lastDialogueIndexDictionary.ContainsKey(lastIndex))
+                    {
+                        lastDialogueIndexDictionary.Add(lastIndex, lastIndex);
+                    }
+                }
+            }
+
+
+            npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
+        }
+
+        ingameAttributeCollection = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: loginedUser.id);
+    }
+
     private void LoadUserData(string path)
     {
         JsonData data = LoadJsonData(path: path);
 
-        foreach(JsonData datum in data)
+        User user;
+        int _id;
+        string _account, _password;
+
+        foreach (JsonData datum in data)
         {
-            userAccountPasswordDictionary.Add(key: datum[NameManager.JSON_COLUMN_ACCOUNT].ToString(), value: datum[NameManager.JSON_COLUMN_PASSWORD].ToString());
+            _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
+            _account = datum[NameManager.JSON_COLUMN_ACCOUNT].ToString();
+            _password = datum[NameManager.JSON_COLUMN_PASSWORD].ToString();
+
+            user = new User(
+                id: _id,
+                account: _account,
+                password: _password
+            );
+
+            userAccountUserDictionary.Add(key: _account, value: user);
         }
     }
 

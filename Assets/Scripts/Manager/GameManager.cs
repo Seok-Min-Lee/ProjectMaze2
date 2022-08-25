@@ -37,8 +37,6 @@ public class GameManager : MonoBehaviour
     public GameObject[] trafficLights;
     public Material[] skyboxMaterials;
 
-    SystemManager systemManager;
-
     // NPC 상호작용 관련
 
     DialogueCollection dialogueCollection;
@@ -56,14 +54,13 @@ public class GameManager : MonoBehaviour
     Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
     float skyboxRotation;
-    int userId;
+    //int userId;
 
     private void Awake()
     {
-        systemManager = new SystemManager();
         displayedTrapGuideDictionary = new Dictionary<TrapType, bool>();
         // DB 데이터 로드 추가
-        // systemManager.GetDbData();
+        // SystemManager.instance.GetDbData();
 
         currentSceneName = SceneManager.GetActiveScene().name;
         SetIngameAttributes();
@@ -124,7 +121,7 @@ public class GameManager : MonoBehaviour
         if (TryGetNextDialogue(dialogue: out dialogue))
         {
             npcDialogue.text = dialogue.text;
-            isLast = systemManager.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
+            isLast = SystemManager.instance.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
 
             if (dialogue.type == DialogueType.Question)
             {
@@ -300,7 +297,7 @@ public class GameManager : MonoBehaviour
 
         // Player Attribute DB 데이터 업데이트 추가.
         IngameAttributeCollection ingameAttributes = ConvertPropertyToIngameAttribute();
-        systemManager.WriteIngameAttributeToJsonData(ingameAttributes);
+        SystemManager.instance.WriteIngameAttributeToJsonData(ingameAttributes);
         //
 
         SceneManager.LoadScene(sceneName: sceneName);
@@ -313,8 +310,8 @@ public class GameManager : MonoBehaviour
 
     private void InitializeInteractionData(NPCInteractionZone npc)
     {
-        if (systemManager.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
-            systemManager.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
+        if (SystemManager.instance.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
+            SystemManager.instance.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
         {
             this.dialogueSequenceNo = 0;
             npcName.text = npc.npcName;
@@ -351,23 +348,23 @@ public class GameManager : MonoBehaviour
             {
                 if (player.isActiveMagicFairy)
                 {
-                    sequenceSubNo = systemManager.dialogueMagicGiantSequenceSubNo;
+                    sequenceSubNo = SystemManager.instance.dialogueMagicGiantSequenceSubNo;
                 }
                 else
                 {
                     if (UnityEngine.Random.Range(minInclusive: 0, maxExclusive: 2) > 0)
                     {
-                        sequenceSubNo = systemManager.dialogueMagicFairySequenceSubNo;
+                        sequenceSubNo = SystemManager.instance.dialogueMagicFairySequenceSubNo;
                     }
                     else
                     {
-                        sequenceSubNo = systemManager.dialogueMagicGiantSequenceSubNo;
+                        sequenceSubNo = SystemManager.instance.dialogueMagicGiantSequenceSubNo;
                     }
                 }
             }
             else
             {
-                sequenceSubNo = systemManager.dialogueMagicHumanSequenceSubNo;
+                sequenceSubNo = SystemManager.instance.dialogueMagicHumanSequenceSubNo;
             }
         }
         else
@@ -410,15 +407,15 @@ public class GameManager : MonoBehaviour
     {
         if(dialogue.type == DialogueType.Event)
         {
-            if(dialogue.sequenceSubNo == systemManager.dialogueMagicFairySequenceSubNo)
+            if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicFairySequenceSubNo)
             {
                 player.ActivateMagicFairy(isActive: true);
             }
-            else if(dialogue.sequenceSubNo == systemManager.dialogueMagicGiantSequenceSubNo)
+            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicGiantSequenceSubNo)
             {
                 player.ActivateMagicGiant(isActive: true);
             }
-            else if(dialogue.sequenceSubNo == systemManager.dialogueMagicHumanSequenceSubNo)
+            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicHumanSequenceSubNo)
             {
                 player.ActivateMagicHuman(isActive: true);
             }
@@ -526,7 +523,7 @@ public class GameManager : MonoBehaviour
         attributeIsActivePlayerBeads = new bool[3];
         attributeIsActivePlayerMinimaps = new bool[3];
 
-        IngameAttributeCollection ingameAttributes = systemManager.ingameAttributeCollection;
+        IngameAttributeCollection ingameAttributes = SystemManager.instance.ingameAttributeCollection;
 
         foreach (IngameAttribute attribute in ingameAttributes)
         {
@@ -654,89 +651,91 @@ public class GameManager : MonoBehaviour
     private IngameAttributeCollection ConvertPropertyToIngameAttribute()
     {
         IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
+
         int index = 0;
+        int userId = SystemManager.instance.loginedUser.id;
 
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_1,
             value: this.attributeIsActivePlayerBeads[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_2,
             value: this.attributeIsActivePlayerBeads[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_BEAD_3,
             value: this.attributeIsActivePlayerBeads[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_1,
             value: this.attributeIsActivePlayerMinimaps[0] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_2,
             value: this.attributeIsActivePlayerMinimaps[1] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3,
             value: this.attributeIsActivePlayerMinimaps[2] == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_FAIRY,
             value: this.attributeIsActivePlayerMagicFairy == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_GIANT,
             value: this.attributePlayerMagicGiantStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN,
             value: this.attributeIsActivePlayerMagicHuman == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_LIFE,
             value: this.attributePlayerLife
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP,
             value: this.attributePlayerCurrentHp
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION,
             value: this.attributePlayerCurrentConfusion
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK,
             value: this.attributePlayerPoisonStack
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
-            userId: this.userId,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE,
             value: this.attributeIsDisplayGuide == true ? 1 : 0
         ));
