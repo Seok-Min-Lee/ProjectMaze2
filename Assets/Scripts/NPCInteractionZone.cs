@@ -24,7 +24,7 @@ public class NPCInteractionZone : MonoBehaviour
         }
     }
 
-    public void DisappearByVolatility()
+    public void DisappearByVolatility(bool isVolatility)
     {
         if (isVolatility)
         {

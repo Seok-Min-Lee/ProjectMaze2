@@ -528,7 +528,7 @@ public class Player : MonoBehaviour
         {
             // UI 및 NPC 업데이트.
             manager.UpdateUIWhetherInteraction(isInteract: false);
-            interactNpc.DisappearByVolatility();
+            interactNpc.DisappearByVolatility(isVolatility: interactNpc.isVolatility);
 
             // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
             isInteractPreprocessReady = false;
