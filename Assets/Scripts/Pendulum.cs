@@ -4,19 +4,12 @@ using UnityEngine;
 
 public class Pendulum : MonoBehaviour
 {
-    public float angle = 0;
+    public pendulumDirectionType direction;
 
-    public float lerpTime = 0;
+    public float angle = 0;
     public float speed = 2f;
 
-    float initX, initY, initZ;
-
-    void Start()
-    {
-        initX = transform.localRotation.x;
-        initY = transform.localRotation.y;
-        initZ = transform.localRotation.z;
-    }
+    public float lerpTime;
 
     void Update()
     {
@@ -26,8 +19,16 @@ public class Pendulum : MonoBehaviour
 
     private Quaternion CalculateMovementOfPendulum()
     {
-        return Quaternion.Lerp(Quaternion.Euler(Vector3.forward * angle),
-            Quaternion.Euler(Vector3.back * angle), GetLerpTParam());
+        if(direction == pendulumDirectionType.X_axis)
+        {
+            return Quaternion.Lerp(Quaternion.Euler(Vector3.forward * angle),
+                Quaternion.Euler(Vector3.back * angle), GetLerpTParam());
+        }
+        else
+        {
+            return Quaternion.Lerp(Quaternion.Euler(Vector3.right * angle),
+                Quaternion.Euler(Vector3.left * angle), GetLerpTParam());
+        }
     }
 
     private float GetLerpTParam()
