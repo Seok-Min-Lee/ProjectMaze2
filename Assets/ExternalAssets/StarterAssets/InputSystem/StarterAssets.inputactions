@@ -61,21 +61,21 @@
                 },
                 {
                     "name": "Interact",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "a200e502-469d-40eb-b9e5-a8153e8db16a",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Escape",
-                    "type": "Button",
-                    "id": "c4969f04-245c-4e6e-b814-4bb4eed754ff",
+                    "type": "Value",
+                    "id": "02088d23-16bf-429a-b616-0e20a609c314",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -356,7 +356,7 @@
                 },
                 {
                     "name": "",
-                    "id": "20601723-f4a1-4ffa-8458-7e0c9c570200",
+                    "id": "e1252141-92fa-4fdf-acd2-a29ef895a391",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
