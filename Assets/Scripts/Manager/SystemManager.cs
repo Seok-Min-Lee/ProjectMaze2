@@ -26,7 +26,7 @@ public class SystemManager : MonoBehaviour
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
 
-    public User loginedUser { get; private set; }
+    public User logInedUser { get; private set; }
 
     private void Awake()
     {
@@ -55,18 +55,38 @@ public class SystemManager : MonoBehaviour
         lastDialogueIndexDictionary = new Dictionary<int, int>();
     }
 
-    public bool TryLogin(string account, string password)
+    public bool TryLogIn(string account, string password)
     {
         if(userAccountUserDictionary.TryGetValue(key: account, value: out User _user) &&
            string.Equals(a: password, b: _user.password))
         {
-            loginedUser = _user;
-            LoadData();
+            logInedUser = _user;
+            LoadDataAll();
 
             return true;
         }
 
         return false;
+    }
+
+    public void ClearDataAll()
+    {
+        IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
+        Dictionary<int, int> lastDialogueIndexDictionary = new Dictionary<int, int>();
+        dialogueMagicHumanSequenceSubNo = 0;
+        dialogueMagicFairySequenceSubNo = 0;
+        dialogueMagicGiantSequenceSubNo = 0;
+
+        userAccountUserDictionary = new Dictionary<string, User>();
+        npcIndexNameDictionary = new Dictionary<int, string>();
+        npcNameIndexDictionary = new Dictionary<string, int>();
+        npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+
+        logInedUser = new User(
+            id: -1,
+            account: String.Empty,
+            password: String.Empty
+        );
     }
 
     public void SaveIngameAttributes(IEnumerable<IngameAttribute> ingameAttributes)
@@ -107,7 +127,7 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    private void LoadData()
+    private void LoadDataAll()
     {
         // Json 형식 데이터 로드
         JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
@@ -147,7 +167,7 @@ public class SystemManager : MonoBehaviour
             npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
 
-        ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: loginedUser.id);
+        ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
     }
 
     private void LoadUserData(string path)

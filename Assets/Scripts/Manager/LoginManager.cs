@@ -22,8 +22,8 @@ public class LoginManager : MonoBehaviour
 
     public void OnClickExit()
     {
-        UnityEditor.EditorApplication.isPlaying = false;
-        //Application.Quit();
+        //UnityEditor.EditorApplication.isPlaying = false;
+        Application.Quit();
     }
 
     public void OnClickSubmit()
@@ -31,7 +31,7 @@ public class LoginManager : MonoBehaviour
         string userAccount = inputAccount.text;
         string userPassword = inputPassword.text;
 
-        if(SystemManager.instance.TryLogin(account: userAccount, password: userPassword))
+        if(SystemManager.instance.TryLogIn(account: userAccount, password: userPassword))
         {
             inputPanel.SetActive(false);
             modePanel.SetActive(true);

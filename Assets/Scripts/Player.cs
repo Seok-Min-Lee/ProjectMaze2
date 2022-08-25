@@ -135,17 +135,6 @@ public class Player : MonoBehaviour
 
             case NameManager.TAG_PORTAL:
                 Portal portal = other.GetComponentInParent<Portal>();
-                manager.UpdatePlayerIngameAttributes(
-                    isActiveBeads: this.isActiveBeads,
-                    isActiveMinimap: this.isActiveMinimap,
-                    isActiveMagicFairy: this.isActiveMagicFairy,
-                    isActiveMagicHuman: this.isActiveMagicHuman,
-                    life: this.currentLife,
-                    currentHp: this.currentHp,
-                    currentConfusion: this.confusionStack,
-                    magicGiantStack: this.magicGiantStack,
-                    poisonStack: this.poisonStack
-                );
                 manager.LoadSceneBySceneType(sceneType: portal.nextSceneType);
                 break;
         }
@@ -244,6 +233,21 @@ public class Player : MonoBehaviour
                 manager.DisplayGameMenu();
             }
         }
+    }
+
+    public void CallUpdatePlayerIngameAttributes()
+    {
+        manager.UpdatePlayerIngameAttributes(
+            isActiveBeads: this.isActiveBeads,
+            isActiveMinimap: this.isActiveMinimap,
+            isActiveMagicFairy: this.isActiveMagicFairy,
+            isActiveMagicHuman: this.isActiveMagicHuman,
+            life: this.currentLife,
+            currentHp: this.currentHp,
+            currentConfusion: this.confusionStack,
+            magicGiantStack: this.magicGiantStack,
+            poisonStack: this.poisonStack
+        );
     }
 
     private void InitializeController()
