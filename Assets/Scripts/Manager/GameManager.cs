@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
     // 인게임 UI
-    public GameObject normalPanel, interactPanel, deathPanel, guidePanel;   // 평상시, 상호작용, 게임오버, 가이드
+    public GameObject normalPanel, interactPanel, gameMenuPanel, guidePanel, deathPanel;   // 평상시, 상호작용, 게임메뉴, 가이드, 게임오버
     public GameObject interactableAlram;
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     bool minimapVisible;
 
     string currentSceneName;
-    bool isPause, isDisplayGuide;
+    bool isPause, isDisplayGuide, isDisplayGameMenu;
 
     Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
@@ -59,13 +59,15 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         displayedTrapGuideDictionary = new Dictionary<TrapType, bool>();
-        // DB 데이터 로드 추가
-        // SystemManager.instance.GetDbData();
 
-        currentSceneName = SceneManager.GetActiveScene().name;
         SetIngameAttributes();
+    }
 
-        if(TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
+    private void Start()
+    {
+        currentSceneName = SceneManager.GetActiveScene().name;
+
+        if (TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
             minimapVisible = this.attributeIsActivePlayerMinimaps[minimapIndex];
         }
@@ -173,18 +175,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DisplayGameMenu()
+    {
+        if (!this.isDisplayGameMenu)
+        {
+            if (!this.isDisplayGuide)
+            {
+                player.StopPlayerMotion();
+                SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+            }
+            else
+            {
+                OnClickGuideOKButton();
+            }
+        }
+    }
+
     public void DisplayTrapGuide(TrapType type)
     {
         if (!this.isDisplayGuide && !displayedTrapGuideDictionary.ContainsKey(type))
         {
-            this.isDisplayGuide = true;
-
-            SwitchPause();
-            guidePanel.SetActive(this.isDisplayGuide);
-
-            player._input.controlEnable = !this.isDisplayGuide;
             player.StopPlayerMotion();
-            Cursor.lockState = CursorLockMode.Confined;
+            SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
 
             guideHead.text = type.ToString();
             guideBody.text = "업데이트 필요";
@@ -203,15 +215,35 @@ public class GameManager : MonoBehaviour
         player.Interact();
     }
 
+    public void OnClickGameMenuOKButton()
+    {
+        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+
+        // 설정 값 저장 - 추가할 것
+        IngameAttributeCollection ingameAttributes = ConvertPropertyToIngameAttribute();
+        SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
+    }
+
+    public void OnClickGameMenuCancelButton()
+    {
+        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+    }
+
+    public void OnClickGameMenuQuitButton()
+    {
+        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+
+        // 설정 값 저장 - 추가할 것
+        IngameAttributeCollection ingameAttributes = ConvertPropertyToIngameAttribute();
+        SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
+
+        UnityEditor.EditorApplication.isPlaying = false;
+        //Application.Quit();
+    }
+
     public void OnClickGuideOKButton()
     {
-        this.isDisplayGuide = false;
-
-        SwitchPause();
-        guidePanel.SetActive(this.isDisplayGuide);
-
-        player._input.controlEnable = !this.isDisplayGuide;
-        Cursor.lockState = CursorLockMode.Locked;
+        SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
     }
 
     public void ActivateSkyboxByPlayerBeads(bool[] isActiveBeads)
@@ -291,7 +323,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdateScene(SceneType sceneType)
+    public void LoadSceneBySceneType(SceneType sceneType)
     {
         string sceneName = ConvertManager.ConvertSceneTypeToString(sceneType: sceneType);
 
@@ -495,6 +527,17 @@ public class GameManager : MonoBehaviour
         }
 
         return isVisible;
+    }
+
+    private void SwitchPauseEvent(ref GameObject panel, ref bool isActive)
+    {
+        isActive = !isActive;
+
+        SwitchPause();
+        panel.SetActive(isActive);
+
+        player._input.controlEnable = !isActive;
+        Cursor.lockState = isActive ? CursorLockMode.Confined : CursorLockMode.Locked;
     }
 
     private void SwitchPause()

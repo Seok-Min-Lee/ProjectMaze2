@@ -89,6 +89,7 @@ public class Player : MonoBehaviour
         //OnDamage();
         Detoxify();
         Interact();
+        Escape();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -145,7 +146,7 @@ public class Player : MonoBehaviour
                     magicGiantStack: this.magicGiantStack,
                     poisonStack: this.poisonStack
                 );
-                manager.UpdateScene(sceneType: portal.nextSceneType);
+                manager.LoadSceneBySceneType(sceneType: portal.nextSceneType);
                 break;
         }
     }
@@ -209,6 +210,40 @@ public class Player : MonoBehaviour
     public void ActivateMagicHuman(bool isActive)
     {
         this.isActiveMagicHuman = isActive;
+    }
+
+    public void Interact()
+    {
+        InteractPreprocess();
+
+        if (wasInteractPreprocess &&
+            isInteract &&
+            _input.interact)
+        {
+            // 상호작용 및 다음 스크립트 존재 여부에 따라 상호작용 상태 업데이트.
+            manager.UpdateInteractionUI(isContinuable: out isInteract);
+
+            // 키 입력 초기화.
+            _input.interact = false;
+        }
+
+        InteractPostProcess();
+    }
+
+    public void Escape()
+    {
+        if (_input.escape)
+        {
+            if (isInteract)
+            {
+                isInteract = false;
+                _input.interact = false;
+            }
+            else
+            {
+                manager.DisplayGameMenu();
+            }
+        }
     }
 
     private void InitializeController()
@@ -496,24 +531,6 @@ public class Player : MonoBehaviour
             wasInteractPreprocess = true;
             isInteract = true;
         }
-    }
-
-    public void Interact()
-    {
-        InteractPreprocess();
-
-        if (wasInteractPreprocess && 
-            isInteract &&
-            _input.interact)
-        {
-            // 상호작용 및 다음 스크립트 존재 여부에 따라 상호작용 상태 업데이트.
-            manager.UpdateInteractionUI(isContinuable: out isInteract);
-
-            // 키 입력 초기화.
-            _input.interact = false;
-        }
-
-        InteractPostProcess();
     }
 
     private void InteractPostProcess()

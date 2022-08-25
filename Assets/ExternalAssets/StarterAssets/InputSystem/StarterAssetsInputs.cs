@@ -100,9 +100,9 @@ namespace StarterAssets
             interact = newInteractState;
         }
 
-		public void EscapeInput(bool newInteractState)
+		public void EscapeInput(bool newEscapeState)
 		{
-			escape = newInteractState;
+			escape = newEscapeState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
