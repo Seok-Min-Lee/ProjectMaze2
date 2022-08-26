@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
         
     public GameManager manager;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
+    public AudioSource itemSound, trapSound, damageSound;
 
     public int currentHp { get; private set; }
     public int maxHp { get; private set; }
@@ -349,6 +350,7 @@ public class Player : MonoBehaviour
                 break;
         }
 
+        itemSound.Play();
         gameObject.SetActive(false);
     }
 
@@ -421,6 +423,7 @@ public class Player : MonoBehaviour
 
         }
 
+        this.damageSound.Play();
         StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
     }
 
@@ -524,6 +527,8 @@ public class Player : MonoBehaviour
 
             manager.DisplayGuideByGuideType(guideType: ConvertManager.ConvertTrapTypeToGuideType(trapType: trapType));
         }
+
+        trapSound.Play();
     }
 
     private void OnTriggerEnterToTrap(Trap trap)
