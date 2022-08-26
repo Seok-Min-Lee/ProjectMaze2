@@ -455,7 +455,7 @@ public class Player : MonoBehaviour
             trap.trafficLightType == TrapTrafficLightType.Red &&
             IsMoving())
         {
-            Respawn();
+            OnDamage(value: maxHp, isAvoidable: false);
             trap.DeactivateEvent(player: this);
         }
     }
