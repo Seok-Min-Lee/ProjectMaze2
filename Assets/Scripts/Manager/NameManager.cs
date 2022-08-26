@@ -14,6 +14,9 @@ public static class NameManager
     public const string JSON_COLUMN_ATTRIBUTE_NAME = "attributeName";
     public const string JSON_COLUMN_VALUE = "value";
     public const string JSON_COLIMN_USER_ID = "userId";
+    public const string JSON_COLUMN_GUIDE_TYPE = "guideType";
+    public const string JSON_COLUMN_TITLE = "title";
+    public const string JSON_COLUMN_DESCRIPTION = "description";
 
     public const string INGAME_ATTRIBUTE_NAME_BEAD_1 = "bead1";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_2 = "bead2";
@@ -52,6 +55,7 @@ public static class NameManager
     public const string TAG_NPC = "NPC";
     public const string TAG_NPC_INTERACTION_ZONE = "NpcInteractionZone";
     public const string TAG_PORTAL = "Portal";
+    public const string TAG_GUIDE_ACTIVATOR = "GuideActivator";
 
     public const string LAYER_PLAYER = "Player";
 
@@ -73,4 +77,12 @@ public static class NameManager
     public const string DIALOGUE_KEYWORD_MAGIC_FAIRY = "소인족의 발걸음";
     public const string DIALOGUE_KEYWORD_MAGIC_GIANT = "거인족의 기백";
     public const string DIALOGUE_KEYWORD_MAGIC_HUMAN = "아무 효과 없는 마법";
+
+    public const string GUIDE_TYPE_MISTERY_WALL = "MisteryWall";
+    public const string GUIDE_TYPE_FADE_IN_AND_OUT = "FadeInAndOut";
+    public const string GUIDE_TYPE_PUSHING_WALL = "PushingWall";
+    public const string GUIDE_TYPE_TRAFFIC_LIGHT = "TrafficLight";
+    public const string GUIDE_TYPE_MACH_PAIR = "MachPair";
+    public const string GUIDE_TYPE_MANIPULATE = "Manipulate";
+    public const string GUIDE_TYPE_GAME_GOAL = "GameGoal";
 }

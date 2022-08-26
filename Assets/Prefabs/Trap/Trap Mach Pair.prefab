@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027082128189660
 MeshFilter:
@@ -148,7 +148,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8019027082268111470
 MonoBehaviour:
@@ -239,7 +239,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027082599244806
 MeshFilter:
@@ -357,7 +357,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027083100111823
 MeshFilter:
@@ -470,6 +470,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6394603894726822717}
   - {fileID: 8019027082128189729}
   - {fileID: 8019027083100111824}
   - {fileID: 8019027082599244811}
@@ -477,7 +478,6 @@ Transform:
   - {fileID: 8019027083406540885}
   - {fileID: 8019027084064590437}
   - {fileID: 8019027082268111473}
-  - {fileID: 6394603894726822717}
   - {fileID: 8019027082543357842}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -515,7 +515,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027083211385346
 MeshFilter:
@@ -633,7 +633,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027083406540880
 MeshFilter:
@@ -848,7 +848,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8019027083160116023}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8019027084064590432
 MeshFilter:
@@ -1066,7 +1066,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4032829403979041442, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041442, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: m_LocalPosition.x

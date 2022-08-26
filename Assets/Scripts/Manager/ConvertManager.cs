@@ -62,6 +62,71 @@ public static class ConvertManager
         return result;
     }
 
+    public static GuideType ConvertStringToGuideType(string input)
+    {
+        GuideType type;
+
+        switch (input)
+        {
+            case NameManager.GUIDE_TYPE_FADE_IN_AND_OUT:
+                type = GuideType.FadeInAndOut;
+                break;
+            case NameManager.GUIDE_TYPE_MACH_PAIR:
+                type = GuideType.MachPair;
+                break;
+            case NameManager.GUIDE_TYPE_MISTERY_WALL:
+                type = GuideType.MisteryWall;
+                break;
+            case NameManager.GUIDE_TYPE_PUSHING_WALL:
+                type = GuideType.PushingWall;
+                break;
+            case NameManager.GUIDE_TYPE_TRAFFIC_LIGHT:
+                type = GuideType.TrafficLight;
+                break;
+
+            case NameManager.GUIDE_TYPE_GAME_GOAL:
+                type = GuideType.GameGoal;
+                break;
+            case NameManager.GUIDE_TYPE_MANIPULATE:
+                type = GuideType.Manipulate;
+                break;
+            default:
+                type = GuideType.None;
+                break;
+        }
+
+        return type;
+    }
+
+    public static GuideType ConvertTrapTypeToGuideType(TrapType trapType)
+    {
+        GuideType type;
+
+        switch (trapType)
+        {
+            case TrapType.FadeInAndOut:
+                type = GuideType.FadeInAndOut;
+                break;
+            case TrapType.MachPair:
+                type = GuideType.MachPair;
+                break;
+            case TrapType.MisteryWall:
+                type = GuideType.MisteryWall;
+                break;
+            case TrapType.PushingWall:
+                type = GuideType.PushingWall;
+                break;
+            case TrapType.TrafficLight:
+                type = GuideType.TrafficLight;
+                break;
+            default:
+                type = GuideType.None;
+                break;
+        }
+
+        return type;
+    }
+
     public static bool TryConvertNpcTypeToName(NpcType type, out string name)
     {
         name = string.Empty;

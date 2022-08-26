@@ -51,14 +51,14 @@ public class GameManager : MonoBehaviour
     string currentSceneName;
     bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
 
-    Dictionary<TrapType, bool> displayedTrapGuideDictionary;
+    Dictionary<GuideType, GuideType> displayedGuideTypeDictionary;
 
     float skyboxRotation;
     //int userId;
 
     private void Awake()
     {
-        displayedTrapGuideDictionary = new Dictionary<TrapType, bool>();
+        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
 
         SetIngameAttributes();
     }
@@ -191,17 +191,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void DisplayTrapGuide(TrapType type)
+    public void DisplayGuideByGuideType(GuideType guideType)
     {
-        if (!this.isDisplayGuide && !displayedTrapGuideDictionary.ContainsKey(type))
+        Guide guide;
+        if (!this.isDisplayGuide && 
+            !displayedGuideTypeDictionary.ContainsKey(guideType) &&
+            SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
         {
             player.StopPlayerMotion();
             SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
 
-            guideHead.text = type.ToString();
-            guideBody.text = "업데이트 필요";
+            guideHead.text = guide.title;
+            guideBody.text = guide.description;
 
-            displayedTrapGuideDictionary.Add(key: type, value: true);
+            displayedGuideTypeDictionary.Add(key: guideType, value: guideType);
         }
     }
 

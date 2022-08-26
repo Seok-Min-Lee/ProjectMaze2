@@ -119,10 +119,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_TRAP_ACTIVATOR:
-                TrapActivator trapActivater = other.GetComponentInParent<TrapActivator>();
-                trapActivater.ActivateTrap(player: this);
-
-                manager.DisplayTrapGuide(trapActivater.traps[0].GetComponent<Trap>().type);
+                OnTriggerEnterToTrapActivator(trapActivator: other.GetComponentInParent<TrapActivator>());
                 break;
 
             case NameManager.TAG_TRAP_DEACTIVATOR:
@@ -131,6 +128,10 @@ public class Player : MonoBehaviour
 
             case NameManager.TAG_TRAP:
                 OnTriggerEnterToTrap(trap: other.GetComponentInParent<Trap>());
+                break;
+
+            case NameManager.TAG_GUIDE_ACTIVATOR:
+                OnTriggerEnterToGuideActivator(guideActivator: other.GetComponent<GuideActivator>());
                 break;
 
             case NameManager.TAG_PORTAL:
@@ -470,6 +471,18 @@ public class Player : MonoBehaviour
         isInteract = false;
     }
 
+    private void OnTriggerEnterToTrapActivator(TrapActivator trapActivator)
+    {
+        trapActivator.ActivateTrap(player: this);
+
+        if(trapActivator.traps.Length > 0)
+        {
+            TrapType trapType = trapActivator.traps[0].GetComponent<Trap>().type;
+
+            manager.DisplayGuideByGuideType(guideType: ConvertManager.ConvertTrapTypeToGuideType(trapType: trapType));
+        }
+    }
+
     private void OnTriggerEnterToTrap(Trap trap)
     {
         switch (trap.type)
@@ -478,6 +491,11 @@ public class Player : MonoBehaviour
                 trap.GetComponent<TrapMachPairColumn>().DetectPlayer();
                 break;
         }
+    }
+
+    private void OnTriggerEnterToGuideActivator(GuideActivator guideActivator)
+    {
+        manager.DisplayGuideByGuideType(guideType: guideActivator.type);
     }
 
     private void UpdateCountTimeDetox()

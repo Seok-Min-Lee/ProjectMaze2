@@ -10,13 +10,15 @@ public class SystemManager : MonoBehaviour
 {
     public static SystemManager instance;
 
-    const string USER_JSON_PATH = "/Resources/tb_user_test.json";
-    const string NPC_JSON_PATH = "/Resources/tb_npc_test.json";
-    const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue_test.json";
-    const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute_test.json";
+    const string USER_JSON_PATH = "/Resources/tb_user.json";
+    const string NPC_JSON_PATH = "/Resources/tb_npc.json";
+    const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue.json";
+    const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute.json";
+    const string GUIDE_JOSN_PATH = "/Resources/tb_guide.json";
 
     public IngameAttributeCollection ingameAttributes { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
+    public Dictionary<GuideType, Guide> guideTypeGuideDictionary { get; private set; }
     public int dialogueMagicHumanSequenceSubNo { get; private set; }
     public int dialogueMagicFairySequenceSubNo { get; private set; }
     public int dialogueMagicGiantSequenceSubNo { get; private set; }
@@ -53,6 +55,7 @@ public class SystemManager : MonoBehaviour
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
 
         lastDialogueIndexDictionary = new Dictionary<int, int>();
+        guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
     }
 
     public bool TryLogIn(string account, string password)
@@ -81,6 +84,7 @@ public class SystemManager : MonoBehaviour
         npcIndexNameDictionary = new Dictionary<int, string>();
         npcNameIndexDictionary = new Dictionary<string, int>();
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+        guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
 
         logInedUser = new User(
             id: -1,
@@ -130,14 +134,16 @@ public class SystemManager : MonoBehaviour
     private void LoadDataAll()
     {
         // Json 형식 데이터 로드
-        JsonData npcRaws, dialogueRaws, ingameAttributeRaws;
+        JsonData npcRaws, dialogueRaws, ingameAttributeRaws, guideRaws;
         LoadJsonRawData(
             npcDataPath: Application.dataPath + NPC_JSON_PATH,
             dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
             ingameAttributePath: Application.dataPath + INGAME_ATTRIBUTE_PATH,
+            guidePath: Application.dataPath + GUIDE_JOSN_PATH,
             npcRaws: out npcRaws,
             dialogueRaws: out dialogueRaws,
-            ingameAttributeRaws: out ingameAttributeRaws
+            ingameAttributeRaws: out ingameAttributeRaws,
+            guideRaws: out guideRaws
         );
 
         // 구조체 형식에 맞게 변환 및 객체 생성
@@ -168,6 +174,17 @@ public class SystemManager : MonoBehaviour
         }
 
         ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
+
+        GuideCollection guides = ConvertJsonDataToGuide(data: guideRaws);
+        foreach(Guide guide in guides)
+        {
+            GuideType guideType = guide.type;
+
+            if(!guideTypeGuideDictionary.ContainsKey(key: guideType))
+            {
+                guideTypeGuideDictionary.Add(key: guideType, value: guide);
+            }
+        }
     }
 
     private void LoadUserData(string path)
@@ -198,14 +215,17 @@ public class SystemManager : MonoBehaviour
         string npcDataPath, 
         string dialogueDataPath,
         string ingameAttributePath,
+        string guidePath,
         out JsonData npcRaws, 
         out JsonData dialogueRaws,
-        out JsonData ingameAttributeRaws
+        out JsonData ingameAttributeRaws,
+        out JsonData guideRaws
     )
     {
         npcRaws = LoadJsonData(path: npcDataPath);
         dialogueRaws = LoadJsonData(path: dialogueDataPath);
         ingameAttributeRaws = LoadJsonData(path: ingameAttributePath);
+        guideRaws = LoadJsonData(path: guidePath);
     }
 
     private JsonData LoadJsonData(string path)
@@ -310,6 +330,28 @@ public class SystemManager : MonoBehaviour
         }
 
         return ingameAttributes;
+    }
+
+    private GuideCollection ConvertJsonDataToGuide(JsonData data)
+    {
+        GuideCollection guides = new GuideCollection();
+
+        foreach (JsonData datum in data)
+        {
+            int _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
+            GuideType _type = ConvertManager.ConvertStringToGuideType(datum[NameManager.JSON_COLUMN_GUIDE_TYPE].ToString());
+            string _title = datum[NameManager.JSON_COLUMN_TITLE].ToString();
+            string _description = datum[NameManager.JSON_COLUMN_DESCRIPTION].ToString();
+
+            guides.Add(new Guide(
+                id: _id,
+                type: _type,
+                title: _title,
+                description: _description
+            ));
+        }
+
+        return guides;
     }
     
     public void SaveIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
