@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     // NPC 상호작용 관련
 
     DialogueCollection dialogueCollection;
-    public int dialogueSituationNo; // 테스트 끝나면 private 수정.
+    int situationNo;
     int dialogueSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
 
@@ -48,10 +48,7 @@ public class GameManager : MonoBehaviour
     string currentSceneName;
     bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
 
-    
-
     float skyboxRotation;
-    //int userId;
 
     private void Awake()
     {
@@ -61,7 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        currentSceneName = SceneManager.GetActiveScene().name;
+        this.currentSceneName = SceneManager.GetActiveScene().name;
 
         if (TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
@@ -72,7 +69,7 @@ public class GameManager : MonoBehaviour
         UpdateUIActivedBeads(isActives: this.attributeIsActivePlayerBeads);
         ActivateSkyboxByPlayerBeads(isActiveBeads: this.attributeIsActivePlayerBeads);
 
-        Debug.Log(SceneManager.GetActiveScene().buildIndex);
+        this.situationNo = IsClearGame() ? 1 : 0;
     }
 
     private void LateUpdate()
@@ -364,6 +361,30 @@ public class GameManager : MonoBehaviour
         gameObject.transform.position = vector;
     }
 
+    private bool IsClearGame()
+    {
+        if(this.currentSceneName == NameManager.SCENE_VILLAGE &&
+            IshadBeadAll())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IshadBeadAll()
+    {
+        for (int i = 0; i < this.attributeIsActivePlayerBeads.Length; i++)
+        {
+            if (this.attributeIsActivePlayerBeads[i] == false)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void InitializeInteractionData(NPCInteractionZone npc)
     {
         if (SystemManager.instance.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
@@ -372,7 +393,7 @@ public class GameManager : MonoBehaviour
             this.dialogueSequenceNo = 0;
             npcName.text = npc.npcName;
 
-            DialogueCollection _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.dialogueSituationNo));
+            DialogueCollection _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.situationNo));
 
             if (npc.type == NpcType.Goblin)
             {

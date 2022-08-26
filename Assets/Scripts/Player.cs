@@ -92,8 +92,6 @@ public class Player : MonoBehaviour
         if (_savedPositionEnabled)
         {
             ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
-            //this.transform.position = new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ);
-            Debug.Log("position : " + this.transform.position);
         }
 
         UpdateBeadVisibility();
