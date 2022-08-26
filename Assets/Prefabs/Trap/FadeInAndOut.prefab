@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 541797309931132061}
   - component: {fileID: 3226483201224036750}
   m_Layer: 0
-  m_Name: Normal Wall
+  m_Name: Normal Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
