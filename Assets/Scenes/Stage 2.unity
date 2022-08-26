@@ -1542,6 +1542,10 @@ PrefabInstance:
       value: Trap Activator
       objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: isVolatility
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: traps.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -2590,6 +2594,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2021964521}
     m_Modifications:
+    - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+      propertyPath: isVolatility
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 325173603641520665, guid: 444a3284a7a65e542803eb087755986c, type: 3}
       propertyPath: m_LocalScale.x
       value: 18
