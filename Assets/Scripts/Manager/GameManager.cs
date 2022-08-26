@@ -71,6 +71,8 @@ public class GameManager : MonoBehaviour
         ActivateMinimap(isActive: minimapVisible);
         UpdateUIActivedBeads(isActives: this.attributeIsActivePlayerBeads);
         ActivateSkyboxByPlayerBeads(isActiveBeads: this.attributeIsActivePlayerBeads);
+
+        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void LateUpdate()
@@ -234,7 +236,7 @@ public class GameManager : MonoBehaviour
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         Cursor.lockState = CursorLockMode.Confined;
 
-        SaveCurrentIngameAttributes();
+        SaveCurrentIngameAttributes(isSavePosition: true);
         SystemManager.instance.ClearDataExclusiveUsers();
 
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
@@ -244,7 +246,7 @@ public class GameManager : MonoBehaviour
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
-        SaveCurrentIngameAttributes();
+        SaveCurrentIngameAttributes(isSavePosition: true);
 
         //UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
@@ -352,7 +354,7 @@ public class GameManager : MonoBehaviour
         string sceneName = ConvertManager.ConvertSceneTypeToString(sceneType: sceneType);
 
         // Player Attribute DB 데이터 업데이트 추가.
-        SaveCurrentIngameAttributes();
+        SaveCurrentIngameAttributes(isSavePosition: false);
 
         LoadingSceneManager.LoadScene(sceneName: sceneName);
     }
@@ -585,8 +587,11 @@ public class GameManager : MonoBehaviour
     bool[] attributeIsActivePlayerBeads;
     bool[] attributeIsActivePlayerMinimaps;
     bool attributeIsDisplayGuide;
+    bool attributeSavedPositionEnabled;
     bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
     int attributePlayerLife, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
+    int attributeSavedSceneNumber;
+    int attributeSavedPositionX, attributeSavedPositionY, attributeSavedPositionZ;
 
     public void SetPlayerIngameAttributes(
         out bool[] isActiveBeads,
@@ -597,7 +602,11 @@ public class GameManager : MonoBehaviour
         out int currentHp,
         out int currentConfusion,
         out int magicGiantStack,
-        out int poisonStack
+        out int poisonStack,
+        out bool savedPositionEnabled,
+        out int savedPositionX,
+        out int savedPositionY,
+        out int savedPositionZ
     )
     {
         switch (currentSceneName)
@@ -624,6 +633,10 @@ public class GameManager : MonoBehaviour
         currentConfusion = this.attributePlayerCurrentConfusion;
         magicGiantStack = this.attributePlayerMagicGiantStack;
         poisonStack = this.attributePlayerPoisonStack;
+        savedPositionEnabled = this.attributeSavedPositionEnabled;
+        savedPositionX = this.attributeSavedPositionX;
+        savedPositionY = this.attributeSavedPositionY;
+        savedPositionZ = this.attributeSavedPositionZ;
     }
 
     public void UpdatePlayerIngameAttributes(
@@ -635,7 +648,10 @@ public class GameManager : MonoBehaviour
         int currentHp,
         int currentConfusion,
         int magicGiantStack,
-        int poisonStack
+        int poisonStack,
+        int attributeSavedPositionX,
+        int attributeSavedPositionY,
+        int attributeSavedPositionZ
     )
     {
         switch (currentSceneName)
@@ -659,10 +675,15 @@ public class GameManager : MonoBehaviour
         this.attributePlayerCurrentConfusion = currentConfusion;
         this.attributePlayerMagicGiantStack = magicGiantStack;
         this.attributePlayerPoisonStack = poisonStack;
+        this.attributeSavedPositionX = attributeSavedPositionX;
+        this.attributeSavedPositionY = attributeSavedPositionY;
+        this.attributeSavedPositionZ = attributeSavedPositionZ;
     }
 
-    private void SaveCurrentIngameAttributes()
+    private void SaveCurrentIngameAttributes(bool isSavePosition)
     {
+        this.attributeSavedPositionEnabled = isSavePosition;
+
         // 플레이어 속성 값 호출
         this.player.CallUpdatePlayerIngameAttributes();
 
@@ -701,6 +722,11 @@ public class GameManager : MonoBehaviour
         this.attributePlayerMagicGiantStack = 0;
         this.attributePlayerPoisonStack = 0;
 
+        this.attributeSavedPositionEnabled = false;
+        this.attributeSavedSceneNumber = 0;
+        this.attributeSavedPositionX = 0;
+        this.attributeSavedPositionY = 0;
+        this.attributeSavedPositionZ = 0;
     }
     private void SetIngameAttributesBySavedData(IEnumerable<IngameAttribute> ingameAttributes)
     {
@@ -751,6 +777,21 @@ public class GameManager : MonoBehaviour
                         break;
                     case NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE:
                         attributeIsDisplayGuide = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_ENABLED:
+                        attributeSavedPositionEnabled = attribute.value == 0 ? false : true;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_SCENE_NUMBER:
+                        attributeSavedSceneNumber = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_X:
+                        attributeSavedPositionX = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Y:
+                        attributeSavedPositionY = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Z:
+                        attributeSavedPositionZ = attribute.value;
                         break;
                 }
             }
@@ -848,6 +889,41 @@ public class GameManager : MonoBehaviour
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE,
             value: this.attributeIsDisplayGuide == true ? 1 : 0
         ));
+
+        if (this.attributeSavedPositionEnabled)
+        {
+            ingameAttributes.Add(new IngameAttribute(
+                id: index++,
+                userId: userId,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_ENABLED,
+                value: this.attributeSavedPositionEnabled == true ? 1 : 0
+            ));
+            ingameAttributes.Add(new IngameAttribute(
+                id: index++,
+                userId: userId,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_SAVED_SCENE_NUMBER,
+                value: SceneManager.GetSceneByName(this.currentSceneName).buildIndex
+            ));
+            ingameAttributes.Add(new IngameAttribute(
+                id: index++,
+                userId: userId,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_X,
+                value: this.attributeSavedPositionX
+            ));
+            ingameAttributes.Add(new IngameAttribute(
+                id: index++,
+                userId: userId,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Y,
+                value: this.attributeSavedPositionY
+            ));
+            ingameAttributes.Add(new IngameAttribute(
+                id: index++,
+                userId: userId,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Z,
+                value: this.attributeSavedPositionZ
+            ));
+        }
+
 
         return ingameAttributes;
     }

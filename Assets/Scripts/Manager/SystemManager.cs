@@ -306,18 +306,18 @@ public class SystemManager : MonoBehaviour
     {
         IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
 
-        int index = 0;
         foreach(JsonData datum in data)
         {
             int _userId = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLIMN_USER_ID].ToString());
 
             if(userId == _userId)
             {
-                string _attributeName = datum[NameManager.JSON_COLUMN_ATTRIBUTE_NAME].ToString();
+                int _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
                 int _value = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_VALUE].ToString());
+                string _attributeName = datum[NameManager.JSON_COLUMN_ATTRIBUTE_NAME].ToString();
 
                 ingameAttributes.Add(new IngameAttribute(
-                    id: index++,
+                    id: _id,
                     userId: _userId,
                     attributeName: _attributeName,
                     value: _value

@@ -62,24 +62,39 @@ public class Player : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
-        bool _isActiveMagicFairy, _isActiveMagicHuman;
-        int _magicGiantStack;
 
         manager.SetPlayerIngameAttributes(
-            isActiveBeads: out this.isActiveBeads,
-            isActiveMinimap: out this.isActiveMinimap,
-            isActiveMagicFairy: out _isActiveMagicFairy,
-            isActiveMagicHuman: out _isActiveMagicHuman,
-            life: out this.currentLife,
-            currentHp: out this.currentHp,
-            currentConfusion: out this.confusionStack,
-            magicGiantStack: out _magicGiantStack,
-            poisonStack: out this.poisonStack
+            isActiveBeads: out bool[]  _isActieBeads,
+            isActiveMinimap: out bool _isActiveMinimap,
+            isActiveMagicFairy: out bool _isActiveMagicFairy,
+            isActiveMagicHuman: out bool _isActiveMagicHuman,
+            life: out int _currentLife,
+            currentHp: out int _currentHp,
+            currentConfusion: out int _confusionStack,
+            magicGiantStack: out int _magicGiantStack,
+            poisonStack: out int _poisonStack,
+            savedPositionEnabled: out bool _savedPositionEnabled,
+            savedPositionX: out int _savedPositionX,
+            savedPositionY: out int _savedPositionY,
+            savedPositionZ: out int _savedPositionZ
         );
 
+        this.isActiveBeads = _isActieBeads;
+        this.isActiveMinimap = _isActiveMinimap;
         this.isActiveMagicFairy = _isActiveMagicFairy;
         this.isActiveMagicHuman = _isActiveMagicHuman;
+        this.currentLife = _currentLife;
+        this.currentHp = _currentHp;
+        this.confusionStack = _confusionStack;
         this.magicGiantStack = _magicGiantStack;
+        this.poisonStack = _poisonStack;
+
+        if (_savedPositionEnabled)
+        {
+            ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
+            //this.transform.position = new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ);
+            Debug.Log("position : " + this.transform.position);
+        }
 
         UpdateBeadVisibility();
     }
@@ -238,6 +253,8 @@ public class Player : MonoBehaviour
 
     public void CallUpdatePlayerIngameAttributes()
     {
+        Vector3 position = this.transform.position;
+
         manager.UpdatePlayerIngameAttributes(
             isActiveBeads: this.isActiveBeads,
             isActiveMinimap: this.isActiveMinimap,
@@ -247,7 +264,10 @@ public class Player : MonoBehaviour
             currentHp: this.currentHp,
             currentConfusion: this.confusionStack,
             magicGiantStack: this.magicGiantStack,
-            poisonStack: this.poisonStack
+            poisonStack: this.poisonStack,
+            attributeSavedPositionX: (int)position.x,
+            attributeSavedPositionY: (int)position.y,
+            attributeSavedPositionZ: (int)position.z
         );
     }
 

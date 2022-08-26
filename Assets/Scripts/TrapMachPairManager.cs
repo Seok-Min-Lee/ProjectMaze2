@@ -79,12 +79,10 @@ public class TrapMachPairManager : Trap
 
     private void MachPairSuccess()
     {
-        Debug.Log("Mach Pair Success");
     }
 
     private void MachPairFail()
     {
-        Debug.Log("Mach Pair Fail");
         player.currentHp -= 33;
     }
 
