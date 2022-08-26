@@ -393,18 +393,17 @@ public class GameManager : MonoBehaviour
             this.dialogueSequenceNo = 0;
             npcName.text = npc.npcName;
 
-            DialogueCollection _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.situationNo));
-
             if (npc.type == NpcType.Goblin)
             {
-                this.dialogueSequenceSubNo = GetGoblinInteracionDialogueSequenceSubNo(dialogues: _dialogueCollection);
+                this.dialogueSequenceSubNo = GetGoblinInteracionDialogueSequenceSubNo(dialogues: dialogues);
 
-                dialogueCollection = new DialogueCollection(_dialogueCollection.Where(dialogue => dialogue.sequenceSubNo == this.dialogueSequenceSubNo));
+                dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.sequenceSubNo == this.dialogueSequenceSubNo));
             }
             else
             {
                 this.dialogueSequenceSubNo = 0;
-                dialogueCollection = _dialogueCollection;
+
+                dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.situationNo));
             }
         }
     }
