@@ -296,10 +296,12 @@ public class GameManager : MonoBehaviour
 
     public void ActivateMinimap(bool isActive)
     {
-        if(minimapCamera != null)
+        minimapVisible = isActive;
+        minimap.SetActive(minimapVisible);
+
+        if (minimapVisible &&
+           minimapCamera != null)
         {
-            minimapVisible = isActive;
-            minimap.SetActive(minimapVisible);
             minimapCamera.SetActive(minimapVisible);
 
             switch (currentSceneName)
