@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6440326994472423460}
   - component: {fileID: 6431274966472623860}
   - component: {fileID: 6367151702110703029}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Wood House2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
