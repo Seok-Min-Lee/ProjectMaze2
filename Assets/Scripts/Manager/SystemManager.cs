@@ -13,6 +13,7 @@ public class SystemManager : MonoBehaviour
     public IngameAttributeCollection ingameAttributes { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
     public Dictionary<GuideType, Guide> guideTypeGuideDictionary { get; private set; }
+    public Dictionary<GuideType, GuideType> displayedGuideTypeDictionary { get; private set; }
     public int dialogueMagicHumanSequenceSubNo { get; private set; }
     public int dialogueMagicFairySequenceSubNo { get; private set; }
     public int dialogueMagicGiantSequenceSubNo { get; private set; }
@@ -50,6 +51,7 @@ public class SystemManager : MonoBehaviour
 
         lastDialogueIndexDictionary = new Dictionary<int, int>();
         guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
+        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
     }
 
     public bool TryLogIn(string account, string password)
@@ -78,6 +80,7 @@ public class SystemManager : MonoBehaviour
         npcNameIndexDictionary = new Dictionary<string, int>();
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
         guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
+        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
 
         logInedUser = new User(
             id: -1,

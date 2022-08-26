@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
     public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
     public Text guideHead, guideBody;   // 가이드 제목, 설명
-
+    public Toggle displayGuideToggle;
     public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
 
     public Player player;
@@ -48,16 +48,15 @@ public class GameManager : MonoBehaviour
     string currentSceneName;
     bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
 
-    Dictionary<GuideType, GuideType> displayedGuideTypeDictionary;
+    
 
     float skyboxRotation;
     //int userId;
 
     private void Awake()
     {
-        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
-
         SetIngameAttributes();
+        displayGuideToggle.isOn = this.attributeIsDisplayGuide;
     }
 
     private void Start()
@@ -191,8 +190,10 @@ public class GameManager : MonoBehaviour
     public void DisplayGuideByGuideType(GuideType guideType)
     {
         Guide guide;
-        if (!this.isDisplayGuide && 
-            !displayedGuideTypeDictionary.ContainsKey(guideType) &&
+
+        if (this.attributeIsDisplayGuide &&
+            !this.isDisplayGuide && 
+            !SystemManager.instance.displayedGuideTypeDictionary.ContainsKey(guideType) &&
             SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
         {
             player.StopPlayerMotion();
@@ -201,7 +202,7 @@ public class GameManager : MonoBehaviour
             guideHead.text = guide.title;
             guideBody.text = guide.description;
 
-            displayedGuideTypeDictionary.Add(key: guideType, value: guideType);
+            SystemManager.instance.displayedGuideTypeDictionary.Add(key: guideType, value: guideType);
         }
     }
 
@@ -220,6 +221,7 @@ public class GameManager : MonoBehaviour
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
         // 설정 값 저장 - 추가할 것
+        this.attributeIsDisplayGuide = displayGuideToggle.isOn;
     }
 
     public void OnClickGameMenuCancelButton()
@@ -242,7 +244,6 @@ public class GameManager : MonoBehaviour
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
-        // 설정 값 저장 - 추가할 것
         SaveCurrentIngameAttributes();
 
         //UnityEditor.EditorApplication.isPlaying = false;
