@@ -450,13 +450,16 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStayInTrap(GameObject trapGameObject)
     {
-        TrapTrafficLight trap = trapGameObject.GetComponent<TrapTrafficLight>();
-        if (trap != null &&
-            trap.trafficLightType == TrapTrafficLightType.Red &&
-            IsMoving())
+        Trap trap = trapGameObject.GetComponent<Trap>();
+
+        if(trap != null)
         {
-            OnDamage(value: maxHp, isAvoidable: false);
-            trap.DeactivateEvent(player: this);
+            switch (trap.type)
+            {
+                case TrapType.TrafficLight:
+                    trap.GetComponent<TrapTrafficLight>().Jaywalk(player: this);
+                    break;
+            }
         }
     }
 

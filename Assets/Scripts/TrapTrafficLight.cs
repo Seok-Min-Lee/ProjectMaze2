@@ -49,11 +49,12 @@ public class TrapTrafficLight : Trap
 
     public void Jaywalk(Player player)
     {
-        //if(type == TrapTrafficLightType.Red &&
-        //   player.IsMoving())
-        //{
-        //    player.ChangeCurrentHp(value: -damage);
-        //}
+        if (trafficLightType == TrapTrafficLightType.Red &&
+            player.IsMoving())
+        {
+            player.OnDamage(value: player.maxHp, isAvoidable: false);
+            this.DeactivateEvent(player: this.player);
+        }
     }
 
     IEnumerator Timer()
