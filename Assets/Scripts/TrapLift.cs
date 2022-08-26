@@ -46,7 +46,6 @@ public class TrapLift : Trap
                     positionVector.y = positionY;
 
                     StopAllCoroutines();
-                    //StopCoroutine(UpdateRisingState());
                     StartCoroutine(UpdateRisingState());
 
                 }
@@ -65,7 +64,6 @@ public class TrapLift : Trap
                     positionVector.y = -positionY;
 
                     StopAllCoroutines();
-                    //StopCoroutine(UpdateRisingState());
                     StartCoroutine(UpdateRisingState());
 
                 }
