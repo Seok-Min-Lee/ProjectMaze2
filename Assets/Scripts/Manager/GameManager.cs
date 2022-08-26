@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
     // 인게임 UI
-    public GameObject normalPanel, interactPanel, gameMenuPanel, guidePanel, deathPanel;   // 평상시, 상호작용, 게임메뉴, 가이드, 게임오버
+    public GameObject normalPanel, interactPanel, gameMenuPanel, guidePanel, gameOverPanel;   // 평상시, 상호작용, 게임메뉴, 가이드, 게임오버
     public GameObject interactableAlram;
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     bool minimapVisible;
 
     string currentSceneName;
-    bool isPause, isDisplayGuide, isDisplayGameMenu;
+    bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
 
     Dictionary<TrapType, bool> displayedTrapGuideDictionary;
 
@@ -251,6 +251,19 @@ public class GameManager : MonoBehaviour
     public void OnClickGuideOKButton()
     {
         SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+    }
+
+    public void OnClickGameOverReTryButton()
+    {
+        isDisplayGameOver = false;
+
+        gameOverPanel.SetActive(isDisplayGameOver);
+
+        player._input.controlEnable = !isDisplayGameOver;
+        Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
+
+        SystemManager.instance.ingameAttributes.Clear();
+        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
     }
 
     public void ActivateSkyboxByPlayerBeads(bool[] isActiveBeads)
@@ -485,7 +498,12 @@ public class GameManager : MonoBehaviour
         // 게임오버
         if (player.currentLife <= 0 && player.currentHp <= 0)
         {
-            deathPanel.SetActive(true);
+            isDisplayGameOver = true;
+
+            gameOverPanel.SetActive(isDisplayGameOver);
+
+            player._input.controlEnable = !isDisplayGameOver;
+            Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
         }
     }
 
