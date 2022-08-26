@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
         SaveCurrentIngameAttributes();
         SystemManager.instance.ClearDataAll();
 
-        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOADING);
+        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
     }
 
     public void OnClickGameMenuQuitButton()
