@@ -6,6 +6,7 @@ public class VillageObjectManger : MonoBehaviour
 {
     public GameObject[] giantStoneStatues;
     public GameObject[] giantTwins;
+    public MeshRenderer[] invisuableWalls;
 
     bool isClearGame;
 
@@ -20,6 +21,10 @@ public class VillageObjectManger : MonoBehaviour
         foreach (GameObject giantTwin in giantTwins)
         {
             giantTwin.SetActive(this.isClearGame);
+        }
+        foreach(MeshRenderer wall in invisuableWalls)
+        {
+            wall.enabled = !this.isClearGame;
         }
     }
 }
