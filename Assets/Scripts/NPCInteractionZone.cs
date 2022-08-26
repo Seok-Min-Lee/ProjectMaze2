@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NPCInteractionZone : MonoBehaviour
@@ -8,6 +6,7 @@ public class NPCInteractionZone : MonoBehaviour
     public GameObject NPCObject;
     public GameObject effect;
     public Transform cameraPoint;
+
     public bool isVolatility { get; private set; }
     public string npcName { get; private set; }
     

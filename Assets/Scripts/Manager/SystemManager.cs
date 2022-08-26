@@ -1,10 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using LitJson;
-using System.IO;
-using System;
 
 public class SystemManager : MonoBehaviour
 {
@@ -42,17 +42,17 @@ public class SystemManager : MonoBehaviour
 
     private void Start()
     {
-        userAccountUserDictionary = new Dictionary<string, User>();
+        this.userAccountUserDictionary = new Dictionary<string, User>();
         LoadUserData(path: Application.dataPath + ValueManager.JSON_PATH_TB_USER);
 
         // µñ¼Å³Ê¸® »ý¼º
-        npcIndexNameDictionary = new Dictionary<int, string>();
-        npcNameIndexDictionary = new Dictionary<string, int>();
-        npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+        this.npcIndexNameDictionary = new Dictionary<int, string>();
+        this.npcNameIndexDictionary = new Dictionary<string, int>();
+        this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
 
-        lastDialogueIndexDictionary = new Dictionary<int, int>();
-        guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
-        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
+        this.lastDialogueIndexDictionary = new Dictionary<int, int>();
+        this.guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
+        this.displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
     }
 
     public bool TryLogIn(string account, string password)
@@ -60,7 +60,7 @@ public class SystemManager : MonoBehaviour
         if(userAccountUserDictionary.TryGetValue(key: account, value: out User _user) &&
            string.Equals(a: password, b: _user.password))
         {
-            logInedUser = _user;
+            this.logInedUser = _user;
             LoadDataAll();
 
             return true;
@@ -77,20 +77,20 @@ public class SystemManager : MonoBehaviour
 
     public void DeleteDataExclusiveUsers()
     {
-        IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
-        Dictionary<int, int> lastDialogueIndexDictionary = new Dictionary<int, int>();
-        dialogueMagicHumanSequenceSubNo = 0;
-        dialogueMagicFairySequenceSubNo = 0;
-        dialogueMagicGiantSequenceSubNo = 0;
+        this.ingameAttributes = new IngameAttributeCollection();
+        this.lastDialogueIndexDictionary = new Dictionary<int, int>();
+        this.dialogueMagicHumanSequenceSubNo = 0;
+        this.dialogueMagicFairySequenceSubNo = 0;
+        this.dialogueMagicGiantSequenceSubNo = 0;
 
-        npcIndexNameDictionary = new Dictionary<int, string>();
-        npcNameIndexDictionary = new Dictionary<string, int>();
-        npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
-        guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
-        displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
+        this.npcIndexNameDictionary = new Dictionary<int, string>();
+        this.npcNameIndexDictionary = new Dictionary<string, int>();
+        this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+        this.guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
+        this.displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
 
-        logInedUser = new User(
-            id: -1,
+        this.logInedUser = new User(
+            id: 0,
             account: String.Empty,
             password: String.Empty
         );
@@ -107,7 +107,7 @@ public class SystemManager : MonoBehaviour
 
     public bool GetNpcIndexByName(string name, out int index)
     {
-        if (npcNameIndexDictionary.TryGetValue(key: name, value: out index))
+        if (this.npcNameIndexDictionary.TryGetValue(key: name, value: out index))
         {
             return true;
         }
@@ -117,7 +117,7 @@ public class SystemManager : MonoBehaviour
 
     public bool GetNpcNameByIndex(int index, out string name)
     {
-        if (npcIndexNameDictionary.TryGetValue(key: index, out name))
+        if (this.npcIndexNameDictionary.TryGetValue(key: index, out name))
         {
             return true;
         }
@@ -127,7 +127,7 @@ public class SystemManager : MonoBehaviour
 
     public bool GetDialoguesByNpcIndex(int index, out DialogueCollection dialogueCollection)
     {
-        if (npcIndexDialogueListDictionary.TryGetValue(key: index, out dialogueCollection))
+        if (this.npcIndexDialogueListDictionary.TryGetValue(key: index, out dialogueCollection))
         {
             return true;
         }
@@ -154,7 +154,11 @@ public class SystemManager : MonoBehaviour
         NpcCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
         foreach (NPC raw in npcs)
         {
-            npcNameIndexDictionary.Add(key: raw.name, value: raw.id);
+            string npcName = raw.name;
+            if(!this.npcNameIndexDictionary.ContainsKey(key: npcName))
+            {
+                this.npcNameIndexDictionary.Add(key: npcName, value: raw.id);
+            }
         }
 
         DialogueCollection dialogues = ConvertJsonDataToDialogue(data: dialogueRaws);
@@ -166,18 +170,18 @@ public class SystemManager : MonoBehaviour
                 {
                     int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
 
-                    if (!lastDialogueIndexDictionary.ContainsKey(lastIndex))
+                    if (!this.lastDialogueIndexDictionary.ContainsKey(lastIndex))
                     {
-                        lastDialogueIndexDictionary.Add(lastIndex, lastIndex);
+                        this.lastDialogueIndexDictionary.Add(lastIndex, lastIndex);
                     }
                 }
             }
 
 
-            npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
+            this.npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
 
-        ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
+        this.ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
         this.isClearGame = DetectClearGameByIngameAttributes(attributes: this.ingameAttributes);
 
         GuideCollection guides = ConvertJsonDataToGuide(data: guideRaws);
@@ -185,9 +189,9 @@ public class SystemManager : MonoBehaviour
         {
             GuideType guideType = guide.type;
 
-            if(!guideTypeGuideDictionary.ContainsKey(key: guideType))
+            if(!this.guideTypeGuideDictionary.ContainsKey(key: guideType))
             {
-                guideTypeGuideDictionary.Add(key: guideType, value: guide);
+                this.guideTypeGuideDictionary.Add(key: guideType, value: guide);
             }
         }
     }
@@ -225,7 +229,7 @@ public class SystemManager : MonoBehaviour
                 password: _password
             );
 
-            userAccountUserDictionary.Add(key: _account, value: user);
+            this.userAccountUserDictionary.Add(key: _account, value: user);
         }
     }
 

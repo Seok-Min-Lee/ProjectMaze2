@@ -11,8 +11,7 @@ public class Player : MonoBehaviour
 
     public GameManager manager;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
-    public GameObject[] beads;
-
+    
     public int currentHp, maxHp;
     public int currentLife, maxLife;
 
@@ -308,10 +307,6 @@ public class Player : MonoBehaviour
 
     private void UpdateBeadVisibility()
     {
-        for(int i=0; i<isActiveBeads.Length; i++)
-        {
-            beads[i].SetActive(isActiveBeads[i]);
-        }
         manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
@@ -344,7 +339,6 @@ public class Player : MonoBehaviour
         if(index >= 0 && index < this.isActiveBeads.Length)
         {
             this.isActiveBeads[index] = true;
-            beads[index].SetActive(true);
         }
         manager.UpdateUIActivedBeads(isActives: this.isActiveBeads);
         manager.ActivateSkyboxByPlayerBeads(isActiveBeads: this.isActiveBeads);

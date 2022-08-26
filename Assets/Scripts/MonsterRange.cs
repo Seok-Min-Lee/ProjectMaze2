@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterRange : Monster
@@ -21,9 +20,16 @@ public class MonsterRange : Monster
         instantModifyVec = projectilePosition.position - this.transform.position;
     }
 
-    void Update()
+    private void Update()
     {
         StartCoroutine(Attack());
+    }
+
+    public void TurnBack()
+    {
+        this.isReverse = !this.isReverse;
+
+        this.gameObject.transform.rotation = Quaternion.Euler(0, transform.localEulerAngles.y + ValueManager.MONSTSER_TURN_BACK_ANGLE, 0);
     }
 
     IEnumerator Attack()
@@ -32,23 +38,24 @@ public class MonsterRange : Monster
         {
             animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_DO_ATTACK);
 
-            GameObject instantProjectile = Instantiate(original: projectile,
-                                                       position: transform.position + instantModifyVec,
-                                                       rotation: transform.rotation);
-            if (this.type == MonsterType.Range)
-            {
-                MonsterMissile monsterMissile = instantProjectile.GetComponent<MonsterMissile>();
+            // 투사체 오브젝트 생성
+            GameObject instantProjectile = Instantiate(
+                original: projectile,
+                position: transform.position + instantModifyVec,
+                rotation: transform.rotation
+            );
 
-                instantProjectile.GetComponent<Rigidbody>().velocity = transform.forward * monsterMissile.speed;
-                monsterMissile.damage = this.damage;
-            }
-            else if(this.type == MonsterType.Catapult)
+            // 몬스터 타입에 따라 투사체 세팅
+            switch (this.type)
             {
-                MonsterAttackRock monsterRock = instantProjectile.GetComponent<MonsterAttackRock>();
-                monsterRock.damage = this.damage;
+                case MonsterType.Range:
+                    AttackTypeRange(projectile: instantProjectile);
+                    break;
+                case MonsterType.Catapult:
+                    AttackTypeCatapult(projectile: instantProjectile);
+                    break;
             }
             
-
             attackDelay = 0;
         }
         else
@@ -59,10 +66,17 @@ public class MonsterRange : Monster
         yield return null;
     }
 
-    public void TurnBack()
+    private void AttackTypeRange(GameObject projectile)
     {
-        this.isReverse = !this.isReverse;
+        MonsterMissile monsterMissile = projectile.GetComponent<MonsterMissile>();
 
-        this.gameObject.transform.rotation = Quaternion.Euler(0, transform.localEulerAngles.y + 180, 0);
+        projectile.GetComponent<Rigidbody>().velocity = transform.forward * monsterMissile.speed;
+        monsterMissile.damage = this.damage;
+    }
+
+    private void AttackTypeCatapult(GameObject projectile)
+    {
+        MonsterAttackRock monsterRock = projectile.GetComponent<MonsterAttackRock>();
+        monsterRock.damage = this.damage;
     }
 }

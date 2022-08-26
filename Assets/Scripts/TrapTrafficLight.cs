@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TrapTrafficLight : Trap
@@ -7,6 +6,7 @@ public class TrapTrafficLight : Trap
     public GameManager manager;
     public TrapTrafficLightType trafficLightType { get; private set; }
     public int damage;
+    public float durationRed, durationGreen, durationOrange;
 
     TrapTrafficLightType latestType;
     Player player;
@@ -52,7 +52,9 @@ public class TrapTrafficLight : Trap
         if (trafficLightType == TrapTrafficLightType.Red &&
             player.IsMoving())
         {
-            player.OnDamage(value: player.maxHp, isAvoidable: false);
+            int _damage = this.damage > 0 ? this.damage : player.maxHp;
+
+            player.OnDamage(value: _damage, isAvoidable: false);
             this.DeactivateEvent(player: this.player);
         }
     }
@@ -62,16 +64,16 @@ public class TrapTrafficLight : Trap
         if(player != null)
         {
             trafficLightType = TrapTrafficLightType.Green;
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(durationGreen);
 
             trafficLightType = TrapTrafficLightType.Orange;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(durationOrange);
 
             trafficLightType = TrapTrafficLightType.Red;
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(durationRed);
 
             trafficLightType = TrapTrafficLightType.Orange;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(durationOrange);
 
             StartCoroutine(Timer());
         }

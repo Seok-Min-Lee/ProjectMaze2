@@ -5,12 +5,9 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public ItemType type;
-    public int value;
-
     public Transform mesh;
-
-    float rotateSpeed = 60f;
-
+    public int value;
+    
     private void Start()
     {
         if(type == ItemType.Bead)
@@ -36,6 +33,6 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
-        mesh.Rotate(axis: Vector3.up, angle: rotateSpeed * Time.deltaTime);
+        mesh.Rotate(axis: Vector3.up, angle: ValueManager.ITEM_ROTATION_SPEED * Time.deltaTime);
     }
 }

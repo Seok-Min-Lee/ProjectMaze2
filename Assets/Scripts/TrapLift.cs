@@ -19,17 +19,13 @@ public class TrapLift : Trap
         }
     }
 
-    public override void DeactivateEvent(Player player = null)
-    {
-
-    }
-
     private void Start()
     {
         positionY = transform.position.y;
         positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
 
-        this.transform.position = positionVector;
+        // 바닥과 충돌 방지를 위해 보정해준다.
+        this.transform.position = positionVector + new Vector3(0, ValueManager.TRAP_LIFT_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
@@ -49,7 +45,8 @@ public class TrapLift : Trap
                 {
                     positionVector.y = positionY;
 
-                    StopCoroutine(UpdateRisingState());
+                    StopAllCoroutines();
+                    //StopCoroutine(UpdateRisingState());
                     StartCoroutine(UpdateRisingState());
 
                 }
@@ -67,7 +64,8 @@ public class TrapLift : Trap
                 {
                     positionVector.y = -positionY;
 
-                    StopCoroutine(UpdateRisingState());
+                    StopAllCoroutines();
+                    //StopCoroutine(UpdateRisingState());
                     StartCoroutine(UpdateRisingState());
 
                 }
@@ -79,7 +77,7 @@ public class TrapLift : Trap
 
     private IEnumerator UpdateRisingState()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(ValueManager.TRAP_LIFT_DERECTION_CHANGE_DELAY);
         isRising = !isRising;
     }
 }

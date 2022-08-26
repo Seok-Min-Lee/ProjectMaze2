@@ -19,7 +19,6 @@ public class MonsterMissile : MonoBehaviour
 
     private void Update()
     {
-        //rigid.AddForce(force: Vector3.right * speed, mode: ForceMode.Impulse);
         transform.Rotate(axis: Vector3.forward, angle: rotateSpeed);
     }
 

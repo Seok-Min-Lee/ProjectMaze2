@@ -31,11 +31,6 @@ public class TrapMachPairManager : Trap
         }
     }
 
-    public override void DeactivateEvent(Player player = null)
-    {
-
-    }
-
     private void Start()
     {
         columnValueCountDictionary = new Dictionary<TrapMachPairType, int>();
@@ -83,7 +78,7 @@ public class TrapMachPairManager : Trap
 
     private void MachPairFail()
     {
-        player.currentHp -= 33;
+        player.currentHp -= ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE;
     }
 
     private void MachEnd()
@@ -130,7 +125,7 @@ public class TrapMachPairManager : Trap
 
         while (true)
         {
-            type = (TrapMachPairType)(int)(Random.RandomRange(min: 0, max: leftColumns.Length) + 1);
+            type = (TrapMachPairType)(Random.Range(minInclusive: 0, maxExclusive: leftColumns.Length) + 1);
 
             // 딕셔너리에 포함된 타입은 중복이기 때문에 사용하지 않는다.
             if (!columnValueCountDictionary.ContainsKey(key: type))
@@ -148,7 +143,7 @@ public class TrapMachPairManager : Trap
 
         while (true)
         {
-            type = (TrapMachPairType)(int)(Random.RandomRange(min: 0, max: leftColumns.Length) + 1);
+            type = (TrapMachPairType)(Random.Range(minInclusive: 0, maxExclusive: leftColumns.Length) + 1);
 
             // 딕셔너리에 추가된 타입 중 2번 이상 사용되지 않은 것을 사용한다.
             if ((columnValueCountDictionary.TryGetValue(key: type, value: out int value) && value < 2))

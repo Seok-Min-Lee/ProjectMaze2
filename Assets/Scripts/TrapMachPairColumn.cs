@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TrapMachPairColumn : Trap
@@ -20,17 +18,12 @@ public class TrapMachPairColumn : Trap
         this.isRising = true;
     }
 
-    public override void DeactivateEvent(Player player = null)
-    {
-        
-    }
-
     private void Start()
     {
         positionY = transform.position.y;
         positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
 
-        this.transform.position = positionVector;
+        this.transform.position = positionVector + new Vector3(0, ValueManager.TRAP_MACH_PAIR_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
