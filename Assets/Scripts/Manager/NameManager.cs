@@ -18,6 +18,7 @@ public static class NameManager
     public const string JSON_COLUMN_TITLE = "title";
     public const string JSON_COLUMN_DESCRIPTION = "description";
 
+    public const string INGAME_ATTRIBUTE_NAME_BEAD = "bead";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_1 = "bead1";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_2 = "bead2";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_3 = "bead3";

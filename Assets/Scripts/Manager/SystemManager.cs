@@ -17,13 +17,14 @@ public class SystemManager : MonoBehaviour
     public int dialogueMagicHumanSequenceSubNo { get; private set; }
     public int dialogueMagicFairySequenceSubNo { get; private set; }
     public int dialogueMagicGiantSequenceSubNo { get; private set; }
+    public bool isClearGame { get; private set; }
 
+    public User logInedUser { get; private set; }
+    
     Dictionary<string, User> userAccountUserDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
     Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
-
-    public User logInedUser { get; private set; }
 
     private void Awake()
     {
@@ -68,7 +69,13 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public void ClearDataExclusiveUsers()
+    public void DeleteIngameData()
+    {
+        this.isClearGame = false;
+        this.ingameAttributes.Clear();
+    }
+
+    public void DeleteDataExclusiveUsers()
     {
         IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
         Dictionary<int, int> lastDialogueIndexDictionary = new Dictionary<int, int>();
@@ -93,6 +100,7 @@ public class SystemManager : MonoBehaviour
     {
         this.ingameAttributes.Clear();
         this.ingameAttributes.AddRange(ingameAttributes);
+        this.isClearGame = DetectClearGameByIngameAttributes(this.ingameAttributes);
 
         SaveIngameAttributeToJsonData(ingameAttributes: ingameAttributes);
     }
@@ -170,6 +178,7 @@ public class SystemManager : MonoBehaviour
         }
 
         ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
+        this.isClearGame = DetectClearGameByIngameAttributes(attributes: this.ingameAttributes);
 
         GuideCollection guides = ConvertJsonDataToGuide(data: guideRaws);
         foreach(Guide guide in guides)
@@ -181,6 +190,19 @@ public class SystemManager : MonoBehaviour
                 guideTypeGuideDictionary.Add(key: guideType, value: guide);
             }
         }
+    }
+
+    private bool DetectClearGameByIngameAttributes(IEnumerable<IngameAttribute> attributes)
+    {
+        foreach(IngameAttribute attribute in attributes.Where(attribute => attribute.attributeName.Contains(NameManager.INGAME_ATTRIBUTE_NAME_BEAD)))
+        {
+            if(attribute.value != 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void LoadUserData(string path)

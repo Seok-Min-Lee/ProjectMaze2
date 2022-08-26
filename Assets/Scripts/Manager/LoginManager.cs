@@ -45,7 +45,7 @@ public class LogInManager : MonoBehaviour
 
     public void OnClickNewGame()
     {
-        SystemManager.instance.ingameAttributes.Clear();
+        SystemManager.instance.DeleteIngameData();
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
     }
 

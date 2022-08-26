@@ -234,7 +234,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
 
         SaveCurrentIngameAttributes(isSavePosition: true);
-        SystemManager.instance.ClearDataExclusiveUsers();
+        SystemManager.instance.DeleteDataExclusiveUsers();
 
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
     }
