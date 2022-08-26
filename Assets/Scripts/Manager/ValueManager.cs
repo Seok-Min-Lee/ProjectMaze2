@@ -1,6 +1,8 @@
 public static class ValueManager
 {
-    public const int PLAYER_MAGIC_GIANT_STACK_MAX = 5;  // 플레이어 방어 최대 스택
+    public const int PLAYER_HP_MAX = 100;   // 최대 HP
+    public const int PLAYER_LIFE_MAX = 5;   // 최대 Life 개수
+    public const int PLAYER_MAGIC_GIANT_STACK_MAX = 3;  // 플레이어 방어 최대 스택
     public const int PLAYER_POISON_STACK_MAX = 5;   // 독 최대 스택
     public const int PLAYER_POISON_TIC_DAMAGE = 2;    // 독 스택당 도트 데미지
     public const int PLAYER_CONFUSION_STACK_MAX = 100;  // '공포' 스택 최대값

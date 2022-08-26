@@ -78,7 +78,7 @@ public class TrapMachPairManager : Trap
 
     private void MachPairFail()
     {
-        player.currentHp -= ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE;
+        player.OnDamage(value: ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE, isAvoidable: true);
     }
 
     private void MachEnd()

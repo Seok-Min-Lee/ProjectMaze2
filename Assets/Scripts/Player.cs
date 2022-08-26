@@ -7,37 +7,40 @@ using StarterAssets;
 public class Player : MonoBehaviour
 {
     public StarterAssetsInputs _input { get; private set; }
-    ThirdPersonController _controller;
-
+        
     public GameManager manager;
     public GameObject addictEffect, detoxEffect, confusionEffect, confusionChargeEffect;
-    
-    public int currentHp, maxHp;
-    public int currentLife, maxLife;
 
-    public bool[] isActiveBeads;
-    public bool isActiveMinimap;
+    public int currentHp { get; private set; }
+    public int maxHp { get; private set; }
+    public int currentLife { get; private set; }
+    public int maxLife { get; private set; }
+    public int confusionStack { get; private set; }
+    public int confusionStackMax { get; private set; }
+    public int poisonStack { get; private set; }
     public int magicGiantStack { get; private set; }
+
+    public bool[] isActiveBeads { get; private set; }
+    public bool isActiveMinimap { get; private set; }
     public bool isActiveMagicFairy { get; private set; }
     public bool isActiveMagicHuman { get; private set; }
+    public bool isPoison { get; private set; }
+    public bool isConfusion { get; private set; }
+    public bool isInteract { get; private set; }
+    public bool wasInteractPreprocess { get; private set; }
+    public bool isInteractPreprocessReady { get; private set; }
 
-    public bool isPoison;
-    public bool isConfusion;
-    public bool isInteract, wasInteractPreprocess, isInteractPreprocessReady;
+    private ThirdPersonController _controller;
+    private CharacterController controller;
+    private NPCInteractionZone interactNpc;
 
-    CharacterController controller;
-    Vector3 respawnPoint, interactPoint;
-    NPCInteractionZone interactNpc;
+    private Vector3 respawnPoint, interactPoint;
 
-    float countTimeDetox = 0f, countTimeConfusion = 0f;
-
-    public int confusionStack, confusionStackMax;
-    public int poisonStack;
-    int poisonStackMax, poisonTicDamage;
-    float detoxActivateTime, confusionActivateTime, confusionDuration;
+    private int poisonStackMax, poisonTicDamage;
+    private float detoxActivateTime, confusionActivateTime, confusionDuration, countTimeDetox, countTimeConfusion;
 
     #region ##### 유니티 내장 함수 #####
-    
+
     private void Awake()
     {
         _input = GetComponent<StarterAssetsInputs>();
@@ -46,21 +49,32 @@ public class Player : MonoBehaviour
         InitializeController();
 
         InitializePlayer(
-            poisonStack: out this.poisonStack,
-            confusionStack: out this.confusionStack,
-            poisonStackMax: out this.poisonStackMax,
-            confusionStackMax: out this.confusionStackMax,
-            poisonTicDamage: out this.poisonTicDamage,
-            detoxActivateTime: out this.detoxActivateTime,
-            confusionStackUpdateTime: out this.confusionActivateTime,
-            confusionDuration: out this.confusionDuration
+            hpMax: out int _maxHp,
+            lifeMax: out int _maxLife,
+            poisonStackMax: out int _poisonStackMax,
+            confusionStackMax: out int _confusionStackMax,
+            poisonTicDamage: out int _poisonTicDamage,
+            detoxActivateTime: out float _detoxActivateTime,
+            confusionStackUpdateTime: out float _confusionActivateTime,
+            confusionDuration: out float _confusionDuration
         );
+
+        this.maxHp = _maxHp;
+        this.maxLife = _maxLife;
+        this.poisonStackMax = _poisonStackMax;
+        this.confusionStackMax = _confusionStackMax;
+        this.poisonTicDamage = _poisonTicDamage;
+        this.detoxActivateTime = _detoxActivateTime;
+        this.confusionActivateTime = _confusionActivateTime;
+        this.confusionDuration = _confusionDuration;
+
+        this.countTimeDetox = 0f;
+        this.countTimeConfusion = 0f;
     }
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-
 
         manager.SetPlayerIngameAttributes(
             isActiveBeads: out bool[]  _isActieBeads,
@@ -223,7 +237,8 @@ public class Player : MonoBehaviour
             _input.interact)
         {
             // 상호작용 및 다음 스크립트 존재 여부에 따라 상호작용 상태 업데이트.
-            manager.UpdateInteractionUI(isContinuable: out isInteract);
+            manager.UpdateInteractionUI(isContinuable: out bool _isInteract);
+            this.isInteract = _isInteract;
 
             // 키 입력 초기화.
             _input.interact = false;
@@ -284,8 +299,8 @@ public class Player : MonoBehaviour
     }
 
     private void InitializePlayer(
-        out int poisonStack,
-        out int confusionStack,
+        out int hpMax,
+        out int lifeMax,
         out int poisonStackMax,
         out int confusionStackMax,
         out int poisonTicDamage,
@@ -294,9 +309,8 @@ public class Player : MonoBehaviour
         out float confusionDuration
     )
     {
-        poisonStack = 0;
-        confusionStack = 0;
-
+        hpMax = ValueManager.PLAYER_HP_MAX;
+        lifeMax = ValueManager.PLAYER_LIFE_MAX;
         poisonStackMax = ValueManager.PLAYER_POISON_STACK_MAX;
         confusionStackMax = ValueManager.PLAYER_CONFUSION_STACK_MAX;
         poisonTicDamage = ValueManager.PLAYER_POISON_TIC_DAMAGE;
@@ -316,32 +330,49 @@ public class Player : MonoBehaviour
 
         switch (item.type)
         {
+            case ItemType.BackMirror:
+                break;
+            case ItemType.Bead:
+                // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
+                GetItemBead(index: item.value);
+                break;
             case ItemType.Heal:
                 // hp, life 둘다 0 인 경우 GameOver 추가 필요.
                 ChangeCurrentHp(value: item.value, isDamage: false);
                 break;
+            case ItemType.Life:
+                GetItemLife(value: item.value);
+                break;
             case ItemType.Map:
-                // 미니맵 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
                 this.isActiveMinimap = true;
                 manager.ActivateMinimap(isActive: this.isActiveMinimap);
-                break;
-            case ItemType.Bead:
-                // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
-                ActivateBeadByIndex(index: item.value);
                 break;
         }
 
         gameObject.SetActive(false);
     }
 
-    private void ActivateBeadByIndex(int index)
+    private void GetItemBead(int index)
     {
         if(index >= 0 && index < this.isActiveBeads.Length)
         {
             this.isActiveBeads[index] = true;
         }
+
         manager.UpdateUIActivedBeads(isActives: this.isActiveBeads);
         manager.ActivateSkyboxByPlayerBeads(isActiveBeads: this.isActiveBeads);
+    }
+
+    private void GetItemLife(int value)
+    {
+        if(this.currentLife >= this.maxLife)
+        {
+            this.currentLife = this.maxLife;
+        }
+        else
+        {
+            this.currentLife += value;
+        }
     }
 
     private void OnDamageByMonsterAttack(GameObject obj)
@@ -662,7 +693,7 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    //Gameover 추가.
+                    manager.DisplayGameOver();
                 }
             }
         }

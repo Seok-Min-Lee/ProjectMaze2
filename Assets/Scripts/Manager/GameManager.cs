@@ -202,6 +202,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DisplayGameOver()
+    {
+        if (!isDisplayGameOver)
+        {
+            isDisplayGameOver = true;
+
+            gameOverPanel.SetActive(isDisplayGameOver);
+
+            player._input.controlEnable = !isDisplayGameOver;
+            Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
+        }
+    }
+
     public void OnClickInteractionOption(int choiceNo)
     {
         dialogueSequenceSubNo = choiceNo;
