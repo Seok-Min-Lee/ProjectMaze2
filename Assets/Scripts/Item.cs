@@ -12,22 +12,25 @@ public class Item : MonoBehaviour
     {
         if(type == ItemType.Bead)
         {
+            Material material = mesh.GetComponentInChildren<Renderer>().material;
+            float alpha = material.color.a;
+
             Color color = Color.white;
 
             switch (value)
             {
                 case 0:
-                    color = Color.red;
+                    color = new Color(1, 0, 0, alpha);
                     break;
                 case 1:
-                    color = Color.green;
+                    color = new Color(0, 1, 0, alpha);
                     break;
                 case 2:
-                    color = Color.blue;
+                    color = new Color(0, 0, 1, alpha);
                     break;
             }
 
-            mesh.GetComponentInChildren<Renderer>().material.color = color;
+            material.color = color;
         }
     }
 
