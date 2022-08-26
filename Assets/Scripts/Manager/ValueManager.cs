@@ -17,6 +17,9 @@ public static class ValueManager
     public const int PLAYER_POISON_TIC_DAMAGE = 2;    // 독 스택당 도트 데미지
     public const int PLAYER_CONFUSION_STACK_MAX = 100;  // '공포' 스택 최대값
 
+    public const float TRAP_FADE_IN_AND_OUT_UPDATE_COUNT_PER_ONE_SECOND = 20.0f; // 1초간 매쉬 업데이트 횟수, 이것의 역수가 업데이트 인터벌 시간
+    public const float TRAP_FADE_IN_AND_OUT_FADE_CHANGE_DELAY = 3f;  // Fade In 과 Out 완료 후 대기 시간.
+
     public const float TIME_SCALE_PASUE = 0f;
     public const float TIME_SCALE_PLAY = 1.0f;
 

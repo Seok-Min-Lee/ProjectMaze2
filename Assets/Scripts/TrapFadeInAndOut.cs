@@ -9,15 +9,18 @@ public class TrapFadeInAndOut : Trap
     Renderer renderer;
     Color updateColor;
 
-    float updateCount = 10.0f;
-    float delayFadeChange = 2.0f, durationFade = 1.0f;
-    float updateTime;
+    float delayFadeChange;  // 매쉬 변환 완료 후 반대로 변환하기까지 대기시간
+    float updateCountPerSecond; // 1초당 매쉬 업데이트 횟수
+    float updateIntervalTime;   // 매쉬 업데이트 인터벌
 
     private void Start()
     {
         renderer = GetComponent<Renderer>();
 
-        updateTime = (float)1 / (updateCount * durationFade);
+        delayFadeChange = ValueManager.TRAP_FADE_IN_AND_OUT_FADE_CHANGE_DELAY;
+        
+        updateCountPerSecond = ValueManager.TRAP_FADE_IN_AND_OUT_UPDATE_COUNT_PER_ONE_SECOND;
+        updateIntervalTime = (float)1 / updateCountPerSecond;
     }
 
     public override void ActivateEvent(Player player = null)
@@ -49,11 +52,11 @@ public class TrapFadeInAndOut : Trap
         while (isActive)
         {
             // Fade Out
-            for (int i = (int)updateCount; i >= 0; i--)
+            for (int i = (int)updateCountPerSecond; i >= 0; i--)
             {
-                UpdateMaterialAlphaValue(value: (float)(i / updateCount));
+                UpdateMaterialAlphaValue(value: (float)(i / updateCountPerSecond));
 
-                yield return new WaitForSeconds(updateTime);
+                yield return new WaitForSeconds(updateIntervalTime);
             }
             this.GetComponent<Collider>().enabled = false;
 
@@ -61,11 +64,11 @@ public class TrapFadeInAndOut : Trap
 
             // Fade In
             this.GetComponent<Collider>().enabled = true;
-            for (int i = 0; i <= updateCount; i++)
+            for (int i = 0; i <= updateCountPerSecond; i++)
             {
-                UpdateMaterialAlphaValue(value: (float)(i / updateCount));
+                UpdateMaterialAlphaValue(value: (float)(i / updateCountPerSecond));
 
-                yield return new WaitForSeconds(updateTime);
+                yield return new WaitForSeconds(updateIntervalTime);
             }
 
             yield return new WaitForSeconds(delayFadeChange);
