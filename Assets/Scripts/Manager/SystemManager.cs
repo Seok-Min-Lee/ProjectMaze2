@@ -10,12 +10,6 @@ public class SystemManager : MonoBehaviour
 {
     public static SystemManager instance;
 
-    const string USER_JSON_PATH = "/Resources/tb_user.json";
-    const string NPC_JSON_PATH = "/Resources/tb_npc.json";
-    const string DIALOGUE_JSON_PATH = "/Resources/tb_dialogue.json";
-    const string INGAME_ATTRIBUTE_PATH = "/Resources/tb_ingame_attribute.json";
-    const string GUIDE_JOSN_PATH = "/Resources/tb_guide.json";
-
     public IngameAttributeCollection ingameAttributes { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
     public Dictionary<GuideType, Guide> guideTypeGuideDictionary { get; private set; }
@@ -47,7 +41,7 @@ public class SystemManager : MonoBehaviour
     private void Start()
     {
         userAccountUserDictionary = new Dictionary<string, User>();
-        LoadUserData(path: Application.dataPath + USER_JSON_PATH);
+        LoadUserData(path: Application.dataPath + ValueManager.JSON_PATH_TB_USER);
 
         // 딕셔너리 생성
         npcIndexNameDictionary = new Dictionary<int, string>();
@@ -136,10 +130,10 @@ public class SystemManager : MonoBehaviour
         // Json 형식 데이터 로드
         JsonData npcRaws, dialogueRaws, ingameAttributeRaws, guideRaws;
         LoadJsonRawData(
-            npcDataPath: Application.dataPath + NPC_JSON_PATH,
-            dialogueDataPath: Application.dataPath + DIALOGUE_JSON_PATH,
-            ingameAttributePath: Application.dataPath + INGAME_ATTRIBUTE_PATH,
-            guidePath: Application.dataPath + GUIDE_JOSN_PATH,
+            npcDataPath: Application.dataPath + ValueManager.JSON_PATH_TB_NPC,
+            dialogueDataPath: Application.dataPath + ValueManager.JSON_PATH_TB_DIALOGUE,
+            ingameAttributePath: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_ATTRIBUTE,
+            guidePath: Application.dataPath + ValueManager.JSON_PATH_TB_GUIDE,
             npcRaws: out npcRaws,
             dialogueRaws: out dialogueRaws,
             ingameAttributeRaws: out ingameAttributeRaws,
@@ -358,6 +352,6 @@ public class SystemManager : MonoBehaviour
     {
         JsonData data = JsonMapper.ToJson(ingameAttributes);
 
-        File.WriteAllText(path: Application.dataPath + INGAME_ATTRIBUTE_PATH, contents: data.ToString());
+        File.WriteAllText(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_ATTRIBUTE, contents: data.ToString());
     }
 }

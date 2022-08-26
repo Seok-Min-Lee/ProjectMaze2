@@ -9,9 +9,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    const string PREFIX_PLAYER_LIFE = "X ";
-    const string PREFIX_PLAYER_EFFECT_STACK = "X ";
-
     // 카메라
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
@@ -85,7 +82,7 @@ public class GameManager : MonoBehaviour
             UpdateMinimap();
 
             skyboxRotation += Time.deltaTime;
-            RenderSettings.skybox.SetFloat("_Rotation", skyboxRotation);
+            RenderSettings.skybox.SetFloat(ValueManager.PROPERY_SKYBOX_ROTATION, skyboxRotation);
         }
     }
 
@@ -478,22 +475,22 @@ public class GameManager : MonoBehaviour
     private void DefaultUIUpadate()
     {
         // 체력 및 공포
-        playerLifeText.text = PREFIX_PLAYER_LIFE + player.currentLife.ToString();
+        playerLifeText.text = ValueManager.PREFIX_PLAYER_LIFE + player.currentLife.ToString();
         playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
         playerConfusionBar.localScale = new Vector3((float)player.confusionStack / player.confusionStackMax, 1, 1);
 
         // 마법 효과
         bool isActiveMagicGiant = player.magicGiantStack > 0;
-        bool isACtivePoision = player.poisonStack > 0;
+        bool isActivePoision = player.poisonStack > 0;
 
         magicFairyImage.SetActive(player.isActiveMagicFairy);
         magicGiantImage.SetActive(isActiveMagicGiant);
         magicHumanImage.SetActive(player.isActiveMagicHuman);
-        poisonImage.SetActive(player.isPoison);
+        poisonImage.SetActive(isActivePoision);
         confusionImage.SetActive(player.isConfusion);
 
-        magicGiantStackText.text = PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
-        poisonStackText.text = PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
+        magicGiantStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
+        poisonStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
 
         // 상호작용 가능한 경우
         interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
