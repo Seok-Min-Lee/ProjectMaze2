@@ -179,7 +179,7 @@ public class GameManager : MonoBehaviour
             if (!this.isDisplayGuide)
             {
                 player.StopPlayerMotion();
-                SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+                SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
             }
             else
             {
@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour
             SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
         {
             player.StopPlayerMotion();
-            SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+            SwitchPauseAndCursorLockEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
 
             guideHead.text = guide.title;
             guideBody.text = guide.description;
@@ -217,29 +217,30 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuOKButton()
     {
-        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
         // 설정 값 저장 - 추가할 것
     }
 
     public void OnClickGameMenuCancelButton()
     {
-        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
     }
 
     public void OnClickGameMenuLobbyButton()
     {
-        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        Cursor.lockState = CursorLockMode.Confined;
 
         SaveCurrentIngameAttributes();
-        SystemManager.instance.ClearDataAll();
+        SystemManager.instance.ClearDataExclusiveUsers();
 
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
     }
 
     public void OnClickGameMenuQuitButton()
     {
-        SwitchPauseEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
         // 설정 값 저장 - 추가할 것
         SaveCurrentIngameAttributes();
@@ -250,7 +251,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGuideOKButton()
     {
-        SwitchPauseEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+        SwitchPauseAndCursorLockEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
     }
 
     public void OnClickGameOverReTryButton()
@@ -552,7 +553,7 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
-    private void SwitchPauseEvent(ref GameObject panel, ref bool isActive)
+    private void SwitchPauseAndCursorLockEvent(ref GameObject panel, ref bool isActive)
     {
         isActive = !isActive;
 

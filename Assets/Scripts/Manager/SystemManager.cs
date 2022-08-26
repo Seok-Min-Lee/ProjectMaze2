@@ -66,7 +66,7 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public void ClearDataAll()
+    public void ClearDataExclusiveUsers()
     {
         IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
         Dictionary<int, int> lastDialogueIndexDictionary = new Dictionary<int, int>();
@@ -74,7 +74,6 @@ public class SystemManager : MonoBehaviour
         dialogueMagicFairySequenceSubNo = 0;
         dialogueMagicGiantSequenceSubNo = 0;
 
-        userAccountUserDictionary = new Dictionary<string, User>();
         npcIndexNameDictionary = new Dictionary<int, string>();
         npcNameIndexDictionary = new Dictionary<string, int>();
         npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
