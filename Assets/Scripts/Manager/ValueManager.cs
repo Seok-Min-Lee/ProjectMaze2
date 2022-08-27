@@ -30,14 +30,25 @@ public static class ValueManager
     public const float TIME_SCALE_PASUE = 0f;   // 게임 일시정지 설정을 위한 타임 스케일 값
     public const float TIME_SCALE_PLAY = 1.0f;  // 일시정지 해제 후 설정할 타임 스케일값
 
-    public const string PREFIX_PLAYER_LIFE = "X ";
-    public const string PREFIX_PLAYER_EFFECT_STACK = "X ";
-    public const string PROPERY_SKYBOX_ROTATION = "_Rotation";
+    public const float INGAME_PREFERENCE_BGM_VOLUME_MAX = 0f;    // 출력가능한 소리의 범위는 -80~20 이지만 음질을 고려하여 -40~0 내에서만 제어한다.
+    public const float INGAME_PREFERENCE_BGM_VOLUME_MIN = -40f;  
+    public const float INGAME_PREFERNECE_BGM_VOLUME_MUTE = -80f; // 설정한 값이 최소값이면 뮤트 처리를 하기 위해 -80으로 변환한다.
+    public const float INGAME_PREFERENCE_SE_VOLUME_MAX = 0f;
+    public const float INGAME_PREFERENCE_SE_VOLUME_MIN = -40f;
+    public const float INGAME_PREFERNECE_SE_VOLUME_MUTE = -80f;
+
+    public const string PREFIX_PLAYER_LIFE = "X ";  // UI 에서 플레이어 라이프 옆에 오는 표시
+    public const string PREFIX_PLAYER_EFFECT_STACK = "X ";  // UI 에서 스택을 표현하기 위한 표시
+    
+    public const string PROPERY_SKYBOX_ROTATION = "_Rotation";  // 스카이박스 세팅을 위한 스카이박스 프로퍼티
+    public const string PROPERY_AUDIO_MIXER_BGM = "BGM";    // 오디오 세팅을 위한 오디오 믹서 프로퍼티 (추가한 그룹명)
+    public const string PROPERY_AUDIO_MIXER_EFFECT = "Effect";  // 오디오 세팅을 위한 오디오 믹서 프로퍼티 (추가한 그룹명)
 
     public const string JSON_PATH_TB_USER = "/Resources/tb_user.json";
     public const string JSON_PATH_TB_NPC = "/Resources/tb_npc.json";
     public const string JSON_PATH_TB_DIALOGUE = "/Resources/tb_dialogue.json";
     public const string JSON_PATH_TB_INGAME_ATTRIBUTE = "/Resources/tb_ingame_attribute.json";
+    public const string JSON_PATH_TB_INGAME_PREFERENCE = "/Resources/tb_ingame_preference.json";
     public const string JSON_PATH_TB_GUIDE = "/Resources/tb_guide.json";
 
     public const string ERROR_MESSAGE_LOGIN_FAIL = "로그인 실패. 로그인 정보를 확인해주시길 바랍니다.";

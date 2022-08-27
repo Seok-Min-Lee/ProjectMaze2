@@ -32,12 +32,15 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_1 = "minimap1";
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_2 = "minimap2";
     public const string INGAME_ATTRIBUTE_NAME_MINIMAP_3 = "minimap3";
-    public const string INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE = "displayGuide";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_ENABLED = "savedPositionEnabled";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_SCENE_NUMBER = "savedSceneNumber";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_X = "savedPositionX";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Y = "savedPositionY";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Z = "savedPositionZ";
+
+    public const string INGAME_PREFERENCE_NAME_GUIDE_VISIBLE = "guideVisible";
+    public const string INGAME_PREFERENCE_NAME_BGM_VOLUME = "bgmVolume";
+    public const string INGAME_PREFERENCE_NAME_SE_VOLUME = "seVolume";
 
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_LOADING = "LoadingScene";

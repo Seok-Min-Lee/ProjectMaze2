@@ -11,6 +11,7 @@ public class SystemManager : MonoBehaviour
     public static SystemManager instance;
 
     public IngameAttributeCollection ingameAttributes { get; private set; }
+    public IngamePreferenceCollection ingamePreferences { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
     public Dictionary<GuideType, Guide> guideTypeGuideDictionary { get; private set; }
     public Dictionary<GuideType, GuideType> displayedGuideTypeDictionary { get; private set; }
@@ -43,8 +44,13 @@ public class SystemManager : MonoBehaviour
 
     private void Start()
     {
+        // 유저 데이터 로드
         this.userAccountUserDictionary = new Dictionary<string, User>();
         LoadUserData(path: Application.dataPath + ValueManager.JSON_PATH_TB_USER);
+
+        // 환경 설정 데이터 로드
+        ingamePreferences = new IngamePreferenceCollection();
+        LoadUserIngamePreference(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_PREFERENCE);
 
         // 딕셔너리 생성
         this.npcIndexNameDictionary = new Dictionary<int, string>();
@@ -104,7 +110,15 @@ public class SystemManager : MonoBehaviour
         this.ingameAttributes.AddRange(ingameAttributes);
         this.isClearGame = DetectClearGameByIngameAttributes(this.ingameAttributes);
 
-        SaveIngameAttributeToJsonData(ingameAttributes: ingameAttributes);
+        SaveIngameAttributeToJsonData(ingameAttributes: this.ingameAttributes);
+    }
+
+    public void SaveIngamePreferences(IEnumerable<IngamePreference> preferences)
+    {
+        this.ingamePreferences.Clear();
+        this.ingamePreferences.AddRange(preferences);
+
+        SaveIngamePreferenceToJsonData(preferences: this.ingamePreferences);
     }
 
     public bool GetNpcIndexByName(string name, out int index)
@@ -232,6 +246,28 @@ public class SystemManager : MonoBehaviour
             );
 
             this.userAccountUserDictionary.Add(key: _account, value: user);
+        }
+    }
+
+    private void LoadUserIngamePreference(string path)
+    {
+        JsonData data = LoadJsonData(path: path);
+
+        IngamePreference preference;
+        int _id;
+        string _name, _value;
+
+        foreach(JsonData datum in data)
+        {
+            _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
+            _name = datum[NameManager.JSON_COLUMN_NAME].ToString();
+            _value = datum[NameManager.JSON_COLUMN_VALUE].ToString();
+
+            ingamePreferences.Add(new IngamePreference(
+                id: _id,
+                name: _name,
+                value: _value
+            ));
         }
     }
 
@@ -392,10 +428,17 @@ public class SystemManager : MonoBehaviour
         return guides;
     }
     
-    public void SaveIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
+    private void SaveIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)
     {
         JsonData data = JsonMapper.ToJson(ingameAttributes);
 
         File.WriteAllText(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_ATTRIBUTE, contents: data.ToString());
+    }
+
+    private void SaveIngamePreferenceToJsonData(IEnumerable<IngamePreference> preferences)
+    {
+        JsonData data = JsonMapper.ToJson(preferences);
+
+        File.WriteAllText(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_PREFERENCE, contents: data.ToString());
     }
 }

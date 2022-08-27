@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +19,8 @@ public class GameManager : MonoBehaviour
     public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
     public Text guideHead, guideBody;   // 가이드 제목, 설명
     public Toggle displayGuideToggle;
+    public AudioMixer masterMixer;
+    public Slider bgmSlider, seSlider;
     public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
 
     public Player player;
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         SetIngameAttributes();
-        displayGuideToggle.isOn = this.attributeIsDisplayGuide;
+        SetIngamePreferences();
     }
 
     private void Start()
@@ -194,6 +197,10 @@ public class GameManager : MonoBehaviour
             {
                 player.StopPlayerMotion();
                 SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+
+                this.displayGuideToggle.isOn = this.preferenceGuideVisible;
+                this.bgmSlider.value = this.preferenceBgmVolume;
+                this.seSlider.value = this.preferenceSeVolume;
             }
             else
             {
@@ -206,7 +213,7 @@ public class GameManager : MonoBehaviour
     {
         Guide guide;
 
-        if (this.attributeIsDisplayGuide &&
+        if (this.preferenceGuideVisible &&
             !this.isDisplayGuide && 
             !SystemManager.instance.displayedGuideTypeDictionary.ContainsKey(guideType) &&
             SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
@@ -249,18 +256,28 @@ public class GameManager : MonoBehaviour
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
         // 설정 값 저장 - 추가할 것
-        this.attributeIsDisplayGuide = displayGuideToggle.isOn;
+        this.preferenceGuideVisible = displayGuideToggle.isOn;
+        this.preferenceBgmVolume = bgmSlider.value;
+        this.preferenceSeVolume = seSlider.value;
+
+        // 타입 변환 후 교체 및 저장.
+        IngamePreferenceCollection preferences = ConvertPropertyToIngamePreferences();
+        SystemManager.instance.SaveIngamePreferences(preferences: preferences);
     }
 
     public void OnClickGameMenuCancelButton()
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        
+        RollbackAudioSetting();
     }
 
     public void OnClickGameMenuLobbyButton()
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         Cursor.lockState = CursorLockMode.Confined;
+
+        RollbackAudioSetting();
 
         SaveCurrentIngameAttributes(isSavePosition: true);
         SystemManager.instance.DeleteDataExclusiveUsers();
@@ -271,6 +288,8 @@ public class GameManager : MonoBehaviour
     public void OnClickGameMenuQuitButton()
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+
+        RollbackAudioSetting();
 
         SaveCurrentIngameAttributes(isSavePosition: true);
 
@@ -294,6 +313,30 @@ public class GameManager : MonoBehaviour
 
         SystemManager.instance.ingameAttributes.Clear();
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
+    }
+
+    public void ChangedValueBgmSlider()
+    {
+        float volume = bgmSlider.value;
+
+        if(volume <= ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MIN)
+        {
+            volume = ValueManager.INGAME_PREFERNECE_BGM_VOLUME_MUTE;
+        }
+
+        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, volume);
+    }
+
+    public void ChangedValueSoundEffectSlider()
+    {
+        float volume = bgmSlider.value;
+
+        if (volume <= ValueManager.INGAME_PREFERENCE_SE_VOLUME_MIN)
+        {
+            volume = ValueManager.INGAME_PREFERNECE_SE_VOLUME_MUTE;
+        }
+
+        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, volume);
     }
 
     public void ActivateSkyboxByPlayerBeads(bool[] isActiveBeads)
@@ -614,6 +657,12 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
+    private void RollbackAudioSetting()
+    {
+        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, this.preferenceBgmVolume);
+        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, this.preferenceSeVolume);
+    }
+
     private void SwitchPauseAndCursorLockEvent(ref GameObject panel, ref bool isActive)
     {
         isActive = !isActive;
@@ -642,12 +691,14 @@ public class GameManager : MonoBehaviour
     // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
     bool[] attributeIsActivePlayerBeads;
     bool[] attributeIsActivePlayerMinimaps;
-    bool attributeIsDisplayGuide;
     bool attributeSavedPositionEnabled;
     bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
     int attributePlayerLife, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
     int attributeSavedSceneNumber;
     int attributeSavedPositionX, attributeSavedPositionY, attributeSavedPositionZ;
+
+    bool preferenceGuideVisible;
+    float preferenceBgmVolume, preferenceSeVolume;
 
     public void SetPlayerIngameAttributes(
         out bool[] isActiveBeads,
@@ -757,6 +808,12 @@ public class GameManager : MonoBehaviour
         SetIngameAttributesBySavedData(ingameAttributes: SystemManager.instance.ingameAttributes);
     }
 
+    private void SetIngamePreferences()
+    {
+        SetIngamePreferenceDefault();
+        SetIngamePreferenceBySavedData(preferences: SystemManager.instance.ingamePreferences);
+    }
+
     private void SetIngameAttributesDefault()
     {
         for(int i = 0; i < attributeIsActivePlayerBeads.Length; i++)
@@ -768,7 +825,6 @@ public class GameManager : MonoBehaviour
             attributeIsActivePlayerMinimaps[i] = false;
         }
 
-        this.attributeIsDisplayGuide = true;
         this.attributeIsActivePlayerMagicFairy = false;
         this.attributeIsActivePlayerMagicHuman = false;
 
@@ -784,6 +840,15 @@ public class GameManager : MonoBehaviour
         this.attributeSavedPositionY = 0;
         this.attributeSavedPositionZ = 0;
     }
+
+    private void SetIngamePreferenceDefault()
+    {
+        this.preferenceGuideVisible = true;
+
+        this.preferenceBgmVolume = ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MAX;
+        this.preferenceSeVolume = ValueManager.INGAME_PREFERENCE_SE_VOLUME_MAX;
+    }
+
     private void SetIngameAttributesBySavedData(IEnumerable<IngameAttribute> ingameAttributes)
     {
         if(ingameAttributes.Count() > 0)
@@ -831,9 +896,6 @@ public class GameManager : MonoBehaviour
                     case NameManager.INGAME_ATTRIBUTE_NAME_MINIMAP_3:
                         attributeIsActivePlayerMinimaps[2] = attribute.value == 0 ? false : true;
                         break;
-                    case NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE:
-                        attributeIsDisplayGuide = attribute.value == 0 ? false : true;
-                        break;
                     case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_ENABLED:
                         attributeSavedPositionEnabled = attribute.value == 0 ? false : true;
                         break;
@@ -850,6 +912,27 @@ public class GameManager : MonoBehaviour
                         attributeSavedPositionZ = attribute.value;
                         break;
                 }
+            }
+        }
+    }
+
+    private void SetIngamePreferenceBySavedData(IEnumerable<IngamePreference> preferences)
+    {
+        foreach (IngamePreference preference in preferences)
+        {
+            switch (preference.name)
+            {
+                case NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE:
+                    this.preferenceGuideVisible = ConvertManager.ConvertStringToInt(preference.value) == 0 ? false : true;
+                    break;
+
+                case NameManager.INGAME_PREFERENCE_NAME_BGM_VOLUME:
+                    this.preferenceBgmVolume = ConvertManager.ConvertStringToFloat(preference.value);
+                    break;
+
+                case NameManager.INGAME_PREFERENCE_NAME_SE_VOLUME:
+                    this.preferenceSeVolume = ConvertManager.ConvertStringToFloat(preference.value);
+                    break;
             }
         }
     }
@@ -939,12 +1022,6 @@ public class GameManager : MonoBehaviour
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_POISON_STACK,
             value: this.attributePlayerPoisonStack
         ));
-        ingameAttributes.Add(new IngameAttribute(
-            id: index++,
-            userId: userId,
-            attributeName: NameManager.INGAME_ATTRIBUTE_NAME_DISPLAY_GUIDE,
-            value: this.attributeIsDisplayGuide == true ? 1 : 0
-        ));
 
         if (this.attributeSavedPositionEnabled)
         {
@@ -982,5 +1059,30 @@ public class GameManager : MonoBehaviour
 
 
         return ingameAttributes;
+    }
+
+    private IngamePreferenceCollection ConvertPropertyToIngamePreferences()
+    {
+        IngamePreferenceCollection preferences = new IngamePreferenceCollection();
+
+        int index = 0;
+
+        preferences.Add(new IngamePreference(
+            id: index++,
+            name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
+            value: this.preferenceGuideVisible ? 1.ToString() : 0.ToString()
+        ));
+        preferences.Add(new IngamePreference(
+            id: index++,
+            name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
+            value: this.preferenceBgmVolume.ToString()
+        ));
+        preferences.Add(new IngamePreference(
+            id: index++,
+            name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
+            value: this.preferenceBgmVolume.ToString()
+        ));
+
+        return preferences;
     }
 }
