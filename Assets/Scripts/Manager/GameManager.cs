@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public Material[] skyboxMaterials;
 
     public AudioSource backgroundMusic;
+    public Transform playerClearRespawnPosition;
 
     // NPC 상호작용 관련
 
@@ -80,6 +81,13 @@ public class GameManager : MonoBehaviour
         this.situationNo = IsClearGame() ? 1 : 0;
 
         RollbackAudioSetting();
+
+        if(playerClearRespawnPosition != null &&
+           !this.attributeSavedPositionEnabled &&
+           IsClearGame()) 
+        {
+            player.ForceToMove(point: this.playerClearRespawnPosition.position);
+        }
     }
 
     private void LateUpdate()
