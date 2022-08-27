@@ -359,6 +359,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+      propertyPath: effect
+      value: 
+      objectReference: {fileID: 401332978}
+    - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
       propertyPath: isVolatility
       value: 1
       objectReference: {fileID: 0}
@@ -464,6 +468,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+--- !u!1 &401332978 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2449706045965056760, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+  m_PrefabInstance: {fileID: 401332977}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &413072497
 PrefabInstance:
   m_ObjectHideFlags: 0

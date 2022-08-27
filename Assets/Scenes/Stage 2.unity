@@ -665,6 +665,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 410621071}
     m_Modifications:
     - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+      propertyPath: effect
+      value: 
+      objectReference: {fileID: 121309331}
+    - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
       propertyPath: isVolatility
       value: 1
       objectReference: {fileID: 0}
@@ -749,6 +753,11 @@ PrefabInstance:
 --- !u!4 &121309330 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3011829238499852110, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+  m_PrefabInstance: {fileID: 121309329}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &121309331 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2449706045965056760, guid: 444a3284a7a65e542803eb087755986c, type: 3}
   m_PrefabInstance: {fileID: 121309329}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &153265933
@@ -2455,6 +2464,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 410621071}
     m_Modifications:
     - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+      propertyPath: effect
+      value: 
+      objectReference: {fileID: 570802921}
+    - target: {fileID: 325173603641520662, guid: 444a3284a7a65e542803eb087755986c, type: 3}
       propertyPath: isVolatility
       value: 1
       objectReference: {fileID: 0}
@@ -2539,6 +2552,11 @@ PrefabInstance:
 --- !u!4 &570802920 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3011829238499852110, guid: 444a3284a7a65e542803eb087755986c, type: 3}
+  m_PrefabInstance: {fileID: 570802919}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &570802921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2449706045965056760, guid: 444a3284a7a65e542803eb087755986c, type: 3}
   m_PrefabInstance: {fileID: 570802919}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &594599283

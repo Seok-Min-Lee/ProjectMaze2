@@ -369,6 +369,10 @@ PrefabInstance:
       value: Trap Activator
       objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: effect
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: traps.Array.size
       value: 1
       objectReference: {fileID: 0}

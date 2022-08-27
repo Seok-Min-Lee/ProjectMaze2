@@ -76,11 +76,10 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public void DeleteIngameData()
+    public void DeleteIngameIngameAttributeData()
     {
         this.isClearGame = false;
         this.ingameAttributes.Clear();
-        this.ingamePreferences.Clear();
     }
 
     public void DeleteDataExclusiveUsers()

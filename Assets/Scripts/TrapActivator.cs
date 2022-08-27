@@ -2,9 +2,18 @@ using UnityEngine;
 
 public class TrapActivator : MonoBehaviour
 {
+    public GameObject effect;
     public GameObject[] traps;
     public TrapDeactivator deactivator;
     public bool isVolatility;
+
+    private void Start()
+    {
+        if (isVolatility && effect != null)
+        {
+            effect.SetActive(true);
+        }
+    }
 
     public void ActivateTrap(Player player = null)
     {
