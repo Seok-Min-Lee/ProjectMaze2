@@ -22,7 +22,8 @@ public class SystemManager : MonoBehaviour
     public bool isClearGame { get; private set; }
 
     public User logInedUser { get; private set; }
-    
+
+    IngameAttributeCollection ingameAttributeExlusiveLoginedUsers;
     Dictionary<string, User> userAccountUserDictionary;
     Dictionary<int, string> npcIndexNameDictionary;
     Dictionary<string, int> npcNameIndexDictionary;
@@ -52,7 +53,8 @@ public class SystemManager : MonoBehaviour
 
     private void Start()
     {
-        // 딕셔너리 생성
+        this.ingameAttributeExlusiveLoginedUsers = new IngameAttributeCollection();
+
         this.npcIndexNameDictionary = new Dictionary<int, string>();
         this.npcNameIndexDictionary = new Dictionary<string, int>();
         this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
@@ -142,7 +144,12 @@ public class SystemManager : MonoBehaviour
         this.ingameAttributes.AddRange(ingameAttributes);
         this.isClearGame = DetectClearGameByIngameAttributes(this.ingameAttributes);
 
-        SaveIngameAttributeToJsonData(ingameAttributes: this.ingameAttributes);
+        // JSON 데이터를 일부 수정 없이 일괄 처리하기 때문에 다른 유저들의 데이터를 한번에 넘긴다.
+        IngameAttributeCollection ingameAttributeAll = new IngameAttributeCollection();
+        ingameAttributeAll.AddRange(this.ingameAttributes);
+        ingameAttributeAll.AddRange(this.ingameAttributeExlusiveLoginedUsers);
+
+        SaveIngameAttributeToJsonData(ingameAttributes: ingameAttributeAll);
     }
 
     public void SaveIngamePreferences(IEnumerable<IngamePreference> preferences)
@@ -229,6 +236,7 @@ public class SystemManager : MonoBehaviour
             this.npcIndexDialogueListDictionary.Add(key: dialogueGroup.Key, value: new DialogueCollection(dialogueGroup));
         }
 
+        this.ingameAttributeExlusiveLoginedUsers.Clear();
         this.ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
         this.isClearGame = DetectClearGameByIngameAttributes(attributes: this.ingameAttributes);
 
@@ -419,19 +427,24 @@ public class SystemManager : MonoBehaviour
         foreach(JsonData datum in data)
         {
             int _userId = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLIMN_USER_ID].ToString());
+            int _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
+            int _value = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_VALUE].ToString());
+            string _attributeName = datum[NameManager.JSON_COLUMN_ATTRIBUTE_NAME].ToString();
 
-            if(userId == _userId)
+            IngameAttribute attribute = new IngameAttribute(
+                id: _id,
+                userId: _userId,
+                attributeName: _attributeName,
+                value: _value
+            );
+
+            if (userId == _userId)
             {
-                int _id = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_ID].ToString());
-                int _value = ConvertManager.ConvertStringToInt(datum[NameManager.JSON_COLUMN_VALUE].ToString());
-                string _attributeName = datum[NameManager.JSON_COLUMN_ATTRIBUTE_NAME].ToString();
-
-                ingameAttributes.Add(new IngameAttribute(
-                    id: _id,
-                    userId: _userId,
-                    attributeName: _attributeName,
-                    value: _value
-                ));
+                ingameAttributes.Add(attribute);
+            }
+            else
+            {
+                this.ingameAttributeExlusiveLoginedUsers.Add(attribute);
             }
         }
 
