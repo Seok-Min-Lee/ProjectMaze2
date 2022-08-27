@@ -290,6 +290,22 @@ PrefabInstance:
       propertyPath: traps.Array.data[0]
       value: 
       objectReference: {fileID: 3011829237757579281}
+    - target: {fileID: 6494145975913827216, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 6494145975913827216, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 6494145975913827216, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 6494145975914192124, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
 --- !u!4 &325173603641520665 stripped

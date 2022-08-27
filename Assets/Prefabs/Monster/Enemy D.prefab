@@ -82,7 +82,7 @@ MonoBehaviour:
   damage: 50
   projectile: {fileID: 8132394040050530138, guid: b0cab03c8edd6f748aba88fb5c813709, type: 3}
   projectilePosition: {fileID: 5301618393699822548}
-  attackTime: 5
+  attackTime: 6
   isReverse: 0
 --- !u!1 &5301618393699822549
 GameObject:
