@@ -6,13 +6,15 @@ using UnityEngine.SceneManagement;
 public class LoadingSceneManager : MonoBehaviour
 {
     public static string nextScene;
-
     public RectTransform progressBar;
+    public GameObject[] backgrounds;
     
     private void Start()
     {
         progressBar.localScale = new Vector3(0, 1, 1);
         StartCoroutine(LoadScene());
+
+        DisplayLoadingImage();
     }
 
     public static void LoadScene(string sceneName)
@@ -57,6 +59,23 @@ public class LoadingSceneManager : MonoBehaviour
 
                     yield break;
                 }
+            }
+        }
+    }
+
+    private void DisplayLoadingImage()
+    {
+        int index = Random.Range(minInclusive: 0, maxExclusive: backgrounds.Length);
+
+        for(int i = 0; i < backgrounds.Length; i++)
+        {
+            if(index == i) 
+            {
+                backgrounds[i].SetActive(true);
+            }
+            else
+            {
+                backgrounds[i].SetActive(false);
             }
         }
     }
