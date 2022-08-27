@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
-  pushingPower: 20
+  pushingPower: 40
   mark: {fileID: 5697386068898095926}
 --- !u!1001 &991034698966353241
 PrefabInstance:
