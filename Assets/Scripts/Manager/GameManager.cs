@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdateUINormalToInteraction(NPCInteractionZone npc)
+    public void ChangeNormalToInteraction(NPCInteractionZone npc)
     {
         interactNpc = npc;
 
@@ -92,6 +92,17 @@ public class GameManager : MonoBehaviour
 
         // 상호작용 관련 데이터 초기화.
         InitializeInteractionData(npc: interactNpc);
+    }
+
+    public void ChangeInteractionToNormal()
+    {
+        // UI 세팅
+        UpdateUIWhetherInteraction(isInteract: false);
+
+        // NPC 상호작용 후 후처리
+        interactNpc.ActivatePostPorcess();
+
+        interactNpc = null;
     }
 
     public void UpdateUIWhetherInteraction(bool isInteract)

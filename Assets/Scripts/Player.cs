@@ -598,7 +598,7 @@ public class Player : MonoBehaviour
             manager.npcInteractionCamera.transform.rotation = interactNpc.cameraPoint.rotation;
 
             // 카메라 및 UI 업데이트.
-            manager.UpdateUINormalToInteraction(npc: interactNpc);
+            manager.ChangeNormalToInteraction(npc: interactNpc);
 
             // 상호작용 준비 상태 업데이트.
             wasInteractPreprocess = true;
@@ -617,8 +617,7 @@ public class Player : MonoBehaviour
             _input.interact)
         {
             // UI 및 NPC 업데이트.
-            manager.UpdateUIWhetherInteraction(isInteract: false);
-            interactNpc.DisappearByVolatility(isVolatility: interactNpc.isVolatility);
+            manager.ChangeInteractionToNormal();
 
             // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
             isInteractPreprocessReady = false;
