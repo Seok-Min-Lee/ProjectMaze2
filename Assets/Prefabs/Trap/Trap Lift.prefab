@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6253184344901691131}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6253184344077773626
 MeshFilter:
@@ -140,8 +140,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6253184344077773625}
   - {fileID: 7003303020915194513}
+  - {fileID: 6253184344077773625}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -152,9 +152,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6253184344901691131}
     m_Modifications:
+    - target: {fileID: 1336260643670884931, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041442, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041442, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: m_LocalScale.x
@@ -213,6 +217,10 @@ PrefabInstance:
       value: Trap Activator
       objectReference: {fileID: 0}
     - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+      propertyPath: effect
+      value: 
+      objectReference: {fileID: 4921484406325817968}
+    - target: {fileID: 4032829403979041453, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
       propertyPath: isVolatility
       value: 1
       objectReference: {fileID: 0}
@@ -226,6 +234,11 @@ PrefabInstance:
       objectReference: {fileID: 6253184344077773630}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+--- !u!1 &4921484406325817968 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1336260643670884931, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
+  m_PrefabInstance: {fileID: 6253184344483573811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7003303020915194513 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4032829403979041442, guid: f948f723279bc4a4598a69b6850cd303, type: 3}
