@@ -47,7 +47,7 @@ public class SystemManager : MonoBehaviour
 
         // 환경 설정 데이터 로드
         ingamePreferences = new IngamePreferenceCollection();
-        LoadUserIngamePreference(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_PREFERENCE);
+        LoadIngamePreference(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_PREFERENCE);
     }
 
     private void Start()
@@ -62,9 +62,41 @@ public class SystemManager : MonoBehaviour
         this.displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
     }
 
+    public void SignUpUser(string account, string password)
+    {
+        UserCollection users = new UserCollection();
+        users.AddRange(this.userAccountUserDictionary.Values);
+
+        int index = 0;
+        foreach(User user in users)
+        {
+            if(user.id > index)
+            {
+                index = user.id;
+            }
+        }
+        index++;
+
+        User _user = new User(
+            id: index,
+            account: account,
+            password: password
+        );
+
+        users.Add(_user);
+        this.userAccountUserDictionary.Add(key: _user.account, value: _user);
+
+        SaveUserToJsonData(users: users);
+    }
+
+    public bool IsExistAccount(string account)
+    {
+        return this.userAccountUserDictionary.ContainsKey(account);
+    }
+
     public bool TryLogIn(string account, string password)
     {
-        if(userAccountUserDictionary.TryGetValue(key: account, value: out User _user) &&
+        if(this.userAccountUserDictionary.TryGetValue(key: account, value: out User _user) &&
            string.Equals(a: password, b: _user.password))
         {
             this.logInedUser = _user;
@@ -249,7 +281,7 @@ public class SystemManager : MonoBehaviour
         }
     }
 
-    private void LoadUserIngamePreference(string path)
+    private void LoadIngamePreference(string path)
     {
         JsonData data = LoadJsonData(path: path);
 
@@ -426,6 +458,13 @@ public class SystemManager : MonoBehaviour
         }
 
         return guides;
+    }
+
+    private void SaveUserToJsonData(IEnumerable<User> users)
+    {
+        JsonData data = JsonMapper.ToJson(users);
+
+        File.WriteAllText(path: Application.dataPath + ValueManager.JSON_PATH_TB_USER, contents: data.ToString());
     }
     
     private void SaveIngameAttributeToJsonData(IEnumerable<IngameAttribute> ingameAttributes)

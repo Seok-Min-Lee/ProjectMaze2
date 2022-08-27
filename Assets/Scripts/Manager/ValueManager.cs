@@ -54,4 +54,8 @@ public static class ValueManager
 
     public const string ERROR_MESSAGE_LOGIN_FAIL = "로그인 실패. 로그인 정보를 확인해주시길 바랍니다.";
     public const string ERROR_MESSAGE_MODE_SELECT_FAIL = "이어하기 실패. 저장된 게임 정보가 없습니다.";
+    public const string ERROR_MESSAGE_SIGN_UP_OVERLAP = "회원가입 실패. 중복되는 계정이 존재합니다.";
+    public const string ERROR_MESSAGE_SIGN_UP_NOT_INPUT = "회원가입 실패. 입력창에 데이터를 입력해주세요.";
+
+    public const string CONFIRM_MESSAGE_SIGN_UP_SUCCESS = "회원가입 완료. 로그인 해주시길 바랍니다.";
 }

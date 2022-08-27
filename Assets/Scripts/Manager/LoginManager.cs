@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class LogInManager : MonoBehaviour
 { 
     public GameObject inputPanel, modePanel;
-    public Text inputAccount, inputPassword, failureText;
+    public Text inputAccount, inputPassword, failureText, successText;
     public AudioMixer masterMixer;
 
     private void Start()
@@ -16,6 +16,7 @@ public class LogInManager : MonoBehaviour
         modePanel.SetActive(false);
 
         failureText.text = string.Empty;
+        successText.text = string.Empty;
 
         InitAudioMixer();
     }
@@ -24,6 +25,35 @@ public class LogInManager : MonoBehaviour
     {
         //UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
+    }
+
+    public void OnClickSignUp()
+    {
+        string userAccount = inputAccount.text;
+        string userPassword = inputPassword.text;
+
+        if(!string.IsNullOrEmpty(userAccount) && !string.IsNullOrEmpty(userPassword))
+        {
+            if (!SystemManager.instance.IsExistAccount(account: userAccount))
+            {
+                SystemManager.instance.SignUpUser(account: userAccount, password: userPassword);
+
+                StopCoroutine(AlertMessage(text: string.Empty));
+                StartCoroutine(AlertMessage(text: ValueManager.CONFIRM_MESSAGE_SIGN_UP_SUCCESS, target: this.successText));
+            }
+            else
+            {
+                // 이미 존재하는 계정
+                StopCoroutine(AlertMessage(text: string.Empty));
+                StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_OVERLAP, target: this.failureText));
+            }
+        }
+        else
+        {
+            // 미입력 된경우
+            StopCoroutine(AlertMessage(text: string.Empty));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_NOT_INPUT, target: this.failureText));
+        }
     }
 
     public void OnClickSubmit()
@@ -39,7 +69,7 @@ public class LogInManager : MonoBehaviour
         else
         {
             StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_LOGIN_FAIL));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_LOGIN_FAIL, target: this.failureText));
         }
     }
 
@@ -69,7 +99,7 @@ public class LogInManager : MonoBehaviour
         else
         {
             StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL, target: this.failureText));
         }
     }
 
@@ -139,12 +169,15 @@ public class LogInManager : MonoBehaviour
         return !string.IsNullOrEmpty(sceneName);
     }
 
-    private IEnumerator AlertMessage(string text)
+    private IEnumerator AlertMessage(string text, Text target = null)
     {
-        failureText.text = text;
+        if(target != null)
+        {
+            target.text = text;
 
-        yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(3f);
 
-        failureText.text = string.Empty;
+            target.text = string.Empty;
+        }
     }
 }
