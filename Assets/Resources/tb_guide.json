@@ -6,4 +6,5 @@
     ,{"id":4,"guideType":"MachPair","title":"MachPair","description":"같은 색의 짝을 찾아야 하는 함정입니다.\n원하는 색의 기둥에 들어가면 됩니다.\n남은 기둥이 없으면 가운데에 기둥이 생깁니다.\n기둥 위의 보상을 획득하면 출구가 열립니다."}
     ,{"id":5,"guideType":"Manipulate","title":"기본조작","description":"WASD\t:\t이동조작\nG\t:\t상호작용\nSHIFT\t:\t달리기\nSPACE\t:\t점프\nESC\t:\t게임메뉴"}
     ,{"id":6,"guideType":"GameGoal","title":"게임 목표","description":"월드에 숨겨진 구슬을 찾아서 탈출하세요!\n구슬은 3개의 미로에 1개씩 숨겨져 있습니다.\n구슬을 모두 모으면 달라진 월드를 볼 수 있어요!"}
+    ,{"id":7,"guideType":"HelloWorld","title":"게임 시작","description":"환영합니다!\n"}
 ]

@@ -76,13 +76,13 @@ public static class NameManager
     public const string ANIMATION_PARAMETER_DO_DIE = "DoDie";
 
     public const string NPC_NAME_HUMAN_GATEKEEPER = "문지기";
-    public const string NPC_NAME_FAIRY_CHILD = "소인족 아이";
-    public const string NPC_NAME_FAIRY_ADULT = "소인족 청년";
-    public const string NPC_NAME_GIANT_STONE_STATUE = "거인족 석상";
-    public const string NPC_NAME_GIANT_TWIN_A = "쌍둥이 거인A";
-    public const string NPC_NAME_GIANT_TWIN_B = "쌍둥이 거인B";
-    public const string NPC_NAME_HUMAN_CHILD = "인간 아이";
-    public const string NPC_NAME_HUMAN_ADULT = "인간 청년";
+    public const string NPC_NAME_FAIRY_CHILD = "소녀같은 요정";
+    public const string NPC_NAME_FAIRY_ADULT = "소년같은 요정";
+    public const string NPC_NAME_GIANT_STONE_STATUE = "거인 석상";
+    public const string NPC_NAME_GIANT_TWIN_A = "쌍둥이 거인 백";
+    public const string NPC_NAME_GIANT_TWIN_B = "쌍둥이 거인 흑";
+    public const string NPC_NAME_HUMAN_CHILD = "호기심 많은 아이";
+    public const string NPC_NAME_HUMAN_ADULT = "걱정 많은 어른";
     public const string NPC_NAME_GOBLIN = "도깨비";
 
     public const string DIALOGUE_KEYWORD_MAGIC_FAIRY = "소인족의 발걸음";
