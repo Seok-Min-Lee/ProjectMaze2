@@ -17,6 +17,7 @@ public class SystemManager : MonoBehaviour
     public int dialogueMagicHumanSequenceSubNo { get; private set; }
     public int dialogueMagicFairySequenceSubNo { get; private set; }
     public int dialogueMagicGiantSequenceSubNo { get; private set; }
+    public int dialogueEntranceSequenceSubNo { get; private set; }
     public bool isClearGame { get; private set; }
 
     public User logInedUser { get; private set; }
@@ -82,6 +83,7 @@ public class SystemManager : MonoBehaviour
         this.dialogueMagicHumanSequenceSubNo = 0;
         this.dialogueMagicFairySequenceSubNo = 0;
         this.dialogueMagicGiantSequenceSubNo = 0;
+        this.dialogueEntranceSequenceSubNo = 0;
 
         this.npcIndexNameDictionary = new Dictionary<int, string>();
         this.npcNameIndexDictionary = new Dictionary<string, int>();
@@ -307,20 +309,34 @@ public class SystemManager : MonoBehaviour
                 ));
 
                 // 특정 다이얼로그의 id 를 저장하기 위함.
-                if (dialogueType == DialogueType.Event)
+                switch (_npcName)
                 {
-                    if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_FAIRY))
-                    {
-                        dialogueMagicFairySequenceSubNo = sequenceSubNo;
-                    }
-                    else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_GIANT))
-                    {
-                        dialogueMagicGiantSequenceSubNo = sequenceSubNo;
-                    }
-                    else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_HUMAN))
-                    {
-                        dialogueMagicHumanSequenceSubNo = sequenceSubNo;
-                    }
+                    case NameManager.NPC_NAME_GOBLIN:
+                        if (dialogueType == DialogueType.Event)
+                        {
+                            if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_FAIRY))
+                            {
+                                this.dialogueMagicFairySequenceSubNo = sequenceSubNo;
+                            }
+                            else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_GIANT))
+                            {
+                                this.dialogueMagicGiantSequenceSubNo = sequenceSubNo;
+                            }
+                            else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_HUMAN))
+                            {
+                                this.dialogueMagicHumanSequenceSubNo = sequenceSubNo;
+                            }
+                        }
+                        break;
+
+                    case NameManager.NPC_NAME_HUMAN_GATEKEEPER:
+                        if (_text.Contains(NameManager.DIALOGUE_KEYWORD_ENTRANCE))
+                        {
+                            this.dialogueEntranceSequenceSubNo = sequenceSubNo;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }

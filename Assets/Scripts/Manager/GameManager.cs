@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     int situationNo;
     int dialogueSequenceNo, dialogueSequenceSubNo;
     NPCInteractionZone interactNpc;
+    VillageObjectManager villageObjectManager;
 
     // 미니맵 관련
     Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
@@ -58,6 +59,11 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         this.currentSceneName = SceneManager.GetActiveScene().name;
+
+        if(this.currentSceneName == NameManager.SCENE_VILLAGE)
+        {
+            villageObjectManager = GameObject.Find(NameManager.NAME_VILLAGE_OBJECT_MANAGER).GetComponent<VillageObjectManager>();
+        }
 
         if (TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
@@ -517,6 +523,13 @@ public class GameManager : MonoBehaviour
             else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicHumanSequenceSubNo)
             {
                 player.ActivateMagicHuman(isActive: true);
+            }
+            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueEntranceSequenceSubNo)
+            {
+                if(villageObjectManager != null)
+                {
+                    villageObjectManager.OpenPortal();
+                }
             }
         }
     }

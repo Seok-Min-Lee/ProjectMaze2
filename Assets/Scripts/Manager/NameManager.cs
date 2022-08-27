@@ -65,6 +65,8 @@ public static class NameManager
 
     public const string LAYER_PLAYER = "Player";
 
+    public const string NAME_VILLAGE_OBJECT_MANAGER = "VillageObjectManager";
+
     public const string ANIMATION_PARAMETER_RUN_FORWARD = "Run Forward";
     public const string ANIMATION_PARAMETER_STAB_ATTACK = "Stab Attack";
     public const string ANIMATION_PARAMETER_DO_ATTACK = "DoAttack";
@@ -83,6 +85,7 @@ public static class NameManager
     public const string DIALOGUE_KEYWORD_MAGIC_FAIRY = "소인족의 발걸음";
     public const string DIALOGUE_KEYWORD_MAGIC_GIANT = "거인족의 기백";
     public const string DIALOGUE_KEYWORD_MAGIC_HUMAN = "아무 효과 없는 마법";
+    public const string DIALOGUE_KEYWORD_ENTRANCE = "입구";
 
     public const string GUIDE_TYPE_MISTERY_WALL = "MisteryWall";
     public const string GUIDE_TYPE_FADE_IN_AND_OUT = "FadeInAndOut";

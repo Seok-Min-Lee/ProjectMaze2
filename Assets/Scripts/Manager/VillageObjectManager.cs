@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class VillageObjectManger : MonoBehaviour
+public class VillageObjectManager : MonoBehaviour
 {
     public GameObject[] giantStoneStatues;
     public GameObject[] giantTwins;
+    public GameObject portal;
     public MeshRenderer[] invisuableWalls;
     public AudioSource backgroundMusicA, backgroundMusicB;
     bool isClearGame;
@@ -29,11 +30,20 @@ public class VillageObjectManger : MonoBehaviour
         {
             backgroundMusicB.Play();
             backgroundMusicB.loop = true;
+            
+            portal.SetActive(true);
         }
         else
         {
             backgroundMusicA.Play();
-            backgroundMusicA.loop = true;
+            backgroundMusicA.loop = true; 
+            
+            portal.SetActive(false);
         }
+    }
+
+    public void OpenPortal()
+    {
+        portal.SetActive(true);
     }
 }
