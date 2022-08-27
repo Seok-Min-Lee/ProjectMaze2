@@ -20,7 +20,7 @@ public class LogInManager : MonoBehaviour
         InitAudioMixer();
     }
 
-    public void OnClickExit()
+    public void OnClickQuit()
     {
         //UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
