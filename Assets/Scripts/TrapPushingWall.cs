@@ -3,7 +3,7 @@ using UnityEngine;
 public class TrapPushingWall : Trap
 {
     public float pushingPower;
-    public GameObject mark;
+    public Material deactivateMaterial;
     
     Player player;
     Vector3 forceVec;
@@ -38,7 +38,7 @@ public class TrapPushingWall : Trap
     {
         isActive = false;
         this.player = null;
-        
-        mark.SetActive(false);
+
+        this.GetComponent<Renderer>().material = deactivateMaterial;
     }
 }

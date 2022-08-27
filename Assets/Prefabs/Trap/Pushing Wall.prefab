@@ -118,7 +118,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7814026112723970637}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -131,7 +131,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: be299f7edb555bf44a2fca6bd9cfc455, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -180,7 +180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   pushingPower: 40
-  mark: {fileID: 5697386068898095926}
+  deactivateMaterial: {fileID: 2100000, guid: 722fb08c88fb7ef48b8909cf7a6f8457, type: 2}
 --- !u!1001 &991034698966353241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -232,6 +232,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 662cb3565fdecb148be8d15d4c68b732, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7a56755d9048c1b46bb5d6c03cbe46af, type: 2}
     - target: {fileID: 919132149155446097, guid: 662cb3565fdecb148be8d15d4c68b732, type: 3}
       propertyPath: m_Name
       value: Direction
@@ -294,6 +298,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 662cb3565fdecb148be8d15d4c68b732, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7a56755d9048c1b46bb5d6c03cbe46af, type: 2}
     - target: {fileID: 919132149155446097, guid: 662cb3565fdecb148be8d15d4c68b732, type: 3}
       propertyPath: m_Name
       value: Direction
