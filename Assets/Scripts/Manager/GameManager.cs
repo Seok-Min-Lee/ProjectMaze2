@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
         ActivateSkyboxByPlayerBeads(isActiveBeads: this.attributeIsActivePlayerBeads);
 
         this.situationNo = IsClearGame() ? 1 : 0;
+
+        RollbackAudioSetting();
     }
 
     private void LateUpdate()
@@ -1074,13 +1076,13 @@ public class GameManager : MonoBehaviour
         ));
         preferences.Add(new IngamePreference(
             id: index++,
-            name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
+            name: NameManager.INGAME_PREFERENCE_NAME_BGM_VOLUME,
             value: this.preferenceBgmVolume.ToString()
         ));
         preferences.Add(new IngamePreference(
             id: index++,
-            name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
-            value: this.preferenceBgmVolume.ToString()
+            name: NameManager.INGAME_PREFERENCE_NAME_SE_VOLUME,
+            value: this.preferenceSeVolume.ToString()
         ));
 
         return preferences;

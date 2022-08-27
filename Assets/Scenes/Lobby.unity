@@ -674,7 +674,7 @@ RectTransform:
   m_Children:
   - {fileID: 1385569102}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1402,6 +1402,7 @@ MonoBehaviour:
   inputAccount: {fileID: 224696193}
   inputPassword: {fileID: 620128470}
   failureText: {fileID: 1619197961}
+  masterMixer: {fileID: 24100000, guid: 392e05b12223d81449e953bfeececbad, type: 2}
 --- !u!4 &342366963
 Transform:
   m_ObjectHideFlags: 0
@@ -1415,7 +1416,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &344423955
 GameObject:
@@ -2239,7 +2240,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7254013775423901812, guid: aef0b1bf09a88e74093f5ba9d483e2c8, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7254013775423901812, guid: aef0b1bf09a88e74093f5ba9d483e2c8, type: 3}
       propertyPath: m_LocalScale.x
@@ -3025,7 +3026,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &996433646 stripped
 Transform:
@@ -4326,7 +4327,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1552827810
 MonoBehaviour:
@@ -5376,7 +5377,7 @@ Transform:
   - {fileID: 528890644}
   - {fileID: 915953378}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2128463385 stripped
 Transform:

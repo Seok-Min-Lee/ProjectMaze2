@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class LogInManager : MonoBehaviour
 { 
     public GameObject inputPanel, modePanel;
     public Text inputAccount, inputPassword, failureText;
+    public AudioMixer masterMixer;
 
     private void Start()
     {
@@ -14,6 +16,8 @@ public class LogInManager : MonoBehaviour
         modePanel.SetActive(false);
 
         failureText.text = string.Empty;
+
+        InitAudioMixer();
     }
 
     public void OnClickExit()
@@ -66,6 +70,21 @@ public class LogInManager : MonoBehaviour
         {
             StopCoroutine(AlertMessage(text: string.Empty));
             StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL));
+        }
+    }
+
+    private void InitAudioMixer()
+    {
+        foreach (IngamePreference preference in SystemManager.instance.ingamePreferences)
+        {
+            if (preference.name == NameManager.INGAME_PREFERENCE_NAME_BGM_VOLUME)
+            {
+                masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, ConvertManager.ConvertStringToFloat(preference.value));
+            }
+            else if (preference.name == NameManager.INGAME_PREFERENCE_NAME_SE_VOLUME)
+            {
+                masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, ConvertManager.ConvertStringToFloat(preference.value));
+            }
         }
     }
 

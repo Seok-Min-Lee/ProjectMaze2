@@ -5,6 +5,7 @@ public class VillageObjectManager : MonoBehaviour
     public GameObject[] giantStoneStatues;
     public GameObject[] giantTwins;
     public GameObject portal;
+    public GameObject dragonGroup;
     public MeshRenderer[] invisuableWalls;
     public AudioSource backgroundMusicA, backgroundMusicB;
     bool isClearGame;
@@ -26,19 +27,18 @@ public class VillageObjectManager : MonoBehaviour
             wall.enabled = !this.isClearGame;
         }
 
+        dragonGroup.SetActive(this.isClearGame);
+        portal.SetActive(this.isClearGame);
+
         if (this.isClearGame)
         {
             backgroundMusicB.Play();
             backgroundMusicB.loop = true;
-            
-            portal.SetActive(true);
         }
         else
         {
             backgroundMusicA.Play();
             backgroundMusicA.loop = true; 
-            
-            portal.SetActive(false);
         }
     }
 

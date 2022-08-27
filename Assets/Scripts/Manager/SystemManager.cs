@@ -40,10 +40,7 @@ public class SystemManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(this.gameObject);
-    }
 
-    private void Start()
-    {
         // 유저 데이터 로드
         this.userAccountUserDictionary = new Dictionary<string, User>();
         LoadUserData(path: Application.dataPath + ValueManager.JSON_PATH_TB_USER);
@@ -51,7 +48,10 @@ public class SystemManager : MonoBehaviour
         // 환경 설정 데이터 로드
         ingamePreferences = new IngamePreferenceCollection();
         LoadUserIngamePreference(path: Application.dataPath + ValueManager.JSON_PATH_TB_INGAME_PREFERENCE);
+    }
 
+    private void Start()
+    {
         // 딕셔너리 생성
         this.npcIndexNameDictionary = new Dictionary<int, string>();
         this.npcNameIndexDictionary = new Dictionary<string, int>();
@@ -80,6 +80,7 @@ public class SystemManager : MonoBehaviour
     {
         this.isClearGame = false;
         this.ingameAttributes.Clear();
+        this.ingamePreferences.Clear();
     }
 
     public void DeleteDataExclusiveUsers()
