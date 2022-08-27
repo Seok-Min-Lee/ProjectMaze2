@@ -113,7 +113,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        //OnDamage();
         Detoxify();
         Interact();
         Escape();
@@ -129,8 +128,9 @@ public class Player : MonoBehaviour
                 GetItem(gameObject: gameObject);
                 break;
 
-            case NameManager.TAG_PLAYER_RESPAWN:
-                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * 10);    // 리스폰 지점 업데이트
+            case NameManager.TAG_PLAYER_RESPAWN: 
+                // 리스폰 지점 업데이트
+                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * ValueManager.PLAYER_CALIBRATION_RESPAWN_Y);
                 break;
 
             case NameManager.TAG_FALL:
@@ -477,11 +477,12 @@ public class Player : MonoBehaviour
             {
                 StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
 
-                confusionStack += negativeEffect.value;
-                countTimeConfusion = 0f;
+                this.confusionStack += negativeEffect.value;
+                this.countTimeConfusion = 0f;
 
-                if (confusionStack >= confusionStackMax)
+                if (this.confusionStack >= this.confusionStackMax)
                 {
+                    this.confusionStack = this.confusionStackMax;
                     StartCoroutine(routine: Confuse());
                 }
             }
