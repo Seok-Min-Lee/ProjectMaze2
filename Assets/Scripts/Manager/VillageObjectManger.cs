@@ -5,7 +5,7 @@ public class VillageObjectManger : MonoBehaviour
     public GameObject[] giantStoneStatues;
     public GameObject[] giantTwins;
     public MeshRenderer[] invisuableWalls;
-
+    public AudioSource backgroundMusicA, backgroundMusicB;
     bool isClearGame;
 
     private void Start()
@@ -23,6 +23,17 @@ public class VillageObjectManger : MonoBehaviour
         foreach(MeshRenderer wall in invisuableWalls)
         {
             wall.enabled = !this.isClearGame;
+        }
+
+        if (this.isClearGame)
+        {
+            backgroundMusicB.Play();
+            backgroundMusicB.loop = true;
+        }
+        else
+        {
+            backgroundMusicA.Play();
+            backgroundMusicA.loop = true;
         }
     }
 }

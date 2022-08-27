@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] trafficLights;
     public Material[] skyboxMaterials;
 
+    public AudioSource backgroundMusic;
+
     // NPC 상호작용 관련
 
     DialogueCollection dialogueCollection;

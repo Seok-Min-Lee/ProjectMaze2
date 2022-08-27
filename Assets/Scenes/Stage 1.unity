@@ -2371,6 +2371,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1824884282890151775, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1824884282890151775, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: c9f4c3a319f77e049aa2b1d6e325a3a7, type: 3}
     - target: {fileID: 2719917232996447297, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4
