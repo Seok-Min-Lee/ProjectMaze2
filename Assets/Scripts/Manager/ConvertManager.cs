@@ -90,6 +90,15 @@ public static class ConvertManager
             case NameManager.GUIDE_TYPE_MANIPULATE:
                 type = GuideType.Manipulate;
                 break;
+            case NameManager.GUIDE_TYPE_HELLO_WORLD:
+                type = GuideType.HelloWorld;
+                break;
+            case NameManager.GUIDE_TYPE_FALL:
+                type = GuideType.Fall;
+                break;
+            case NameManager.GUIDE_TYPE_MONSTER:
+                type = GuideType.Monster;
+                break;
             default:
                 type = GuideType.None;
                 break;

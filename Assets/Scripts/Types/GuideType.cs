@@ -10,6 +10,6 @@ public enum GuideType
     Manipulate,
     GameGoal,
     HelloWorld,
-    Trap,
+    Fall,
     Monster
 }

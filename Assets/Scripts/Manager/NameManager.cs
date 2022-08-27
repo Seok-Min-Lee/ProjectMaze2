@@ -97,4 +97,7 @@ public static class NameManager
     public const string GUIDE_TYPE_MACH_PAIR = "MachPair";
     public const string GUIDE_TYPE_MANIPULATE = "Manipulate";
     public const string GUIDE_TYPE_GAME_GOAL = "GameGoal";
+    public const string GUIDE_TYPE_HELLO_WORLD = "HelloWorld";
+    public const string GUIDE_TYPE_FALL = "Fall";
+    public const string GUIDE_TYPE_MONSTER = "Monster";
 }
