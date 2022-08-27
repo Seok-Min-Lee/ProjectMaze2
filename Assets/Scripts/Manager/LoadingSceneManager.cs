@@ -11,6 +11,7 @@ public class LoadingSceneManager : MonoBehaviour
     
     private void Start()
     {
+        progressBar.localScale = new Vector3(0, 1, 1);
         StartCoroutine(LoadScene());
     }
 
