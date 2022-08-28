@@ -8,9 +8,9 @@ public class TrapMachPairColumn : Trap
     public TrapMachPairType machType;
     public float speed;
 
-    bool isRising;
-    float positionY;
-    Vector3 positionVector;
+    private bool isRising;
+    private float positionY;
+    private Vector3 positionVector;
 
     public override void ActivateEvent(Player player = null)
     {
@@ -20,10 +20,10 @@ public class TrapMachPairColumn : Trap
 
     private void Start()
     {
-        positionY = transform.position.y;
-        positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
+        this.positionY = this.transform.position.y;
+        this.positionVector = new Vector3(this.transform.position.x, -this.positionY, this.transform.position.z);
 
-        this.transform.position = positionVector + new Vector3(0, ValueManager.TRAP_MACH_PAIR_CALIBRATION_START_POSITION_Y, 0);
+        this.transform.position = this.positionVector + new Vector3(0, ValueManager.TRAP_MACH_PAIR_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
@@ -33,22 +33,22 @@ public class TrapMachPairColumn : Trap
 
     public void DetectPlayer()
     {
-        manager.MachPair(type: this.machType);
+        this.manager.MachPair(type: this.machType);
 
-        isActive = false;
-        this.gameObject.SetActive(isActive);
+        this.isActive = false;
+        this.gameObject.SetActive(this.isActive);
     }
 
     private void UpdatePosition()
     {
         if (this.isRising)
         {
-            if (positionVector.y < positionY)
+            if (this.positionVector.y < this.positionY)
             {
-                positionVector.y += speed * Time.deltaTime;
-                positionVector.y = positionVector.y > positionY ? positionY : positionVector.y;
+                this.positionVector.y += this.speed * Time.deltaTime;
+                this.positionVector.y = this.positionVector.y > this.positionY ? this.positionY : this.positionVector.y;
 
-                this.transform.position = positionVector;
+                this.transform.position = this.positionVector;
             }
         }
     }

@@ -9,9 +9,9 @@ public class TrapActivator : MonoBehaviour
 
     private void Start()
     {
-        if (isVolatility && effect != null)
+        if (this.isVolatility && this.effect != null)
         {
-            effect.SetActive(true);
+            this.effect.SetActive(true);
         }
     }
 
@@ -29,7 +29,7 @@ public class TrapActivator : MonoBehaviour
 
         if(deactivator != null)
         {
-            deactivator.gameObject.SetActive(true);
+            this.deactivator.gameObject.SetActive(true);
         }
     }
 

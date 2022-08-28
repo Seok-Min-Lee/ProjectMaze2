@@ -13,26 +13,26 @@ public class Pendulum : MonoBehaviour
 
     void Update()
     {
-        lerpTime += Time.deltaTime * speed;
-        transform.rotation = CalculateMovementOfPendulum();
+        this.lerpTime += Time.deltaTime * this.speed;
+        this.transform.rotation = CalculateMovementOfPendulum();
     }
 
     private Quaternion CalculateMovementOfPendulum()
     {
-        if(direction == pendulumDirectionType.X_axis)
+        if(this.direction == pendulumDirectionType.X_axis)
         {
-            return Quaternion.Lerp(Quaternion.Euler(Vector3.forward * angle),
-                Quaternion.Euler(Vector3.back * angle), GetLerpTParam());
+            return Quaternion.Lerp(Quaternion.Euler(Vector3.forward * this.angle),
+                Quaternion.Euler(Vector3.back * this.angle), GetLerpTParam());
         }
         else
         {
-            return Quaternion.Lerp(Quaternion.Euler(Vector3.right * angle),
-                Quaternion.Euler(Vector3.left * angle), GetLerpTParam());
+            return Quaternion.Lerp(Quaternion.Euler(Vector3.right * this.angle),
+                Quaternion.Euler(Vector3.left * this.angle), GetLerpTParam());
         }
     }
 
     private float GetLerpTParam()
     {
-        return (Mathf.Sin(lerpTime) + 1) * 0.5f;
+        return (Mathf.Sin(this.lerpTime) + 1) * 0.5f;
     }
 }

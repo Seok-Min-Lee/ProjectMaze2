@@ -9,20 +9,20 @@ public class MonsterInsect : Monster
     public BoxCollider AttackArea;
     public float senseRadius, senseDistance, lockOnRadius, lockOnDistance;
 
-    NavMeshAgent agent;
-    Animator animator;
+    private NavMeshAgent agent;
+    private Animator animator;
 
     bool isAttack, isSuicide;
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        this.agent = GetComponent<NavMeshAgent>();
+        this.animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        Debug.DrawRay(start: transform.position + (Vector3.up * 2), dir: Vector3.right * senseDistance, color: Color.red);
+        Debug.DrawRay(start: this.transform.position + (Vector3.up * 2), dir: Vector3.right * this.senseDistance, color: Color.red);
 
         if (target == null)
         {
@@ -31,7 +31,7 @@ public class MonsterInsect : Monster
         else
         {
             LockOn();
-            agent.SetDestination(target: target.position);
+            this.agent.SetDestination(target: this.target.position);
         }
     }
 
@@ -59,35 +59,35 @@ public class MonsterInsect : Monster
 
         if(hits.Length > 0)
         {
-            target = hits[0].transform;
-            animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
+            this.target = hits[0].transform;
+            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
         }
     }
 
     private void LockOn()
     {
         RaycastHit[] hits = Physics.SphereCastAll(
-            origin: transform.position, 
+            origin: this.transform.position, 
             direction: Vector3.right, 
-            radius: lockOnRadius, 
-            maxDistance: lockOnDistance, 
+            radius: this.lockOnRadius, 
+            maxDistance: this.lockOnDistance, 
             layerMask: LayerMask.GetMask(NameManager.LAYER_PLAYER)
         );
 
         if(hits.Length > 0 && !isAttack)
         {
-            if (!isSuicide)
+            if (!this.isSuicide)
             {
-                isSuicide = true;
+                this.isSuicide = true;
 
                 StartCoroutine(routine: SuiCide());
             }
 
-            isAttack = true;
+            this.isAttack = true;
 
-            agent.isStopped = false;
-            animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: false);
-            animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_STAB_ATTACK);
+            this.agent.isStopped = false;
+            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: false);
+            this.animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_STAB_ATTACK);
 
             StartCoroutine(routine: Attack());
         }
@@ -96,14 +96,14 @@ public class MonsterInsect : Monster
     IEnumerator Attack()
     {
         yield return new WaitForSeconds(0.2f);
-        AttackArea.enabled = true;
+        this.AttackArea.enabled = true;
 
         yield return new WaitForSeconds(0.2f);
-        AttackArea.enabled = false;
+        this.AttackArea.enabled = false;
 
         yield return new WaitForSeconds(0.6f);
-        animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
-        isAttack = false;
+        this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
+        this.isAttack = false;
     }
 
     IEnumerator SuiCide()
@@ -114,15 +114,15 @@ public class MonsterInsect : Monster
 
     public void ExplosionDestroy()
     {
-        meshObject.SetActive(false);
-        effectObject.SetActive(true);
+        this.meshObject.SetActive(false);
+        this.effectObject.SetActive(true);
 
         Destroy(obj: this.gameObject, t: 1f);
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(center: transform.position + transform.forward * lockOnDistance, radius: lockOnRadius);
-        Gizmos.DrawWireSphere(center: transform.position + (Vector3.up * 2) + transform.forward * senseDistance, radius: senseRadius);
+        Gizmos.DrawWireSphere(center: this.transform.position + this.transform.forward * this.lockOnDistance, radius: this.lockOnRadius);
+        Gizmos.DrawWireSphere(center: this.transform.position + (Vector3.up * 2) + this.transform.forward * this.senseDistance, radius: this.senseRadius);
     }
 }

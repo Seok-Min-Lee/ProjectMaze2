@@ -8,17 +8,15 @@ public class MonsterAttackRock : MonoBehaviour
     public int damage;
     public float lifeTime;
 
-    Rigidbody rigid;
-
-    float angularPower, scaleValue; // 운동량과 스케일
-    float angularPowerIncrementValue, scaleValueIncrementValue; // 운동량과 스케일의 증가값
-    bool isShoot;
-
-    float gainPowerTime = 2f;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
+    private Rigidbody rigid;
+    private float angularPower, scaleValue; // 운동량과 스케일
+    private float angularPowerIncrementValue, scaleValueIncrementValue; // 운동량과 스케일의 증가값
+    private float gainPowerTime = 2f;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
+    private bool isShoot;
 
     void Awake()
     {
-        rigid = GetComponent<Rigidbody>();
+        this.rigid = GetComponent<Rigidbody>();
 
         //에디터에서는 작동하나 빌드한 프로그램에서는 작동하지 않음
         // 임시로 최대값인 상태로 처리
@@ -31,13 +29,13 @@ public class MonsterAttackRock : MonoBehaviour
         //angularPowerIncrementValue = 0.05f;
         //scaleValueIncrementValue = 0.01f;
 
-        transform.localScale = Vector3.one * scaleValueMaxValue;
-        rigid.AddTorque(torque: transform.right * angularPowerMaxValue, mode: ForceMode.Acceleration);
+        this.transform.localScale = Vector3.one * this.scaleValueMaxValue;
+        this.rigid.AddTorque(torque: this.transform.right * this.angularPowerMaxValue, mode: ForceMode.Acceleration);
     }
 
     private void Start()
     {
-        Destroy(obj: this.gameObject, t: lifeTime);
+        Destroy(obj: this.gameObject, t: this.lifeTime);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -50,11 +48,11 @@ public class MonsterAttackRock : MonoBehaviour
 
     public void ExplosionDestroy()
     {
-        rigid.angularVelocity = Vector3.zero;
-        rigid.velocity = Vector3.zero;
+        this.rigid.angularVelocity = Vector3.zero;
+        this.rigid.velocity = Vector3.zero;
 
-        mesh.SetActive(false);
-        explosionEffect.SetActive(true);
+        this.mesh.SetActive(false);
+        this.explosionEffect.SetActive(true);
 
         Destroy(obj: this.gameObject, t: 1f);
     }
@@ -62,25 +60,25 @@ public class MonsterAttackRock : MonoBehaviour
     IEnumerator GainPowerTimer()
     {
         yield return new WaitForSeconds(seconds: gainPowerTime);
-        isShoot = true;
+        this.isShoot = true;
     }
 
     IEnumerator GainPower()
     {
         while (!isShoot)
         {
-            if (angularPower < angularPowerMaxValue)
+            if (this.angularPower < this.angularPowerMaxValue)
             {
-                angularPower += angularPowerIncrementValue;
+                this.angularPower += this.angularPowerIncrementValue;
             }
 
-            if (scaleValue < scaleValueMaxValue)
+            if (this.scaleValue < this.scaleValueMaxValue)
             {
-                scaleValue += scaleValueIncrementValue;
+                this.scaleValue += this.scaleValueIncrementValue;
             }
 
-            transform.localScale = Vector3.one * scaleValue;
-            rigid.AddTorque(torque: transform.right * angularPower, mode: ForceMode.Acceleration);
+            this.transform.localScale = Vector3.one * this.scaleValue;
+            this.rigid.AddTorque(torque: transform.right * this.angularPower, mode: ForceMode.Acceleration);
 
             yield return null;
         }

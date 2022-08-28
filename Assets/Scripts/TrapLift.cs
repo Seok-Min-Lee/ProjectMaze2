@@ -6,26 +6,26 @@ public class TrapLift : Trap
 {
     public float speed;
 
-    bool isRising;
-    float positionY;
-    Vector3 positionVector;
+    private bool isRising;
+    private float positionY;
+    private Vector3 positionVector;
 
     public override void ActivateEvent(Player player = null)
     {
-        if (!isActive)
+        if (!this.isActive)
         {
-            isActive = true;
-            isRising = true;
+            this.isActive = true;
+            this.isRising = true;
         }
     }
 
     private void Start()
     {
-        positionY = transform.position.y;
-        positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
+        this.positionY = this.transform.position.y;
+        this.positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
 
         // 바닥과 충돌 방지를 위해 보정해준다.
-        this.transform.position = positionVector + new Vector3(0, ValueManager.TRAP_LIFT_CALIBRATION_START_POSITION_Y, 0);
+        this.transform.position = this.positionVector + new Vector3(0, ValueManager.TRAP_LIFT_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
@@ -37,38 +37,38 @@ public class TrapLift : Trap
     {
         if (this.isRising)
         {
-            if (positionVector.y < positionY)
+            if (this.positionVector.y < this.positionY)
             {
-                positionVector.y += speed * Time.deltaTime;
+                this.positionVector.y += this.speed * Time.deltaTime;
 
-                if(positionVector.y > positionY)
+                if(this.positionVector.y > this.positionY)
                 {
-                    positionVector.y = positionY;
+                    this.positionVector.y = this.positionY;
 
                     StopAllCoroutines();
                     StartCoroutine(UpdateRisingState());
 
                 }
 
-                this.transform.position = positionVector;
+                this.transform.position = this.positionVector;
             }
         }
         else
         {
-            if (positionVector.y > -positionY)
+            if (this.positionVector.y > -this.positionY)
             {
-                positionVector.y -= speed * Time.deltaTime;
+                this.positionVector.y -= this.speed * Time.deltaTime;
 
-                if (positionVector.y < -positionY)
+                if (this.positionVector.y < -this.positionY)
                 {
-                    positionVector.y = -positionY;
+                    this.positionVector.y = -this.positionY;
 
                     StopAllCoroutines();
                     StartCoroutine(UpdateRisingState());
 
                 }
 
-                this.transform.position = positionVector;
+                this.transform.position = this.positionVector;
             }
         }
     }
@@ -76,6 +76,6 @@ public class TrapLift : Trap
     private IEnumerator UpdateRisingState()
     {
         yield return new WaitForSeconds(ValueManager.TRAP_LIFT_DERECTION_CHANGE_DELAY);
-        isRising = !isRising;
+        this.isRising = !this.isRising;
     }
 }

@@ -8,16 +8,16 @@ public class MonsterRange : Monster
     public float attackTime;
 
     public bool isReverse;  // 현재 방향전환을 앞,뒤로만 하고 있기 때문에 Bool 타입으로 처리 (처리 로직은 Player 스크립트 참조)
-    Animator animator;
-
-    Vector3 instantModifyVec;
-    float attackDelay;
+    
+    private Animator animator;
+    private Vector3 instantModifyVec;
+    private float attackDelay;
 
     private void Start()
     {
-        animator = GetComponentInChildren<Animator>();
+        this.animator = GetComponentInChildren<Animator>();
 
-        instantModifyVec = projectilePosition.position - this.transform.position;
+        this.instantModifyVec = this.projectilePosition.position - this.transform.position;
     }
 
     private void Update()
@@ -29,20 +29,20 @@ public class MonsterRange : Monster
     {
         this.isReverse = !this.isReverse;
 
-        this.gameObject.transform.rotation = Quaternion.Euler(0, transform.localEulerAngles.y + ValueManager.MONSTSER_TURN_BACK_ANGLE, 0);
+        this.gameObject.transform.rotation = Quaternion.Euler(0, this.transform.localEulerAngles.y + ValueManager.MONSTSER_TURN_BACK_ANGLE, 0);
     }
 
     IEnumerator Attack()
     {
-        if(attackDelay > attackTime)
+        if(this.attackDelay > this.attackTime)
         {
-            animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_DO_ATTACK);
+            this.animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_DO_ATTACK);
 
             // 투사체 오브젝트 생성
             GameObject instantProjectile = Instantiate(
-                original: projectile,
-                position: transform.position + instantModifyVec,
-                rotation: transform.rotation
+                original: this.projectile,
+                position: this.transform.position + this.instantModifyVec,
+                rotation: this.transform.rotation
             );
 
             // 몬스터 타입에 따라 투사체 세팅
@@ -56,11 +56,11 @@ public class MonsterRange : Monster
                     break;
             }
             
-            attackDelay = 0;
+            this.attackDelay = 0;
         }
         else
         {
-            attackDelay += Time.deltaTime;
+            this.attackDelay += Time.deltaTime;
         }
 
         yield return null;
@@ -70,7 +70,7 @@ public class MonsterRange : Monster
     {
         MonsterMissile monsterMissile = projectile.GetComponent<MonsterMissile>();
 
-        projectile.GetComponent<Rigidbody>().velocity = transform.forward * monsterMissile.speed;
+        projectile.GetComponent<Rigidbody>().velocity = this.transform.forward * monsterMissile.speed;
         monsterMissile.damage = this.damage;
     }
 

@@ -10,7 +10,7 @@ public class Item : MonoBehaviour
     
     private void Start()
     {
-        if(type == ItemType.Bead)
+        if(this.type == ItemType.Bead)
         {
             Material material = mesh.GetComponentInChildren<Renderer>().material;
             float alpha = material.color.a;

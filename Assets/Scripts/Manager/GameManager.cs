@@ -10,50 +10,54 @@ public class GameManager : MonoBehaviour
     // 카메라
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
-    // 인게임 UI
-    public GameObject normalPanel, interactPanel, gameMenuPanel, guidePanel, gameOverPanel;   // 평상시, 상호작용, 게임메뉴, 가이드, 게임오버
-    public GameObject interactableAlram;
+    // UI
+    public GameObject normalPanel, interactPanel, gameMenuPanel, guidePanel, gameOverPanel;   // UI 패널들
+
+    // Normal Panel
+    public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
+    public GameObject backMirror;               // 백 미러
+    public GameObject interactableAlram;        // 상호작용 가능 표시
+
+    public GameObject[] playerBeadCovers;       
+    public GameObject magicFairyImage, magicGiantImage, magicHumanImage, poisonImage, confusionImage;   // 특수 효과 활성화 표시
+    public RectTransform playerHpBar, playerConfusionBar;   // 플레이어 HP, 혼란 게이지
+    public Text playerLifeText;     // 플레이어 남은 라이프 표시
+    public Text magicGiantStackText, poisonStackText;   // 특수효과 스택 표시
+    
+    public GameObject trafficLightPanel;
+    public GameObject[] trafficLights;
+
+    // Interact Panel   
     public GameObject interactChoicePanel, nextDialogueSignal;  // 선택지, 다음 표시
     public GameObject[] npcChoiceButtons;   // 선택지 각 버튼
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
     public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
-    public Text guideHead, guideBody;   // 가이드 제목, 설명
+
+    // Game Menu Panel
     public Toggle displayGuideToggle, displayBackMirrorToggle;
-    public AudioMixer masterMixer;
     public Slider bgmSlider, seSlider;
-    public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
-    public GameObject backMirror;
 
-    public Player player;
-    public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
-    public Text playerLifeText;
-    public GameObject magicFairyImage, magicGiantImage, magicHumanImage, poisonImage, confusionImage;
-    public Text magicGiantStackText, poisonStackText;
-    public GameObject[] playerBeadCovers;
+    // Guide Panel
+    public Text guideHead, guideBody;   // 가이드 제목, 설명
 
-    public GameObject trafficLightPanel;
-    public GameObject[] trafficLights;
     public Material[] skyboxMaterials;
+    public AudioMixer masterMixer;
+    public Player player;
 
-    public AudioSource backgroundMusic;
-    public Transform playerClearRespawnPosition;
-
-    // NPC 상호작용 관련
-
-    DialogueCollection dialogueCollection;
-    int situationNo;
-    int dialogueSequenceNo, dialogueSequenceSubNo;
-    NPCInteractionZone interactNpc;
-    VillageObjectManager villageObjectManager;
+    private string currentSceneName;
+    private bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
 
     // 미니맵 관련
-    Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
-    bool minimapVisible;
+    private Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
+    private bool minimapVisible;
 
-    string currentSceneName;
-    bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
+    // NPC 상호작용 관련
+    private DialogueCollection dialogueCollection;
+    private NPCInteractionZone interactNpc;
+    private VillageObjectManager villageObjectManager;
+    private int situationNo, dialogueSequenceNo, dialogueSequenceSubNo;
 
-    float skyboxRotation;
+    private float skyboxRotation;
 
     private void Awake()
     {
@@ -82,13 +86,6 @@ public class GameManager : MonoBehaviour
         this.situationNo = IsClearGame() ? 1 : 0;
 
         RollbackIngamePreference();
-
-        if(playerClearRespawnPosition != null &&
-           !this.attributeSavedPositionEnabled &&
-           IsClearGame()) 
-        {
-            player.ForceToMove(point: this.playerClearRespawnPosition.position);
-        }
     }
 
     private void LateUpdate()

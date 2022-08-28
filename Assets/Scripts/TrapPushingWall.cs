@@ -5,40 +5,40 @@ public class TrapPushingWall : Trap
     public float pushingPower;
     public Material deactivateMaterial;
     
-    Player player;
-    Vector3 forceVec;
+    private Player player;
+    private Vector3 forceVec;
 
     private void Start()
     {
-        forceVec = this.transform.forward * pushingPower * Time.deltaTime;
+        this.forceVec = this.transform.forward * this.pushingPower * Time.deltaTime;
     }
 
     private void Update()
     {
-        if (isActive && player != null)
+        if (this.isActive && this.player != null)
         {
-            player.ForceToMove(player.transform.position + forceVec);
+            this.player.ForceToMove(this.player.transform.position + this.forceVec);
         }
     }
 
     public override void ActivateEvent(Player player = null)
     {
-        if(!isActive && player != null)
+        if(!this.isActive && player != null)
         {
             Vector3 initVec = this.transform.position;
-            initVec.y = player.transform.position.y;
+            initVec.y = this.player.transform.position.y;
             player.ForceToMove(point: initVec);
 
-            isActive = true;
+            this.isActive = true;
             this.player = player;
         }
     }
 
     public override void DeactivateEvent(Player player = null)
     {
-        isActive = false;
+        this.isActive = false;
         this.player = null;
 
-        this.GetComponent<Renderer>().material = deactivateMaterial;
+        this.GetComponent<Renderer>().material = this.deactivateMaterial;
     }
 }

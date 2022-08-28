@@ -8,18 +8,18 @@ public class MonsterMissile : MonoBehaviour
     public int speed;
     public int damage;
 
-    Rigidbody rigid;
-    float rotateSpeed;
+    private Rigidbody rigid;
+    private float rotateSpeed;
 
     private void Awake()
     {
-        rigid = GetComponent<Rigidbody>();
-        rotateSpeed = 15 * Time.deltaTime;
+        this.rigid = GetComponent<Rigidbody>();
+        this.rotateSpeed = 15 * Time.deltaTime;
     }
 
     private void Update()
     {
-        transform.Rotate(axis: Vector3.forward, angle: rotateSpeed);
+        this.transform.Rotate(axis: Vector3.forward, angle: rotateSpeed);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -32,12 +32,12 @@ public class MonsterMissile : MonoBehaviour
 
     public void ExplosionDestroy()
     {
-        rigid.angularVelocity = Vector3.zero;
-        rigid.velocity = Vector3.zero;
+        this.rigid.angularVelocity = Vector3.zero;
+        this.rigid.velocity = Vector3.zero;
 
-        mesh.SetActive(false);
-        boosterEffect.SetActive(false);
-        explosionEffect.SetActive(true);
+        this.mesh.SetActive(false);
+        this.boosterEffect.SetActive(false);
+        this.explosionEffect.SetActive(true);
 
         Destroy(obj: this.gameObject, t: 1f);
     }

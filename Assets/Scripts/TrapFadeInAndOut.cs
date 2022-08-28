@@ -5,42 +5,42 @@ public class TrapFadeInAndOut : Trap
 {
     public float waittingTime;
 
-    Renderer renderer;
-    Color updateColor;
+    private Renderer renderer;
+    private Color updateColor;
 
-    float delayFadeChange;  // 매쉬 변환 완료 후 반대로 변환하기까지 대기시간
-    float updateCountPerSecond; // 1초당 매쉬 업데이트 횟수
-    float updateIntervalTime;   // 매쉬 업데이트 인터벌
+    private float delayFadeChange;  // 매쉬 변환 완료 후 반대로 변환하기까지 대기시간
+    private float updateCountPerSecond; // 1초당 매쉬 업데이트 횟수
+    private float updateIntervalTime;   // 매쉬 업데이트 인터벌
 
     private void Start()
     {
-        renderer = GetComponent<Renderer>();
+        this.renderer = GetComponent<Renderer>();
 
-        delayFadeChange = ValueManager.TRAP_FADE_IN_AND_OUT_FADE_CHANGE_DELAY;
+        this.delayFadeChange = ValueManager.TRAP_FADE_IN_AND_OUT_FADE_CHANGE_DELAY;
         
-        updateCountPerSecond = ValueManager.TRAP_FADE_IN_AND_OUT_UPDATE_COUNT_PER_ONE_SECOND;
-        updateIntervalTime = (float)1 / updateCountPerSecond;
+        this.updateCountPerSecond = ValueManager.TRAP_FADE_IN_AND_OUT_UPDATE_COUNT_PER_ONE_SECOND;
+        this.updateIntervalTime = (float)1 / this.updateCountPerSecond;
     }
 
     public override void ActivateEvent(Player player = null)
     {
-        if (!isActive)
+        if (!this.isActive)
         {
             StopCoroutine(ActiaveAfterWatting());
             StartCoroutine(ActiaveAfterWatting());
 
-            isActive = true;
+            this.isActive = true;
         }
     }
 
     public override void DeactivateEvent(Player player = null)
     {
-        isActive = false;
+        this.isActive = false;
     }
 
     IEnumerator ActiaveAfterWatting()
     {
-        yield return new WaitForSeconds(waittingTime);
+        yield return new WaitForSeconds(this.waittingTime);
         
         StopCoroutine(FadeInAndOut());
         StartCoroutine(FadeInAndOut());
@@ -48,36 +48,36 @@ public class TrapFadeInAndOut : Trap
 
     IEnumerator FadeInAndOut()
     {
-        while (isActive)
+        while (this.isActive)
         {
             // Fade Out
-            for (int i = (int)updateCountPerSecond; i >= 0; i--)
+            for (int i = (int)this.updateCountPerSecond; i >= 0; i--)
             {
-                UpdateMaterialAlphaValue(value: (float)(i / updateCountPerSecond));
+                UpdateMaterialAlphaValue(value: (float)(i / this.updateCountPerSecond));
 
-                yield return new WaitForSeconds(updateIntervalTime);
+                yield return new WaitForSeconds(this.updateIntervalTime);
             }
             this.GetComponent<Collider>().enabled = false;
 
-            yield return new WaitForSeconds(delayFadeChange);
+            yield return new WaitForSeconds(this.delayFadeChange);
 
             // Fade In
             this.GetComponent<Collider>().enabled = true;
-            for (int i = 0; i <= updateCountPerSecond; i++)
+            for (int i = 0; i <= this.updateCountPerSecond; i++)
             {
-                UpdateMaterialAlphaValue(value: (float)(i / updateCountPerSecond));
+                UpdateMaterialAlphaValue(value: (float)(i / this.updateCountPerSecond));
 
-                yield return new WaitForSeconds(updateIntervalTime);
+                yield return new WaitForSeconds(this.updateIntervalTime);
             }
 
-            yield return new WaitForSeconds(delayFadeChange);
+            yield return new WaitForSeconds(this.delayFadeChange);
         }
     }
 
     private void UpdateMaterialAlphaValue(float value)
     {
-        updateColor = renderer.material.color;
-        updateColor.a = value;
-        renderer.material.color = updateColor;
+        this.updateColor = renderer.material.color;
+        this.updateColor.a = value;
+        this.renderer.material.color = updateColor;
     }
 }
