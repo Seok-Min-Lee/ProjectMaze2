@@ -9643,6 +9643,10 @@ PrefabInstance:
       propertyPath: effect
       value: 
       objectReference: {fileID: 8019027083285651935}
+    - target: {fileID: 8019027082308855768, guid: cff4edcd280063840b83d185ddc78d59, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 30.01
+      objectReference: {fileID: 0}
     - target: {fileID: 8019027082543357845, guid: cff4edcd280063840b83d185ddc78d59, type: 3}
       propertyPath: m_IsActive
       value: 1
