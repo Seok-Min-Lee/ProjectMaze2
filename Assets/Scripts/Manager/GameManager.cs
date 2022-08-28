@@ -217,6 +217,10 @@ public class GameManager : MonoBehaviour
                 OnClickGuideOKButton();
             }
         }
+        else
+        {
+            OnClickGameMenuCancelButton();
+        }
     }
 
     public void DisplayGuideByGuideType(GuideType guideType)

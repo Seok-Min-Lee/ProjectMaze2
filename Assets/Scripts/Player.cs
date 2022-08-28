@@ -248,20 +248,16 @@ public class Player : MonoBehaviour
         InteractPostProcess();
     }
 
+    bool watchEscape;
     public void Escape()
     {
-        if (_input.escape)
+        // 키 입력이 Update() 도는 동안 여러번 실행되어 한번만 발생하도록 하기 위함.
+        if(!watchEscape && _input.escape)
         {
-            if (isInteract)
-            {
-                isInteract = false;
-                _input.interact = false;
-            }
-            else
-            {
-                manager.DisplayGameMenu();
-            }
+            manager.DisplayGameMenu();
         }
+
+        watchEscape = _input.escape;
     }
 
     public void CallUpdatePlayerIngameAttributes()
