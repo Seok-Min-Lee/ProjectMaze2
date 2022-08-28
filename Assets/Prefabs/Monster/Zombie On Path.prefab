@@ -511,8 +511,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2544324818294132547}
-  - component: {fileID: 2544324818294132573}
   - component: {fileID: 2544324818294132546}
+  - component: {fileID: 2544324818294132573}
   m_Layer: 0
   m_Name: Confusion Zone
   m_TagString: NegativeEffect
@@ -535,20 +535,6 @@ Transform:
   m_Father: {fileID: 6319575240928156141}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2544324818294132573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2544324818294132544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d2240390aec3eb4d838b82203cd38bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  value: 5
 --- !u!135 &2544324818294132546
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -562,6 +548,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2544324818294132573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2544324818294132544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d2240390aec3eb4d838b82203cd38bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  value: 8
 --- !u!1 &2544585067168967846
 GameObject:
   m_ObjectHideFlags: 0
