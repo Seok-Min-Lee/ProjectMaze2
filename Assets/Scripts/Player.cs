@@ -736,13 +736,6 @@ public class Player : MonoBehaviour
 
         ForceToMove(point: this.respawnPoint);
     }
-    //private void Respawn()
-    //{
-    //    ForceToMove(point: respawnPoint);
-
-    //    currentHp = maxHp;
-    //    currentLife--;
-    //}
 
     private void Timer(float tick, ref float time)
     {
