@@ -39,6 +39,7 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Z = "savedPositionZ";
 
     public const string INGAME_PREFERENCE_NAME_GUIDE_VISIBLE = "guideVisible";
+    public const string INGAME_PREFERENCE_NAME_BACK_MIRROR_VISIBLE = "backMirrorVisible";
     public const string INGAME_PREFERENCE_NAME_BGM_VOLUME = "bgmVolume";
     public const string INGAME_PREFERENCE_NAME_SE_VOLUME = "seVolume";
 

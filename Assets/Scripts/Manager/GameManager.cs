@@ -18,10 +18,11 @@ public class GameManager : MonoBehaviour
     public Text[] npcChoiceTexts;   // 선택지 버튼 내 텍스트
     public Text npcName, npcDialogue;   // 다이얼로그에 표시되는 NPC 이름과 대사
     public Text guideHead, guideBody;   // 가이드 제목, 설명
-    public Toggle displayGuideToggle;
+    public Toggle displayGuideToggle, displayBackMirrorToggle;
     public AudioMixer masterMixer;
     public Slider bgmSlider, seSlider;
     public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
+    public GameObject backMirror;
 
     public Player player;
     public RectTransform playerHpBar, playerConfusionBar;   // HP, 혼란 게이지
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
 
         this.situationNo = IsClearGame() ? 1 : 0;
 
-        RollbackAudioSetting();
+        RollbackIngamePreference();
 
         if(playerClearRespawnPosition != null &&
            !this.attributeSavedPositionEnabled &&
@@ -209,6 +210,7 @@ public class GameManager : MonoBehaviour
                 SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
                 this.displayGuideToggle.isOn = this.preferenceGuideVisible;
+                this.displayBackMirrorToggle.isOn = this.preferenceBackMirrorVisible;
                 this.bgmSlider.value = this.preferenceBgmVolume;
                 this.seSlider.value = this.preferenceSeVolume;
             }
@@ -271,8 +273,11 @@ public class GameManager : MonoBehaviour
 
         // 설정 값 저장 - 추가할 것
         this.preferenceGuideVisible = displayGuideToggle.isOn;
+        this.preferenceBackMirrorVisible = displayBackMirrorToggle.isOn;
         this.preferenceBgmVolume = bgmSlider.value;
         this.preferenceSeVolume = seSlider.value;
+
+        RollbackIngamePreference();
 
         // 타입 변환 후 교체 및 저장.
         IngamePreferenceCollection preferences = ConvertPropertyToIngamePreferences();
@@ -283,7 +288,7 @@ public class GameManager : MonoBehaviour
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         
-        RollbackAudioSetting();
+        RollbackIngamePreference();
     }
 
     public void OnClickGameMenuLobbyButton()
@@ -291,7 +296,7 @@ public class GameManager : MonoBehaviour
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         Cursor.lockState = CursorLockMode.Confined;
 
-        RollbackAudioSetting();
+        RollbackIngamePreference();
 
         SaveCurrentIngameAttributes(isSavePosition: true);
         SystemManager.instance.DeleteDataExclusiveUsers();
@@ -303,7 +308,7 @@ public class GameManager : MonoBehaviour
     {
         SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
 
-        RollbackAudioSetting();
+        RollbackIngamePreference();
 
         SaveCurrentIngameAttributes(isSavePosition: true);
 
@@ -671,10 +676,11 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
-    private void RollbackAudioSetting()
+    private void RollbackIngamePreference()
     {
-        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, this.preferenceBgmVolume);
-        masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, this.preferenceSeVolume);
+        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, this.preferenceBgmVolume);
+        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, this.preferenceSeVolume);
+        this.backMirror.SetActive(this.preferenceBackMirrorVisible);
     }
 
     private void SwitchPauseAndCursorLockEvent(ref GameObject panel, ref bool isActive)
@@ -711,7 +717,7 @@ public class GameManager : MonoBehaviour
     int attributeSavedSceneNumber;
     int attributeSavedPositionX, attributeSavedPositionY, attributeSavedPositionZ;
 
-    bool preferenceGuideVisible;
+    bool preferenceGuideVisible, preferenceBackMirrorVisible;
     float preferenceBgmVolume, preferenceSeVolume;
 
     public void SetPlayerIngameAttributes(
@@ -858,6 +864,7 @@ public class GameManager : MonoBehaviour
     private void SetIngamePreferenceDefault()
     {
         this.preferenceGuideVisible = true;
+        this.preferenceBackMirrorVisible = false;
 
         this.preferenceBgmVolume = ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MAX;
         this.preferenceSeVolume = ValueManager.INGAME_PREFERENCE_SE_VOLUME_MAX;
@@ -938,6 +945,10 @@ public class GameManager : MonoBehaviour
             {
                 case NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE:
                     this.preferenceGuideVisible = ConvertManager.ConvertStringToInt(preference.value) == 0 ? false : true;
+                    break;
+
+                case NameManager.INGAME_PREFERENCE_NAME_BACK_MIRROR_VISIBLE:
+                    this.preferenceBackMirrorVisible = ConvertManager.ConvertStringToInt(preference.value) == 0 ? false : true;
                     break;
 
                 case NameManager.INGAME_PREFERENCE_NAME_BGM_VOLUME:
@@ -1085,6 +1096,11 @@ public class GameManager : MonoBehaviour
             id: index++,
             name: NameManager.INGAME_PREFERENCE_NAME_GUIDE_VISIBLE,
             value: this.preferenceGuideVisible ? 1.ToString() : 0.ToString()
+        ));
+        preferences.Add(new IngamePreference(
+            id: index++,
+            name: NameManager.INGAME_PREFERENCE_NAME_BACK_MIRROR_VISIBLE,
+            value: this.preferenceBackMirrorVisible ? 1.ToString() : 0.ToString()
         ));
         preferences.Add(new IngamePreference(
             id: index++,
