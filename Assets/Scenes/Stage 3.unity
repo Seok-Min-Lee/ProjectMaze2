@@ -158,10 +158,10 @@ Transform:
   - {fileID: 233936486}
   - {fileID: 1850998185}
   - {fileID: 267521533}
-  - {fileID: 1112749467}
   - {fileID: 2414265135856084554}
   - {fileID: 580861034}
   - {fileID: 795604502}
+  - {fileID: 1112749467}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4732,7 +4732,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 363335323480866621, guid: 897cfccd731a0ff43bde5bb2231ad379, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 363335323480866621, guid: 897cfccd731a0ff43bde5bb2231ad379, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8848,12 +8848,16 @@ PrefabInstance:
       value: Ghost Group (2)
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841097, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
+      propertyPath: axisType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6815851500489841097, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: rotateSpeed
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841098, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841098, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -14758,7 +14762,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 363335323480866621, guid: 897cfccd731a0ff43bde5bb2231ad379, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 363335323480866621, guid: 897cfccd731a0ff43bde5bb2231ad379, type: 3}
       propertyPath: m_LocalPosition.x
@@ -14823,12 +14827,20 @@ PrefabInstance:
       value: Ghost Group
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841097, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
+      propertyPath: axisType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6815851500489841097, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
+      propertyPath: isReverse
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6815851500489841097, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: rotateSpeed
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841098, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6815851500489841098, guid: 3410685a37067f74e92d3a69afc727d7, type: 3}
       propertyPath: m_LocalPosition.x
