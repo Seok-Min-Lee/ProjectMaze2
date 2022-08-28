@@ -9,8 +9,8 @@ public class TrapMachPairColumn : Trap
     public float speed;
 
     private bool isRising;
-    private float positionY;
-    private Vector3 positionVector;
+    private float startPositionY;
+    private Vector3 toVector;
 
     public override void ActivateEvent(Player player = null)
     {
@@ -20,15 +20,15 @@ public class TrapMachPairColumn : Trap
 
     private void Start()
     {
-        this.positionY = this.transform.position.y;
-        this.positionVector = new Vector3(this.transform.position.x, -this.positionY, this.transform.position.z);
+        this.startPositionY = this.transform.position.y;
+        this.toVector = new Vector3(this.transform.position.x, -this.startPositionY, this.transform.position.z);
 
-        this.transform.position = this.positionVector + new Vector3(0, ValueManager.TRAP_MACH_PAIR_CALIBRATION_START_POSITION_Y, 0);
+        this.transform.position = this.toVector + new Vector3(0, ValueManager.TRAP_MACH_PAIR_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
     {
-        UpdatePosition();
+        UpdatePosition(maxY: this.startPositionY);
     }
 
     public void DetectPlayer()
@@ -39,16 +39,20 @@ public class TrapMachPairColumn : Trap
         this.gameObject.SetActive(this.isActive);
     }
 
-    private void UpdatePosition()
+    private void UpdatePosition(float maxY)
     {
         if (this.isRising)
         {
-            if (this.positionVector.y < this.positionY)
+            if (this.toVector.y < maxY)
             {
-                this.positionVector.y += this.speed * Time.deltaTime;
-                this.positionVector.y = this.positionVector.y > this.positionY ? this.positionY : this.positionVector.y;
+                this.toVector.y += this.speed * Time.deltaTime;
 
-                this.transform.position = this.positionVector;
+                if(this.toVector.y > maxY)
+                {
+                    this.toVector.y = maxY;
+                }
+
+                this.transform.position = this.toVector;
             }
         }
     }

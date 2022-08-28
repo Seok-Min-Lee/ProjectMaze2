@@ -6,8 +6,8 @@ public class Pendulum : MonoBehaviour
 {
     public pendulumDirectionType direction;
 
-    public float angle = 0;
-    public float speed = 2f;
+    public float angle;
+    public float speed;
 
     public float lerpTime;
 

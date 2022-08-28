@@ -7,8 +7,8 @@ public class TrapLift : Trap
     public float speed;
 
     private bool isRising;
-    private float positionY;
-    private Vector3 positionVector;
+    private float startPositionY;
+    private Vector3 toVector;
 
     public override void ActivateEvent(Player player = null)
     {
@@ -21,54 +21,52 @@ public class TrapLift : Trap
 
     private void Start()
     {
-        this.positionY = this.transform.position.y;
-        this.positionVector = new Vector3(this.transform.position.x, -positionY, this.transform.position.z);
+        this.startPositionY = this.transform.position.y;
+        this.toVector = new Vector3(this.transform.position.x, -startPositionY, this.transform.position.z);
 
         // 바닥과 충돌 방지를 위해 보정해준다.
-        this.transform.position = this.positionVector + new Vector3(0, ValueManager.TRAP_LIFT_CALIBRATION_START_POSITION_Y, 0);
+        this.transform.position = this.toVector + new Vector3(0, ValueManager.TRAP_LIFT_CALIBRATION_START_POSITION_Y, 0);
     }
 
     private void Update()
     {
-        UpdatePosition();
+        UpdatePosition(maxY: this.startPositionY);
     }
 
-    private void UpdatePosition()
+    private void UpdatePosition(float maxY)
     {
         if (this.isRising)
         {
-            if (this.positionVector.y < this.positionY)
+            if (this.toVector.y < maxY)
             {
-                this.positionVector.y += this.speed * Time.deltaTime;
+                this.toVector.y += this.speed * Time.deltaTime;
 
-                if(this.positionVector.y > this.positionY)
+                if(this.toVector.y > maxY)
                 {
-                    this.positionVector.y = this.positionY;
+                    this.toVector.y = maxY;
 
                     StopAllCoroutines();
                     StartCoroutine(UpdateRisingState());
-
                 }
 
-                this.transform.position = this.positionVector;
+                this.transform.position = toVector;
             }
         }
         else
         {
-            if (this.positionVector.y > -this.positionY)
+            if (this.toVector.y > - maxY)
             {
-                this.positionVector.y -= this.speed * Time.deltaTime;
+                this.toVector.y -= this.speed * Time.deltaTime;
 
-                if (this.positionVector.y < -this.positionY)
+                if (this.toVector.y < - maxY)
                 {
-                    this.positionVector.y = -this.positionY;
+                    this.toVector.y = - maxY;
 
                     StopAllCoroutines();
                     StartCoroutine(UpdateRisingState());
-
                 }
 
-                this.transform.position = this.positionVector;
+                this.transform.position = toVector;
             }
         }
     }
