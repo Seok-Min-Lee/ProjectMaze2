@@ -694,7 +694,7 @@ public class Player : MonoBehaviour
 
                 if (currentLife > 0)
                 {
-                    Respawn();
+                    Resurrect();
                 }
                 else
                 {
@@ -720,13 +720,29 @@ public class Player : MonoBehaviour
         _input.SprintInput(newSprintState: false);
     }
 
-    private void Respawn()
+    private void Resurrect()
     {
-        ForceToMove(point: respawnPoint);
+        StopAllCoroutines();
 
-        currentHp = maxHp;
-        currentLife--;
+        this.currentHp = this.maxHp;
+        this.currentLife--;
+        this.isPoison = false;
+        this.isConfusion = false;
+        this.poisonStack = 0;
+        this.confusionStack = 0;
+
+        this.addictEffect.SetActive(false);
+        this.detoxEffect.SetActive(false);
+
+        ForceToMove(point: this.respawnPoint);
     }
+    //private void Respawn()
+    //{
+    //    ForceToMove(point: respawnPoint);
+
+    //    currentHp = maxHp;
+    //    currentLife--;
+    //}
 
     private void Timer(float tick, ref float time)
     {
