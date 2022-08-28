@@ -19,13 +19,20 @@ public class MonsterAttackRock : MonoBehaviour
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
-        StartCoroutine(GainPowerTimer());
-        StartCoroutine(GainPower());
 
-        angularPower = 1f;
-        scaleValue = 0.05f;
-        angularPowerIncrementValue = 0.05f;
-        scaleValueIncrementValue = 0.01f;
+        //에디터에서는 작동하나 빌드한 프로그램에서는 작동하지 않음
+        // 임시로 최대값인 상태로 처리
+
+        //StartCoroutine(GainPowerTimer());
+        //StartCoroutine(GainPower());
+
+        //angularPower = 1f;
+        //scaleValue = 0.05f;
+        //angularPowerIncrementValue = 0.05f;
+        //scaleValueIncrementValue = 0.01f;
+
+        transform.localScale = Vector3.one * scaleValueMaxValue;
+        rigid.AddTorque(torque: transform.right * angularPowerMaxValue, mode: ForceMode.Acceleration);
     }
 
     private void Start()
