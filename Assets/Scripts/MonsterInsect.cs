@@ -4,6 +4,7 @@ using UnityEngine.AI;
 
 public class MonsterInsect : Monster
 {
+    public GameObject meshObject, effectObject;
     public Transform target;
     public BoxCollider AttackArea;
     public float senseRadius, senseDistance, lockOnRadius, lockOnDistance;
@@ -11,7 +12,7 @@ public class MonsterInsect : Monster
     NavMeshAgent agent;
     Animator animator;
 
-    bool isAttack;
+    bool isAttack, isSuicide;
 
     private void Start()
     {
@@ -75,6 +76,13 @@ public class MonsterInsect : Monster
 
         if(hits.Length > 0 && !isAttack)
         {
+            if (!isSuicide)
+            {
+                isSuicide = true;
+
+                StartCoroutine(routine: SuiCide());
+            }
+
             isAttack = true;
 
             agent.isStopped = false;
@@ -96,6 +104,20 @@ public class MonsterInsect : Monster
         yield return new WaitForSeconds(0.6f);
         animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
         isAttack = false;
+    }
+
+    IEnumerator SuiCide()
+    {
+        yield return new WaitForSeconds(3f);
+        ExplosionDestroy();
+    }
+
+    public void ExplosionDestroy()
+    {
+        meshObject.SetActive(false);
+        effectObject.SetActive(true);
+
+        Destroy(obj: this.gameObject, t: 1f);
     }
 
     private void OnDrawGizmos()
