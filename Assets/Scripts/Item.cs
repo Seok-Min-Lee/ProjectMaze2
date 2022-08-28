@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Item : MonoBehaviour
@@ -12,7 +10,7 @@ public class Item : MonoBehaviour
     {
         if(this.type == ItemType.Bead)
         {
-            Material material = mesh.GetComponentInChildren<Renderer>().material;
+            Material material = this.mesh.GetComponentInChildren<Renderer>().material;
             float alpha = material.color.a;
 
             Color color = Color.white;
@@ -36,6 +34,6 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
-        mesh.Rotate(axis: Vector3.up, angle: ValueManager.ITEM_ROTATION_SPEED * Time.deltaTime);
+        this.mesh.Rotate(axis: Vector3.up, angle: ValueManager.ITEM_ROTATION_SPEED * Time.deltaTime);
     }
 }
