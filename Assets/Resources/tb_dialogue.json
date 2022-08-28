@@ -6,7 +6,7 @@
 ,{"id":5,"npcName":"문지기","situationNo":0,"sequenceNo":1,"sequenceSubNo":0,"dialogueType":1,"text":"오래전부터 여기 미로로 마을에는 전해져 오던 전설이 하나 있습니다."}
 ,{"id":6,"npcName":"문지기","situationNo":0,"sequenceNo":2,"sequenceSubNo":0,"dialogueType":1,"text":"'태양을 받치고 있던 거인들은\n어느 날 크게 분노하였고 무언가 예언을 남기고 깊은 잠에 들었다.'"}
 ,{"id":7,"npcName":"문지기","situationNo":0,"sequenceNo":3,"sequenceSubNo":0,"dialogueType":1,"text":"\"쌍둥이 거인의 영역에 3개의 구슬을 숨겨두었으니\n훗날 용기와 지혜를 모두 갖춘 자가 나타나 모든 구슬을 찾았을 때 비로소 태양을 되찾을 것이다.\""}
-,{"id":8,"npcName":"문지기","situationNo":0,"sequenceNo":4,"sequenceSubNo":0,"dialogueType":1,"text":"마을의 쌍둥이 거인 석상을 보셨나요? 전설 속 장소가 바로 여기 미로로 마을과 제 뒤의 미로입니다."}
+,{"id":8,"npcName":"문지기","situationNo":0,"sequenceNo":4,"sequenceSubNo":0,"dialogueType":1,"text":"마을의 쌍둥이 거인 석상을 보셨나요? 전설 속 장소가 바로 여기 미로로 마을과 제 뒤에 보이는 미로입니다."}
 ,{"id":9,"npcName":"문지기","situationNo":0,"sequenceNo":1,"sequenceSubNo":1,"dialogueType":4,"text":"좋습니다. 제 뒤로 입구를 열어드리겠습니다.\n무운을 빌겠습니다."}
 ,{"id":10,"npcName":"문지기","situationNo":0,"sequenceNo":1,"sequenceSubNo":2,"dialogueType":1,"text":"태양이 사라지고 많은 사람들이 선택했습니다."}
 ,{"id":11,"npcName":"문지기","situationNo":0,"sequenceNo":2,"sequenceSubNo":2,"dialogueType":1,"text":"미로에 도전할지... 어디에 있을지 모르는 낙원을 찾아 떠날지..."}
