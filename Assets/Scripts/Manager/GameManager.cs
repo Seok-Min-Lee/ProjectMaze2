@@ -206,13 +206,13 @@ public class GameManager : MonoBehaviour
         {
             if (!this.isDisplayGuide)
             {
-                player.StopPlayerMotion();
-                SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
-
                 this.displayGuideToggle.isOn = this.preferenceGuideVisible;
                 this.displayBackMirrorToggle.isOn = this.preferenceBackMirrorVisible;
                 this.bgmSlider.value = this.preferenceBgmVolume;
                 this.seSlider.value = this.preferenceSeVolume;
+
+                player.StopPlayerMotion();
+                SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
             }
             else
             {
@@ -691,7 +691,15 @@ public class GameManager : MonoBehaviour
         panel.SetActive(isActive);
 
         player._input.controlEnable = !isActive;
-        Cursor.lockState = isActive ? CursorLockMode.Confined : CursorLockMode.Locked;
+
+        if (IsCursorVisibleState())
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        else
+        {
+            Cursor.lockState = isActive ? CursorLockMode.Confined : CursorLockMode.Locked;
+        }
     }
 
     private void SwitchPause()
@@ -706,6 +714,16 @@ public class GameManager : MonoBehaviour
             Time.timeScale = ValueManager.TIME_SCALE_PLAY;
             isPause = false;
         }
+    }
+
+    private bool IsCursorVisibleState()
+    {
+        if (this.player.isInteract || this.isDisplayGameMenu || this.isDisplayGuide || this.isDisplayGameOver)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
