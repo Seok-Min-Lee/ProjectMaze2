@@ -29,7 +29,7 @@ public class MonsterRange : Monster
     {
         this.isReverse = !this.isReverse;
 
-        this.gameObject.transform.rotation = Quaternion.Euler(0, this.transform.localEulerAngles.y + ValueManager.MONSTSER_TURN_BACK_ANGLE, 0);
+        this.gameObject.transform.rotation = Quaternion.Euler(0, this.transform.localEulerAngles.y + ValueManager.MONSTER_TURN_BACK_ANGLE, 0);
     }
 
     IEnumerator Attack()

@@ -11,7 +11,8 @@ public static class ValueManager
 
     public const float ITEM_ROTATION_SPEED = 60f;   // 아이템 공전 속도
 
-    public const float MONSTSER_TURN_BACK_ANGLE = 180f; // 몬스터 뒤돌기 각도
+    public const float MONSTER_TURN_BACK_ANGLE = 180f; // 몬스터 뒤돌기 각도
+    public const float MONSTER_DESTORY_DELAY = 1f;   // 몬스터 소멸까지 걸리는 시간
 
     public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
     public const float PLAYER_SPRINT_SPEED_DEFAULT = 11f;   // 플레이어 달리기 속도 기본값
