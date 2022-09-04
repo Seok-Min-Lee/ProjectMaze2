@@ -17,25 +17,19 @@ public class MonsterAttackRock : MonoBehaviour
     void Awake()
     {
         this.rigid = GetComponent<Rigidbody>();
-
-        //에디터에서는 작동하나 빌드한 프로그램에서는 작동하지 않음
-        // 임시로 최대값인 상태로 처리
-
-        //StartCoroutine(GainPowerTimer());
-        //StartCoroutine(GainPower());
-
-        //angularPower = 1f;
-        //scaleValue = 0.05f;
-        //angularPowerIncrementValue = 0.05f;
-        //scaleValueIncrementValue = 0.01f;
-
-        this.transform.localScale = Vector3.one * this.scaleValueMaxValue;
-        this.rigid.AddTorque(torque: this.transform.right * this.angularPowerMaxValue, mode: ForceMode.Acceleration);
     }
 
     private void Start()
     {
         Destroy(obj: this.gameObject, t: this.lifeTime);
+
+        StartCoroutine(GainPowerTimer());
+        StartCoroutine(GainPower());
+
+        angularPower = 1f;
+        scaleValue = 0.05f;
+        angularPowerIncrementValue = 0.1f;
+        scaleValueIncrementValue = 0.02f;
     }
 
     private void OnCollisionEnter(Collision collision)

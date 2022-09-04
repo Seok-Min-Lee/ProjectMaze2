@@ -13,21 +13,21 @@ public class SystemManager : MonoBehaviour
     public IngameAttributeCollection ingameAttributes { get; private set; }
     public IngamePreferenceCollection ingamePreferences { get; private set; }
     public Dictionary<int, int> lastDialogueIndexDictionary { get; private set; }
+    public Dictionary<int, Npc> npcIndexNpcDictionary { get; private set; }
     public Dictionary<GuideType, Guide> guideTypeGuideDictionary { get; private set; }
-    public Dictionary<GuideType, GuideType> displayedGuideTypeDictionary { get; private set; }
-    public int dialogueMagicHumanSequenceSubNo { get; private set; }
-    public int dialogueMagicFairySequenceSubNo { get; private set; }
-    public int dialogueMagicGiantSequenceSubNo { get; private set; }
-    public int dialogueEntranceSequenceSubNo { get; private set; }
+    public int dialogueMagicHumanCaseNo { get; private set; }
+    public int dialogueMagicFairyCaseNo { get; private set; }
+    public int dialogueMagicGiantCaseNo { get; private set; }
+    public int dialogueEntranceCaseNo { get; private set; }
     public bool isClearGame { get; private set; }
 
     public User logInedUser { get; private set; }
 
-    IngameAttributeCollection ingameAttributeExlusiveLoginedUsers;
-    Dictionary<string, User> userAccountUserDictionary;
-    Dictionary<int, string> npcIndexNameDictionary;
-    Dictionary<string, int> npcNameIndexDictionary;
-    Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
+    private IngameAttributeCollection ingameAttributeExlusiveLoginedUsers;
+    private Dictionary<string, User> userAccountUserDictionary;
+    private Dictionary<int, string> npcIndexNameDictionary;
+    private Dictionary<string, int> npcNameIndexDictionary;
+    private Dictionary<int, DialogueCollection> npcIndexDialogueListDictionary;
 
     private void Awake()
     {
@@ -57,11 +57,12 @@ public class SystemManager : MonoBehaviour
 
         this.npcIndexNameDictionary = new Dictionary<int, string>();
         this.npcNameIndexDictionary = new Dictionary<string, int>();
-        this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+        this.npcIndexNpcDictionary = new Dictionary<int, Npc>();
 
         this.lastDialogueIndexDictionary = new Dictionary<int, int>();
+        this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
+
         this.guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
-        this.displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
     }
 
     public void SignUpUser(string account, string password)
@@ -120,16 +121,16 @@ public class SystemManager : MonoBehaviour
     {
         this.ingameAttributes = new IngameAttributeCollection();
         this.lastDialogueIndexDictionary = new Dictionary<int, int>();
-        this.dialogueMagicHumanSequenceSubNo = 0;
-        this.dialogueMagicFairySequenceSubNo = 0;
-        this.dialogueMagicGiantSequenceSubNo = 0;
-        this.dialogueEntranceSequenceSubNo = 0;
+        this.dialogueMagicHumanCaseNo = 0;
+        this.dialogueMagicFairyCaseNo = 0;
+        this.dialogueMagicGiantCaseNo = 0;
+        this.dialogueEntranceCaseNo = 0;
 
         this.npcIndexNameDictionary = new Dictionary<int, string>();
         this.npcNameIndexDictionary = new Dictionary<string, int>();
+        this.npcIndexNpcDictionary = new Dictionary<int, Npc>();
         this.npcIndexDialogueListDictionary = new Dictionary<int, DialogueCollection>();
         this.guideTypeGuideDictionary = new Dictionary<GuideType, Guide>();
-        this.displayedGuideTypeDictionary = new Dictionary<GuideType, GuideType>();
 
         this.logInedUser = new User(
             id: 0,
@@ -160,7 +161,7 @@ public class SystemManager : MonoBehaviour
         SaveIngamePreferenceToJsonData(preferences: this.ingamePreferences);
     }
 
-    public bool GetNpcIndexByName(string name, out int index)
+    public bool TryGetNpcIndexByName(string name, out int index)
     {
         if (this.npcNameIndexDictionary.TryGetValue(key: name, value: out index))
         {
@@ -170,7 +171,7 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public bool GetNpcNameByIndex(int index, out string name)
+    public bool TryGetNpcNameByIndex(int index, out string name)
     {
         if (this.npcIndexNameDictionary.TryGetValue(key: index, out name))
         {
@@ -180,9 +181,9 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public bool GetDialoguesByNpcIndex(int index, out DialogueCollection dialogueCollection)
+    public bool TryGetDialoguesByNpcIndex(int index, out DialogueCollection dialogues)
     {
-        if (this.npcIndexDialogueListDictionary.TryGetValue(key: index, out dialogueCollection))
+        if (this.npcIndexDialogueListDictionary.TryGetValue(key: index, out dialogues))
         {
             return true;
         }
@@ -206,13 +207,18 @@ public class SystemManager : MonoBehaviour
         );
 
         // 구조체 형식에 맞게 변환 및 객체 생성
-        NpcCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
-        foreach (NPC raw in npcs)
+        NpcDataCollection npcs = ConvertJsonDataToNPC(data: npcRaws);
+        foreach (Npc npc in npcs)
         {
-            string npcName = raw.name;
+            string npcName = npc.name;
             if(!this.npcNameIndexDictionary.ContainsKey(key: npcName))
             {
-                this.npcNameIndexDictionary.Add(key: npcName, value: raw.id);
+                this.npcNameIndexDictionary.Add(key: npcName, value: npc.id);
+            }
+
+            if(!this.npcIndexNpcDictionary.ContainsKey(key: npc.id))
+            {
+                this.npcIndexNpcDictionary.Add(key: npc.id, value: npc);
             }
         }
 
@@ -221,7 +227,7 @@ public class SystemManager : MonoBehaviour
         {
             foreach (IGrouping<int, Dialogue> dialogueSituationNoGroup in dialogueGroup.GroupBy(dialogue => dialogue.situationNo))
             {
-                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type != DialogueType.Option).GroupBy(dialogue => dialogue.sequenceSubNo))
+                foreach (IGrouping<int, Dialogue> dialogueSubNoGroup in dialogueSituationNoGroup.Where(dialogue => dialogue.type != DialogueType.Option).GroupBy(dialogue => dialogue.caseNo))
                 {
                     int lastIndex = dialogueSubNoGroup.OrderByDescending(dialogue => dialogue.sequenceNo).FirstOrDefault().id;
 
@@ -335,16 +341,16 @@ public class SystemManager : MonoBehaviour
         return JsonMapper.ToObject(json);
     }
 
-    private NpcCollection ConvertJsonDataToNPC(JsonData data)
+    private NpcDataCollection ConvertJsonDataToNPC(JsonData data)
     {
-        NpcCollection raws = new NpcCollection();
+        NpcDataCollection raws = new NpcDataCollection();
 
         foreach (JsonData datum in data)
         {
             string _id = datum[NameManager.JSON_COLUMN_ID].ToString();
             string _name = datum[NameManager.JSON_COLUMN_NAME].ToString();
 
-            raws.Add(new NPC(
+            raws.Add(new Npc(
                 id: ConvertManager.ConvertStringToInt(input: _id),
                 name: _name
             ));
@@ -362,24 +368,24 @@ public class SystemManager : MonoBehaviour
             string _id = datum[NameManager.JSON_COLUMN_ID].ToString();
             string _npcName = datum[NameManager.JSON_COLUMN_NPC_NAME].ToString();
             string _situationNo = datum[NameManager.JSON_COLUMN_SITUATION_NO].ToString();
+            string _caseNo = datum[NameManager.JSON_COLUMN_CASE_NO].ToString();
             string _sequenceNo = datum[NameManager.JSON_COLUMN_SEQUENCE_NO].ToString();
-            string _sequenceSubNo = datum[NameManager.JSON_COLUMN_SEQUENCE_SUB_NO].ToString();
             string _dialogueType = datum[NameManager.JSON_COLUMN_DIALOGUE_TYPE].ToString();
             string _text = datum[NameManager.JSON_COLUMN_TEXT].ToString();
 
-            int sequenceSubNo;
+            int caseNo;
             DialogueType dialogueType;
             if(this.npcNameIndexDictionary.TryGetValue(key: _npcName, value: out int _npcId))
             {
-                sequenceSubNo = ConvertManager.ConvertStringToInt(input: _sequenceSubNo);
+                caseNo = ConvertManager.ConvertStringToInt(input: _caseNo);
                 dialogueType = (DialogueType)ConvertManager.ConvertStringToInt(input: _dialogueType);
 
                 raws.Add(new Dialogue(
                     id: ConvertManager.ConvertStringToInt(input: _id),
                     npcId: _npcId,
                     situationNo: ConvertManager.ConvertStringToInt(input: _situationNo),
+                    caseNo: caseNo,
                     sequenceNo: ConvertManager.ConvertStringToInt(input: _sequenceNo),
-                    sequenceSubNo: sequenceSubNo,
                     type: dialogueType,
                     text: _text
                 ));
@@ -392,15 +398,15 @@ public class SystemManager : MonoBehaviour
                         {
                             if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_FAIRY))
                             {
-                                this.dialogueMagicFairySequenceSubNo = sequenceSubNo;
+                                this.dialogueMagicFairyCaseNo = caseNo;
                             }
                             else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_GIANT))
                             {
-                                this.dialogueMagicGiantSequenceSubNo = sequenceSubNo;
+                                this.dialogueMagicGiantCaseNo = caseNo;
                             }
                             else if (_text.Contains(NameManager.DIALOGUE_KEYWORD_MAGIC_HUMAN))
                             {
-                                this.dialogueMagicHumanSequenceSubNo = sequenceSubNo;
+                                this.dialogueMagicHumanCaseNo = caseNo;
                             }
                         }
                         break;
@@ -408,7 +414,7 @@ public class SystemManager : MonoBehaviour
                     case NameManager.NPC_NAME_HUMAN_GATEKEEPER:
                         if (_text.Contains(NameManager.DIALOGUE_KEYWORD_ENTRANCE))
                         {
-                            this.dialogueEntranceSequenceSubNo = sequenceSubNo;
+                            this.dialogueEntranceCaseNo = caseNo;
                         }
                         break;
                     default:

@@ -223,6 +223,37 @@ Transform:
   m_Father: {fileID: 1153274378734921688}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1925575200424414942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7391112494850257777}
+  m_Layer: 0
+  m_Name: Camera Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7391112494850257777
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925575200424414942}
+  m_LocalRotation: {x: -0, y: 0.86602545, z: -0, w: 0.49999994}
+  m_LocalPosition: {x: -0.8000002, y: 0.3, z: 0.9000015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3013394813775852225}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 120, z: 0}
 --- !u!1 &1976194819999448511
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,6 +363,7 @@ GameObject:
   - component: {fileID: 5141907220418109371}
   - component: {fileID: 2873028896406494800}
   - component: {fileID: 2209447824864408797}
+  - component: {fileID: 3220881040830800581}
   m_Layer: 0
   m_Name: Fairy Child
   m_TagString: NPC
@@ -353,6 +385,8 @@ Transform:
   m_Children:
   - {fileID: 1355559131099111982}
   - {fileID: 3294792679722948292}
+  - {fileID: 7391112494850257777}
+  - {fileID: 6158602427601277587}
   - {fileID: 484771554561348225}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -407,6 +441,21 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &3220881040830800581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272878855986069714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066d577b04b5df641b2c1cd31e2e4503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  cameraPoint: {fileID: 7391112494850257777}
+  respawnPoint: {fileID: 6158602427601277587}
 --- !u!1 &2443401119873789223
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,6 +1708,37 @@ Transform:
   m_Father: {fileID: 1919207314512106505}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7385047876372007713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6158602427601277587}
+  m_Layer: 0
+  m_Name: Respawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6158602427601277587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7385047876372007713}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3013394813775852225}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7814735058602754061
 GameObject:
   m_ObjectHideFlags: 0
@@ -2040,6 +2120,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3013394813775852225}
     m_Modifications:
+    - target: {fileID: 1510755667453681205, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: npcObject
+      value: 
+      objectReference: {fileID: 3220881040830800581}
     - target: {fileID: 2229057363439024838, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.8
@@ -2066,7 +2150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: type
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: NPCObject
@@ -2102,7 +2186,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_LocalPosition.x

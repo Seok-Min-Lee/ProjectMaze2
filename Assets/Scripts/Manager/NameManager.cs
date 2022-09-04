@@ -8,7 +8,7 @@ public static class NameManager
     public const string JSON_COLUMN_NPC_NAME = "npcName";
     public const string JSON_COLUMN_SITUATION_NO = "situationNo";
     public const string JSON_COLUMN_SEQUENCE_NO = "sequenceNo";
-    public const string JSON_COLUMN_SEQUENCE_SUB_NO = "sequenceSubNo";
+    public const string JSON_COLUMN_CASE_NO = "caseNo";
     public const string JSON_COLUMN_DIALOGUE_TYPE = "dialogueType";
     public const string JSON_COLUMN_TEXT = "text";
     public const string JSON_COLUMN_ATTRIBUTE_NAME = "attributeName";
@@ -23,6 +23,7 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_BEAD_2 = "bead2";
     public const string INGAME_ATTRIBUTE_NAME_BEAD_3 = "bead3";
     public const string INGAME_ATTRIBUTE_NAME_LIFE = "life";
+    public const string INGAME_ATTRIBUTE_NAME_KEY = "keys";
     public const string INGAME_ATTRIBUTE_NAME_CURRENT_HP = "currentHp";
     public const string INGAME_ATTRIBUTE_NAME_CURRENT_CONFUSION = "currentConfusion";
     public const string INGAME_ATTRIBUTE_NAME_MAGIC_GIANT = "magicGiant";
@@ -43,6 +44,13 @@ public static class NameManager
     public const string INGAME_PREFERENCE_NAME_BGM_VOLUME = "bgmVolume";
     public const string INGAME_PREFERENCE_NAME_SE_VOLUME = "seVolume";
 
+    public const string ITEM_NAME_BACK_MIRROR = "백 미러";
+    public const string ITEM_NAME_BEAD = "구슬";
+    public const string ITEM_NAME_HEAL = "콜라";
+    public const string ITEM_NAME_LIFE = "라이프";
+    public const string ITEM_NAME_MAP = "지도";
+    public const string ITEM_NAME_KEY = "열쇠";
+
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_LOADING = "LoadingScene";
     public const string SCENE_VILLAGE = "Village";
@@ -57,22 +65,23 @@ public static class NameManager
     public const string TAG_FALL = "Fall";
     public const string TAG_MONSTER = "Monster";
     public const string TAG_MONSTER_ATTACK = "MonsterAttack";
-    public const string TAG_NEAGTIVE_EFFECT = "NegativeEffect";
+    public const string TAG_NEGATIVE_EFFECT = "NegativeEffect";
     public const string TAG_MONSTER_TURN_BACK_AREA= "MonsterTurnBackArea";
     public const string TAG_TRAP_ACTIVATOR = "TrapActivator";
     public const string TAG_TRAP_DEACTIVATOR = "TrapDeactivator";
     public const string TAG_TRAP = "Trap";
     public const string TAG_NPC = "NPC";
-    public const string TAG_NPC_INTERACTION_ZONE = "NpcInteractionZone";
     public const string TAG_PORTAL = "Portal";
-    public const string TAG_GUIDE_ACTIVATOR = "GuideActivator";
+    public const string TAG_GUIDE = "Guide";
+    public const string TAG_INTERACTION_ZONE = "InteractionZone";
 
     public const string LAYER_PLAYER = "Player";
 
     public const string NAME_VILLAGE_OBJECT_MANAGER = "VillageObjectManager";
 
-    public const string ANIMATION_PARAMETER_RUN_FORWARD = "Run Forward";
-    public const string ANIMATION_PARAMETER_STAB_ATTACK = "Stab Attack";
+    public const string ANIMATION_PARAMETER_INSECT_RUN_FORWARD = "Run Forward";
+    public const string ANIMATION_PARAMETER_INSECT_STAB_ATTACK = "Stab Attack";
+    public const string ANIMATION_PARAMETE_INSECT_DIE = "Die";
     public const string ANIMATION_PARAMETER_DO_ATTACK = "DoAttack";
     public const string ANIMATION_PARAMETER_DO_DIE = "DoDie";
 
@@ -91,14 +100,19 @@ public static class NameManager
     public const string DIALOGUE_KEYWORD_MAGIC_HUMAN = "아무 효과 없는 마법";
     public const string DIALOGUE_KEYWORD_ENTRANCE = "입구";
 
-    public const string GUIDE_TYPE_MISTERY_WALL = "MisteryWall";
-    public const string GUIDE_TYPE_FADE_IN_AND_OUT = "FadeInAndOut";
-    public const string GUIDE_TYPE_PUSHING_WALL = "PushingWall";
-    public const string GUIDE_TYPE_TRAFFIC_LIGHT = "TrafficLight";
-    public const string GUIDE_TYPE_MACH_PAIR = "MachPair";
-    public const string GUIDE_TYPE_MANIPULATE = "Manipulate";
-    public const string GUIDE_TYPE_GAME_GOAL = "GameGoal";
-    public const string GUIDE_TYPE_HELLO_WORLD = "HelloWorld";
-    public const string GUIDE_TYPE_FALL = "Fall";
-    public const string GUIDE_TYPE_MONSTER = "Monster";
+    public const string GUIDE_TYPE_TRAP_MISTERY_DOOR = "trapMisteryDoor";
+    public const string GUIDE_TYPE_TRAP_FADE_IN_AND_OUT = "trapFadeInAndOut";
+    public const string GUIDE_TYPE_TRAP_PUSHING_WALL = "trapPushingWall";
+    public const string GUIDE_TYPE_TRAP_TRAFFIC_LIGHT = "trapTrafficLight";
+    public const string GUIDE_TYPE_TRAP_MACH_PAIR = "trapMachPair";
+    public const string GUIDE_TYPE_MANIPULATE = "manipulate";
+    public const string GUIDE_TYPE_GAME_GOAL = "gameGoal";
+    public const string GUIDE_TYPE_HELLO_WORLD = "helloWorld";
+    public const string GUIDE_TYPE_MONSTER_INSECT = "monsterInsect";
+    public const string GUIDE_TYPE_MONSTER_ZOMBIE = "monsterZombie";
+    public const string GUIDE_TYPE_MONSTER_GHOST = "monsterGhost";
+    public const string GUIDE_TYPE_MONSTER_TURRET = "monsterTurret";
+    public const string GUIDE_TYPE_MONSTER_CATAPULT = "monsterCatapult";
+    public const string GUIDE_TYPE_NEGATIVE_EFFECT_POISON = "negativeEffectPoison";
+    public const string GUIDE_TYPE_NEGATIVE_EFFECT_CONFUSION = "negativeEffectConfusion";
 }

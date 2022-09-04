@@ -387,6 +387,37 @@ Transform:
   m_Father: {fileID: 9046132297153602582}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1785845371772673129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6465604068193845617}
+  m_Layer: 0
+  m_Name: Respawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6465604068193845617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785845371772673129}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4925437247707656463}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1910985866155295577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,6 +1747,7 @@ GameObject:
   - component: {fileID: 3085151377647934581}
   - component: {fileID: 4421309992815748121}
   - component: {fileID: 1564489444887469277}
+  - component: {fileID: 8558965651394021380}
   m_Layer: 0
   m_Name: Human Adult
   m_TagString: NPC
@@ -1737,6 +1769,8 @@ Transform:
   m_Children:
   - {fileID: 6367636536063483392}
   - {fileID: 9170727779740262880}
+  - {fileID: 6695163842724654539}
+  - {fileID: 6465604068193845617}
   - {fileID: 6566106042434232228}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1791,6 +1825,21 @@ CapsuleCollider:
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
+--- !u!114 &8558965651394021380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8215114154470621980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066d577b04b5df641b2c1cd31e2e4503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 8
+  cameraPoint: {fileID: 6695163842724654539}
+  respawnPoint: {fileID: 6465604068193845617}
 --- !u!1 &8358495433850469516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1823,6 +1872,37 @@ Transform:
   m_Father: {fileID: 7029201799183063870}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8525565079165149322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6695163842724654539}
+  m_Layer: 0
+  m_Name: Camera Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6695163842724654539
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8525565079165149322}
+  m_LocalRotation: {x: -0, y: 0.7933534, z: -0, w: 0.6087614}
+  m_LocalPosition: {x: -2, y: 1, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4925437247707656463}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 105, z: 0}
 --- !u!1 &8568040280408866417
 GameObject:
   m_ObjectHideFlags: 0
@@ -1925,9 +2005,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4925437247707656463}
     m_Modifications:
+    - target: {fileID: 1510755667453681205, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: npcObject
+      value: 
+      objectReference: {fileID: 8558965651394021380}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: type
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: NPCObject
@@ -1935,7 +2019,7 @@ PrefabInstance:
       objectReference: {fileID: 8215114154470621980}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_LocalPosition.x

@@ -35,8 +35,6 @@ namespace StarterAssets
 				Vector2 valuevec = value.Get<Vector2>();
 				MoveInput(isReverse ? -valuevec : valuevec);
 			}
-
-            //MoveInput(value.Get<Vector2>());
 		}
 
 		public void OnLook(InputValue value)

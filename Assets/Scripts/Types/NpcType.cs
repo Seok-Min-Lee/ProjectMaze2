@@ -1,5 +1,6 @@
 public enum NpcType
 {
+    None,
     HumanGatekeeper,
     FairyChild,
     FairyAdult,

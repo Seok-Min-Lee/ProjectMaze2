@@ -5,14 +5,15 @@ using UnityEngine.AI;
 public class MonsterInsect : Monster
 {
     public GameObject meshObject, effectObject;
-    public Transform target;
+    public Transform target, senseCenter;
     public BoxCollider AttackArea;
     public float senseRadius, senseDistance, lockOnRadius, lockOnDistance;
 
+    public bool isAttack { get; private set; }
+
     private NavMeshAgent agent;
     private Animator animator;
-
-    bool isAttack, isSuicide;
+    private bool isSuicide;
 
     private void Start()
     {
@@ -22,8 +23,6 @@ public class MonsterInsect : Monster
 
     private void Update()
     {
-        Debug.DrawRay(start: this.transform.position + (Vector3.up * 2), dir: Vector3.right * this.senseDistance, color: Color.red);
-
         if (target == null)
         {
             SetNavigationTarget();
@@ -37,20 +36,8 @@ public class MonsterInsect : Monster
 
     private void SetNavigationTarget()
     {
-        //RaycastHit hit;
-
-        //if(Physics.Raycast(origin: transform.position + (Vector3.up * 2), 
-        //                   direction: Vector3.right,
-        //                   maxDistance: maxDistance, 
-        //                   layerMask: LayerMask.GetMask(NameManager.LAYER_PLAYER),
-        //                   hitInfo: out hit))
-        //{
-        //    target = hit.transform;
-
-        //    animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
-        //}
         RaycastHit[] hits = Physics.SphereCastAll(
-            origin: transform.position + (Vector3.up * 2),
+            origin: senseCenter.position,
             direction: Vector3.right,
             radius: senseRadius,
             maxDistance: senseDistance,
@@ -60,7 +47,7 @@ public class MonsterInsect : Monster
         if(hits.Length > 0)
         {
             this.target = hits[0].transform;
-            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
+            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_INSECT_RUN_FORWARD, value: true);
         }
     }
 
@@ -76,18 +63,10 @@ public class MonsterInsect : Monster
 
         if(hits.Length > 0 && !isAttack)
         {
-            if (!this.isSuicide)
-            {
-                this.isSuicide = true;
-
-                StartCoroutine(routine: SuiCide());
-            }
-
             this.isAttack = true;
 
-            this.agent.isStopped = false;
-            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: false);
-            this.animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_STAB_ATTACK);
+            this.agent.isStopped = true;
+            this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_INSECT_RUN_FORWARD, value: false);
 
             StartCoroutine(routine: Attack());
         }
@@ -95,20 +74,30 @@ public class MonsterInsect : Monster
 
     IEnumerator Attack()
     {
-        yield return new WaitForSeconds(0.2f);
+        if (!this.isSuicide)
+        {
+            this.isSuicide = true;
+
+            StartCoroutine(routine: SuiCide());
+        }
+        this.animator.SetTrigger(name: NameManager.ANIMATION_PARAMETER_INSECT_STAB_ATTACK);
+        yield return new WaitForSeconds(ValueManager.MONSTER_INSECT_ATTACK_AREA_ACTIVATE_DELAY);
         this.AttackArea.enabled = true;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(ValueManager.MONSTER_INSECT_ATTACK_AREA_DEACTIVATE_DELAY);
         this.AttackArea.enabled = false;
 
-        yield return new WaitForSeconds(0.6f);
-        this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_RUN_FORWARD, value: true);
+        yield return new WaitForSeconds(ValueManager.MONSTER_INSECT_ATTACK_AREA_DEACTIVATE_AFTER_DELAY);
+        this.animator.SetBool(name: NameManager.ANIMATION_PARAMETER_INSECT_RUN_FORWARD, value: true);
         this.isAttack = false;
+        this.agent.isStopped = false;
     }
 
     IEnumerator SuiCide()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(ValueManager.MONSTER_INSECT_SUICIDE_ANIMATION_BEFORE_DELAY);
+        this.animator.SetTrigger(name: NameManager.ANIMATION_PARAMETE_INSECT_DIE);
+        yield return new WaitForSeconds(ValueManager.MONSTER_INSECT_SUICIDE_ANIMATION_AFTER_DELAY);
         ExplosionDestroy();
     }
 
@@ -117,12 +106,12 @@ public class MonsterInsect : Monster
         this.meshObject.SetActive(false);
         this.effectObject.SetActive(true);
 
-        Destroy(obj: this.gameObject, t: 1f);
+        Destroy(obj: this.gameObject, t: ValueManager.MONSTER_DESTORY_DELAY);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(center: this.transform.position + this.transform.forward * this.lockOnDistance, radius: this.lockOnRadius);
-        Gizmos.DrawWireSphere(center: this.transform.position + (Vector3.up * 2) + this.transform.forward * this.senseDistance, radius: this.senseRadius);
+        Gizmos.DrawWireSphere(center: senseCenter.position, radius: this.senseRadius);
     }
 }

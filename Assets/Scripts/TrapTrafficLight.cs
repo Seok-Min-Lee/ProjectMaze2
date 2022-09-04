@@ -23,8 +23,8 @@ public class TrapTrafficLight : Trap
             this.player = player;
 
             // UI 업데이트
-            this.manager.ActivateTrafficLight(isActivate: true);
-            this.manager.UpdateTrafficLightByType(type: this.trafficLightType);
+            manager.ActivateTrafficLight(isActivate: true);
+            manager.UpdateTrafficLightByType(type: this.trafficLightType);
 
             StopCoroutine(Timer());
             StartCoroutine(Timer());
@@ -35,7 +35,8 @@ public class TrapTrafficLight : Trap
     {
         this.isActive = false;
         StopAllCoroutines();
-        this.manager.ActivateTrafficLight(isActivate: false);
+        manager.ActivateTrafficLight(isActivate: false);
+        //manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS, type: EventMessageType.TrapSuccess);
     }
 
     private void Update()
@@ -43,7 +44,7 @@ public class TrapTrafficLight : Trap
         if(this.trafficLightType != this.latestType)
         {
             this.latestType = this.trafficLightType;
-            this.manager.UpdateTrafficLightByType(trafficLightType);
+            manager.UpdateTrafficLightByType(trafficLightType);
         }
     }
 
@@ -55,6 +56,8 @@ public class TrapTrafficLight : Trap
             int _damage = this.damage > 0 ? this.damage : player.maxHp;
 
             player.OnDamage(value: _damage, isAvoidable: false);
+            manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_TRAFFIC_LIGHT_FAILURE, type: EventMessageType.TrapFailure);
+
             this.DeactivateEvent(player: this.player);
         }
     }

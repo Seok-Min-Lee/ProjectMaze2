@@ -16,24 +16,26 @@ public class Player : MonoBehaviour
     public int maxHp { get; private set; }
     public int currentLife { get; private set; }
     public int maxLife { get; private set; }
+    public int currentKey { get; private set; }
+    public int maxKey { get; private set; }
     public int confusionStack { get; private set; }
     public int confusionStackMax { get; private set; }
     public int poisonStack { get; private set; }
     public int magicGiantStack { get; private set; }
-
     public bool[] isActiveBeads { get; private set; }
     public bool isActiveMinimap { get; private set; }
     public bool isActiveMagicFairy { get; private set; }
     public bool isActiveMagicHuman { get; private set; }
     public bool isPoison { get; private set; }
     public bool isConfusion { get; private set; }
-    public bool isInteract { get; private set; }
-    public bool wasInteractPreprocess { get; private set; }
-    public bool isInteractPreprocessReady { get; private set; }
+    public bool isInteract { get; private set; }        // 상호작용 현재 진행 여부
+    public bool isInteractable { get; private set; }    // 상호작용 가능 여부
+    public InteractionType interactableInteractionType { get; private set; }
+    public GuideType interactableGuideType { get; private set; }
+    public NpcObject interactableNpcObject { get; private set; }
 
     private ThirdPersonController _controller;
     private CharacterController controller;
-    private NPCInteractionZone interactNpc;
 
     private Vector3 respawnPoint, interactPoint;
 
@@ -47,11 +49,10 @@ public class Player : MonoBehaviour
         _input = GetComponent<StarterAssetsInputs>();
         _controller = GetComponent<ThirdPersonController>();
 
-        InitializeController();
-
         InitializePlayer(
             hpMax: out int _maxHp,
             lifeMax: out int _maxLife,
+            keyMax: out int _keyMax,
             poisonStackMax: out int _poisonStackMax,
             confusionStackMax: out int _confusionStackMax,
             poisonTicDamage: out int _poisonTicDamage,
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
 
         this.maxHp = _maxHp;
         this.maxLife = _maxLife;
+        this.maxKey = _keyMax;
         this.poisonStackMax = _poisonStackMax;
         this.confusionStackMax = _confusionStackMax;
         this.poisonTicDamage = _poisonTicDamage;
@@ -83,6 +85,7 @@ public class Player : MonoBehaviour
             isActiveMagicFairy: out bool _isActiveMagicFairy,
             isActiveMagicHuman: out bool _isActiveMagicHuman,
             life: out int _currentLife,
+            key: out int _currentKey,
             currentHp: out int _currentHp,
             currentConfusion: out int _confusionStack,
             magicGiantStack: out int _magicGiantStack,
@@ -98,6 +101,7 @@ public class Player : MonoBehaviour
         this.isActiveMagicFairy = _isActiveMagicFairy;
         this.isActiveMagicHuman = _isActiveMagicHuman;
         this.currentLife = _currentLife;
+        this.currentKey = _currentKey;
         this.currentHp = _currentHp;
         this.confusionStack = _confusionStack;
         this.magicGiantStack = _magicGiantStack;
@@ -108,14 +112,13 @@ public class Player : MonoBehaviour
             ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
         }
 
-        UpdateBeadVisibility();
+        InitializeController();
     }
 
     private void Update()
     {
         Detoxify();
         Interact();
-        Escape();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -142,7 +145,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
-                other.GetComponentInParent<MonsterRange>().TurnBack();
+                other.GetComponentInParent<MonsterTurret>().TurnBack();
                 break;
 
             case NameManager.TAG_TRAP_ACTIVATOR:
@@ -157,13 +160,12 @@ public class Player : MonoBehaviour
                 OnTriggerEnterToTrap(trap: other.GetComponentInParent<Trap>());
                 break;
 
-            case NameManager.TAG_GUIDE_ACTIVATOR:
-                OnTriggerEnterToGuideActivator(guideActivator: other.GetComponent<GuideActivator>());
+            case NameManager.TAG_PORTAL:
+                OnTriggerEnterToPortal(portal: other.GetComponentInParent<Portal>());
                 break;
 
-            case NameManager.TAG_PORTAL:
-                Portal portal = other.GetComponentInParent<Portal>();
-                manager.LoadSceneBySceneType(sceneType: portal.nextSceneType);
+            case NameManager.TAG_INTERACTION_ZONE:
+                OnTriggerEnterToInteractionZone(zone: other.GetComponent<InteractionZone>());
                 break;
         }
     }
@@ -172,12 +174,8 @@ public class Player : MonoBehaviour
     {
         switch (other.tag)
         {
-            case NameManager.TAG_NEAGTIVE_EFFECT:
+            case NameManager.TAG_NEGATIVE_EFFECT:
                 OnTriggerStayInNegativeEffectZone(negativeEffect: other.GetComponent<NegativeEffectZone>());
-                break;
-
-            case NameManager.TAG_NPC_INTERACTION_ZONE:
-                OnTriggerStayInNpcInteractionZone(npc: other.GetComponent<NPCInteractionZone>());
                 break;
 
             case NameManager.TAG_TRAP:
@@ -190,8 +188,8 @@ public class Player : MonoBehaviour
     {
         switch (other.tag)
         {
-            case NameManager.TAG_NPC_INTERACTION_ZONE:
-                OnTriggerExitFromNpcInteractionZone();
+            case NameManager.TAG_INTERACTION_ZONE:
+                OnTriggerExitFromInteractionZone();
                 break;
         }
     }
@@ -231,33 +229,14 @@ public class Player : MonoBehaviour
 
     public void Interact()
     {
-        InteractPreprocess();
-
-        if (wasInteractPreprocess &&
-            isInteract &&
-            _input.interact)
+        if (this.isInteractable && _input.interact)
         {
-            // 상호작용 및 다음 스크립트 존재 여부에 따라 상호작용 상태 업데이트.
-            manager.UpdateInteractionUI(isContinuable: out bool _isInteract);
-            this.isInteract = _isInteract;
-
-            // 키 입력 초기화.
-            _input.interact = false;
+            this.isInteract = true;
         }
-
-        InteractPostProcess();
-    }
-
-    bool watchEscape;
-    public void Escape()
-    {
-        // 키 입력이 Update() 도는 동안 여러번 실행되어 한번만 발생하도록 하기 위함.
-        if(!watchEscape && _input.escape)
+        else
         {
-            manager.DisplayGameMenu();
+            this.isInteract = false;
         }
-
-        watchEscape = _input.escape;
     }
 
     public void CallUpdatePlayerIngameAttributes()
@@ -270,6 +249,7 @@ public class Player : MonoBehaviour
             isActiveMagicFairy: this.isActiveMagicFairy,
             isActiveMagicHuman: this.isActiveMagicHuman,
             life: this.currentLife,
+            key: this.currentKey,
             currentHp: this.currentHp,
             currentConfusion: this.confusionStack,
             magicGiantStack: this.magicGiantStack,
@@ -298,6 +278,7 @@ public class Player : MonoBehaviour
     private void InitializePlayer(
         out int hpMax,
         out int lifeMax,
+        out int keyMax,
         out int poisonStackMax,
         out int confusionStackMax,
         out int poisonTicDamage,
@@ -308,17 +289,13 @@ public class Player : MonoBehaviour
     {
         hpMax = ValueManager.PLAYER_HP_MAX;
         lifeMax = ValueManager.PLAYER_LIFE_MAX;
+        keyMax = ValueManager.PLAYER_KEY_MAX;
         poisonStackMax = ValueManager.PLAYER_POISON_STACK_MAX;
         confusionStackMax = ValueManager.PLAYER_CONFUSION_STACK_MAX;
         poisonTicDamage = ValueManager.PLAYER_POISON_TIC_DAMAGE;
         detoxActivateTime = ValueManager.PLAYER_DETOX_ACTIVATE_TIME;
         confusionStackUpdateTime = ValueManager.PLAYER_CONFUSION_STACK_UPDATE_TIME;
         confusionDuration = ValueManager.PLAYER_CONFUSION_DURATION;
-    }
-
-    private void UpdateBeadVisibility()
-    {
-        manager.UpdateUIActivedBeads(isActives: isActiveBeads);
     }
 
     private void GetItem(GameObject gameObject)
@@ -344,9 +321,16 @@ public class Player : MonoBehaviour
                 this.isActiveMinimap = true;
                 manager.ActivateMinimap(isActive: this.isActiveMinimap);
                 break;
+            case ItemType.Key:
+                GetItemKey(value: item.value);
+                break;
         }
 
         itemSound.Play();
+
+        string messageText = ValueManager.MESSAGE_PREFIX_ITEM + item.name + ValueManager.MESSAGE_SUFFIX_ITEM;
+        manager.DisplayConfirmMessage(text: messageText, type: EventMessageType.Item);
+
         gameObject.SetActive(false);
     }
 
@@ -357,8 +341,7 @@ public class Player : MonoBehaviour
             this.isActiveBeads[index] = true;
         }
 
-        manager.UpdateUIActivedBeads(isActives: this.isActiveBeads);
-        manager.ActivateSkyboxByPlayerBeads(isActiveBeads: this.isActiveBeads);
+        manager.UpdateByPlayerActiveBeads(isActives: this.isActiveBeads);
     }
 
     private void GetItemLife(int value)
@@ -370,6 +353,18 @@ public class Player : MonoBehaviour
         else
         {
             this.currentLife += value;
+        }
+    }
+
+    private void GetItemKey(int value)
+    {
+        if (this.currentKey >= this.maxKey)
+        {
+            this.currentKey = this.maxKey;
+        }
+        else
+        {
+            this.currentKey += value;
         }
     }
 
@@ -385,11 +380,11 @@ public class Player : MonoBehaviour
             switch (monster.type)
             {
                 case MonsterType.Insect:
-                    OnDamageByInsect(damage: monster.damage);
+                    OnDamageByInsect(insect: monster.GetComponent<MonsterInsect>() ,damage: monster.damage);
                     break;
                 case MonsterType.Zombie:
                     break;
-                case MonsterType.Range:
+                case MonsterType.Turret:
                     break;
                 case MonsterType.Catapult:
                     break;
@@ -428,26 +423,33 @@ public class Player : MonoBehaviour
 
     }
 
-    private void OnDamageByInsect(int damage)
+    private void OnDamageByInsect(MonsterInsect insect, int damage)
     {
-        OnDamage(value: damage, isAvoidable: true); // 기본공격 데미지
+        if (insect.isAttack)
+        {
+            OnDamage(value: damage, isAvoidable: true); // 기본공격 데미지
 
-        isPoison = true;        // 중독 상태 활성화
-        poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
-        ChangePoisonEffect(isAddict: isPoison); // 중독 이펙트 활성화
+            isPoison = true;        // 중독 상태 활성화
+            poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
 
-        countTimeDetox = 0;       // 해독 타이머 초기화
+            ChangePoisonEffect(isAddict: isPoison); // 중독 이펙트 활성화
+
+            countTimeDetox = 0;       // 해독 타이머 초기화
+        }
     }
 
     private IEnumerator Addict(int summaryDamage)
     {
         if (isPoison)
         {
-            OnDamage(value: summaryDamage, isAvoidable: false);
-        }
+            manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_ADDICT, type: EventMessageType.Debuff);
 
-        yield return new WaitForSeconds(1f);
-        StartCoroutine(routine: Addict(summaryDamage: summaryDamage));
+            OnDamage(value: summaryDamage, isAvoidable: false);
+            
+            yield return new WaitForSeconds(1f);
+            
+            StartCoroutine(routine: Addict(summaryDamage: summaryDamage));
+        }
     }
 
     private void Detoxify()
@@ -460,7 +462,60 @@ public class Player : MonoBehaviour
             {
                 isPoison = false;
                 ChangePoisonEffect(isAddict: isPoison);
+
+                manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_DETOX, type: EventMessageType.Recovery);
             }
+        }
+    }
+
+    private void OnTriggerEnterToInteractionZone(InteractionZone zone)
+    {
+        this.isInteractable = true;
+        this.interactableInteractionType = zone.interactionType;
+
+        switch (zone.interactionType)
+        {
+            case InteractionType.Diaglogue:
+                this.interactableNpcObject = zone.GetComponent<NpcInteractionZone>().npcObject;
+                this.interactPoint = zone.transform.position;
+                break;
+            case InteractionType.Guide:
+                this.interactableGuideType = zone.GetComponent<GuideInteractionZone>().guideType;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void OnTriggerEnterToTrapActivator(TrapActivator trapActivator)
+    {
+        trapActivator.ActivateTrap(player: this);
+
+        trapSound.Play();
+    }
+
+    private void OnTriggerEnterToTrap(Trap trap)
+    {
+        switch (trap.type)
+        {
+            case TrapType.MachPair:
+                trap.GetComponent<TrapMachPairColumn>().DetectPlayer();
+                break;
+        }
+    }
+
+    private void OnTriggerEnterToPortal(Portal portal)
+    {
+        // 필요한 구슬을 가지고 있지 않은 경우 에러 처리.
+        if (TryGetNecessaryBeadIndexByNextSceneType(portal.nextSceneType, index: out int index) &&
+            !this.isActiveBeads[index])
+        {
+            //error
+            Debug.Log("error");
+        }
+        else
+        {
+            manager.LoadSceneBySceneType(sceneType: portal.nextSceneType);
         }
     }
 
@@ -485,13 +540,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerStayInNpcInteractionZone(NPCInteractionZone npc)
-    {
-        interactNpc = npc;
-        isInteractPreprocessReady = true;
-        interactPoint = npc.transform.position;
-    }
-
     private void OnTriggerStayInTrap(GameObject trapGameObject)
     {
         Trap trap = trapGameObject.GetComponent<Trap>();
@@ -507,40 +555,34 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerExitFromNpcInteractionZone()
+    public void OnTriggerExitFromInteractionZone()
     {
-        isInteractPreprocessReady = false;
-        wasInteractPreprocess = false;
-        isInteract = false;
+        this.isInteractable = false;
+        this.interactableInteractionType = InteractionType.None;
+        this.interactableGuideType = GuideType.None;
+        this.interactableNpcObject = null;
     }
 
-    private void OnTriggerEnterToTrapActivator(TrapActivator trapActivator)
+    private bool TryGetNecessaryBeadIndexByNextSceneType(SceneType type, out int index)
     {
-        trapActivator.ActivateTrap(player: this);
-
-        if(trapActivator.traps.Length > 0)
+        // 다음 씬으로 넘어가기 위한 구슬의 인덱스를 찾는 것이기 때문에 하나씩 앞당긴다고 생각하면 된다.
+        switch (type)
         {
-            TrapType trapType = trapActivator.traps[0].GetComponent<Trap>().type;
-
-            manager.DisplayGuideByGuideType(guideType: ConvertManager.ConvertTrapTypeToGuideType(trapType: trapType));
-        }
-
-        trapSound.Play();
-    }
-
-    private void OnTriggerEnterToTrap(Trap trap)
-    {
-        switch (trap.type)
-        {
-            case TrapType.MachPair:
-                trap.GetComponent<TrapMachPairColumn>().DetectPlayer();
+            case SceneType.Stage2:
+                index = 0;
+                break;
+            case SceneType.Stage3:
+                index = 1;
+                break;
+            case SceneType.Village:
+                index = 2;
+                break;
+            default:
+                index = -1;
                 break;
         }
-    }
 
-    private void OnTriggerEnterToGuideActivator(GuideActivator guideActivator)
-    {
-        manager.DisplayGuideByGuideType(guideType: guideActivator.type);
+        return index > -1;
     }
 
     private void UpdateCountTimeDetox()
@@ -572,75 +614,35 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void InteractPreprocess()
-    {
-        // 상호작용 전 한 번만 실행하기 위한 조건 세팅
-        // 1. 상호작용 상태가 아니다.
-        // 2. 상호작용 전처리를 하지 않은 상태이다.
-        // 3. 상호작용 전처리 준비 상태이다.
-        // 4. 상호작용 버튼 입력이 들어왔다.
-        if (!isInteract &&
-            !wasInteractPreprocess &&
-            isInteractPreprocessReady && 
-            _input.interact)
-        {
-            // 플레이어 위치 NPC 앞으로 이동 및 정지
-            // NPC 바라보도록 추후 보완.
-            ForceToMove(point: interactPoint);
-            StopPlayerMotion();
-            this.transform.LookAt(target: interactNpc.transform);
-
-            // 카메라 위치 조정
-            manager.MoveGameObject(gameObject: manager.npcInteractionCamera, vector: interactNpc.cameraPoint.position);
-            manager.npcInteractionCamera.transform.rotation = interactNpc.cameraPoint.rotation;
-
-            // 카메라 및 UI 업데이트.
-            manager.ChangeNormalToInteraction(npc: interactNpc);
-
-            // 상호작용 준비 상태 업데이트.
-            wasInteractPreprocess = true;
-            isInteract = true;
-        }
-    }
-
-    private void InteractPostProcess()
-    {
-        // 상호작용 후 한 번만 실행하기 위한 조건 세팅
-        // 1. 상호작용 상태가 아니다.
-        // 2. 상호작용 전처리를 한 상태이다.
-        // 3. 상호작용 버튼 입력이 들어왔다.
-        if (!isInteract &&
-            wasInteractPreprocess &&
-            _input.interact)
-        {
-            // UI 및 NPC 업데이트.
-            manager.ChangeInteractionToNormal();
-
-            // 상호작용 다시 할 수 있게 하기 위한 변수 초기화
-            isInteractPreprocessReady = false;
-            wasInteractPreprocess = false;
-
-            // 상호작용 키 입력 초기화
-            _input.interact = false;
-        }
-    }
-
     IEnumerator Confuse()
     {
         isConfusion = true;
-        _input.isReverse = true;
+        manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_CONFUSE, type: EventMessageType.Debuff);
+
+        ReversePlayerMove();
 
         // 플레이어 이펙트 활성화 추가
         confusionEffect.SetActive(true);
+
         yield return new WaitForSeconds(confusionDuration);
 
-        //플레이어 이펙트 비활성화 추가
+        // 플레이어 이펙트 비활성화 추가
         confusionEffect.SetActive(false);
-        _input.isReverse = false;
+
+        ReversePlayerMove();
+
         isConfusion = false;
+        manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_CALM_DOWN, type: EventMessageType.Recovery);
 
         confusionStack = 0;
     }
+
+    private void ReversePlayerMove()
+    {
+        _input.isReverse = !_input.isReverse;
+        _input.MoveInput(_input.move * (-1));
+    }
+
     #endregion
 
     #region ##### 다용도 함수 #####
@@ -651,6 +653,14 @@ public class Player : MonoBehaviour
         controller.enabled = false;
         this.transform.position = point;
         controller.enabled = true;
+    }
+
+    public void InputStop()
+    {
+        _input.JumpInput(newJumpState: false);
+        _input.SprintInput(newSprintState: false);
+        _input.MoveInput(newMoveDirection: Vector2.zero);
+        _input.LookInput(newLookDirection: Vector2.zero);
     }
 
     public bool IsMoving()
@@ -692,10 +702,6 @@ public class Player : MonoBehaviour
                 {
                     Resurrect();
                 }
-                else
-                {
-                    manager.DisplayGameOver();
-                }
             }
         }
         else
@@ -729,7 +735,10 @@ public class Player : MonoBehaviour
 
         this.addictEffect.SetActive(false);
         this.detoxEffect.SetActive(false);
+        this.confusionEffect.SetActive(false);
+        this.confusionChargeEffect.SetActive(false);
 
+        _input.isReverse = false;
         ForceToMove(point: this.respawnPoint);
     }
 

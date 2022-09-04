@@ -25,9 +25,14 @@ public class TrapPushingWall : Trap
     {
         if(!this.isActive && player != null)
         {
+            this.player = player;
+
             Vector3 initVec = this.transform.position;
             initVec.y = this.player.transform.position.y;
             player.ForceToMove(point: initVec);
+
+            player._input.controlEnable = false;
+            player.InputStop();
 
             this.isActive = true;
             this.player = player;
@@ -36,6 +41,8 @@ public class TrapPushingWall : Trap
 
     public override void DeactivateEvent(Player player = null)
     {
+        player._input.controlEnable = true;
+
         this.isActive = false;
         this.player = null;
 

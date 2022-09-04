@@ -68,66 +68,55 @@ public static class ConvertManager
 
         switch (input)
         {
-            case NameManager.GUIDE_TYPE_FADE_IN_AND_OUT:
-                type = GuideType.FadeInAndOut;
-                break;
-            case NameManager.GUIDE_TYPE_MACH_PAIR:
-                type = GuideType.MachPair;
-                break;
-            case NameManager.GUIDE_TYPE_MISTERY_WALL:
-                type = GuideType.MisteryWall;
-                break;
-            case NameManager.GUIDE_TYPE_PUSHING_WALL:
-                type = GuideType.PushingWall;
-                break;
-            case NameManager.GUIDE_TYPE_TRAFFIC_LIGHT:
-                type = GuideType.TrafficLight;
-                break;
-
             case NameManager.GUIDE_TYPE_GAME_GOAL:
                 type = GuideType.GameGoal;
-                break;
-            case NameManager.GUIDE_TYPE_MANIPULATE:
-                type = GuideType.Manipulate;
                 break;
             case NameManager.GUIDE_TYPE_HELLO_WORLD:
                 type = GuideType.HelloWorld;
                 break;
-            case NameManager.GUIDE_TYPE_FALL:
-                type = GuideType.Fall;
+            case NameManager.GUIDE_TYPE_MANIPULATE:
+                type = GuideType.Manipulate;
                 break;
-            case NameManager.GUIDE_TYPE_MONSTER:
-                type = GuideType.Monster;
-                break;
-            default:
-                type = GuideType.None;
-                break;
-        }
 
-        return type;
-    }
+            case NameManager.GUIDE_TYPE_MONSTER_CATAPULT:
+                type = GuideType.MonsterCatapult;
+                break;
+            case NameManager.GUIDE_TYPE_MONSTER_GHOST:
+                type = GuideType.MonsterGhost;
+                break;
+            case NameManager.GUIDE_TYPE_MONSTER_INSECT:
+                type = GuideType.MonsterInsect;
+                break;
+            case NameManager.GUIDE_TYPE_MONSTER_TURRET:
+                type = GuideType.MonsterTurret;
+                break;
+            case NameManager.GUIDE_TYPE_MONSTER_ZOMBIE:
+                type = GuideType.MonsterZombie;
+                break;
 
-    public static GuideType ConvertTrapTypeToGuideType(TrapType trapType)
-    {
-        GuideType type;
+            case NameManager.GUIDE_TYPE_NEGATIVE_EFFECT_CONFUSION:
+                type = GuideType.NegativeEffectConfusion;
+                break;
+            case NameManager.GUIDE_TYPE_NEGATIVE_EFFECT_POISON:
+                type = GuideType.NegativeEffectPoison;
+                break;
 
-        switch (trapType)
-        {
-            case TrapType.FadeInAndOut:
-                type = GuideType.FadeInAndOut;
+            case NameManager.GUIDE_TYPE_TRAP_FADE_IN_AND_OUT:
+                type = GuideType.TrapFadeInAndOut;
                 break;
-            case TrapType.MachPair:
-                type = GuideType.MachPair;
+            case NameManager.GUIDE_TYPE_TRAP_MACH_PAIR:
+                type = GuideType.TrapMachPair;
                 break;
-            case TrapType.MisteryWall:
-                type = GuideType.MisteryWall;
+            case NameManager.GUIDE_TYPE_TRAP_MISTERY_DOOR:
+                type = GuideType.TrapMisteryDoor;
                 break;
-            case TrapType.PushingWall:
-                type = GuideType.PushingWall;
+            case NameManager.GUIDE_TYPE_TRAP_PUSHING_WALL:
+                type = GuideType.TrapPushingWall;
                 break;
-            case TrapType.TrafficLight:
-                type = GuideType.TrafficLight;
+            case NameManager.GUIDE_TYPE_TRAP_TRAFFIC_LIGHT:
+                type = GuideType.TrapTrafficLight;
                 break;
+
             default:
                 type = GuideType.None;
                 break;

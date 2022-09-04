@@ -6,4 +6,5 @@ public enum ItemType
     Heal,
     Life,
     Map,
+    Key,
 }

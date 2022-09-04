@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,11 +18,14 @@ public class GameManager : MonoBehaviour
     public GameObject minimap, minimapMarker;   // 지도, 플레이어 마커
     public GameObject backMirror;               // 백 미러
     public GameObject interactableAlram;        // 상호작용 가능 표시
+    public Text interactableAlramText;
+    public Text confirmMessageText;
 
-    public GameObject[] playerBeadCovers;       
+    public GameObject[] playerBeadCovers;
     public GameObject magicFairyImage, magicGiantImage, magicHumanImage, poisonImage, confusionImage;   // 특수 효과 활성화 표시
     public RectTransform playerHpBar, playerConfusionBar;   // 플레이어 HP, 혼란 게이지
     public Text playerLifeText;     // 플레이어 남은 라이프 표시
+    public Text playerKeyText;
     public Text magicGiantStackText, poisonStackText;   // 특수효과 스택 표시
     
     public GameObject trafficLightPanel;
@@ -42,239 +46,161 @@ public class GameManager : MonoBehaviour
 
     public Material[] skyboxMaterials;
     public AudioMixer masterMixer;
-    public Player player;
+
+    private Player player;
 
     private string currentSceneName;
-    private bool isPause, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver;
+    private bool isPause, isDisplayNormal, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver, isDisplayInteract;
 
     // 미니맵 관련
     private Vector3 minimapMarkerPoint, minimapCameraPoint; // 플레이어 마커, 카메라 위치
     private bool minimapVisible;
 
     // NPC 상호작용 관련
-    private DialogueCollection dialogueCollection;
-    private NPCInteractionZone interactNpc;
+    private DialogueCollection dialogues;
     private VillageObjectManager villageObjectManager;
-    private int situationNo, dialogueSequenceNo, dialogueSequenceSubNo;
+    private NpcObject interactNpcObject;
+    public int situationNo { get; private set; }
+    private int dialogueSequenceNo, dialogueCaseNo;
 
     private float skyboxRotation;
 
+    private bool isLatestPlayerInteractable, isLatestPlayerInteractWithNpc, isLatestPlayerInputInteract, isLatestPlayerInputEscape;
+
     private void Awake()
     {
-        SetIngameAttributes();
-        SetIngamePreferences();
+        SetIngameAttributeProperties();
+        SetIngamePreferenceProperties();
     }
 
     private void Start()
     {
+        this.player = GameObject.FindGameObjectWithTag(tag: NameManager.TAG_PLAYER).GetComponent<Player>();
+
         this.currentSceneName = SceneManager.GetActiveScene().name;
+        this.situationNo = IsClearGame() ? 1 : 0;
+        this.isDisplayNormal = normalPanel.activeSelf;
 
-        if(this.currentSceneName == NameManager.SCENE_VILLAGE)
-        {
-            villageObjectManager = GameObject.Find(NameManager.NAME_VILLAGE_OBJECT_MANAGER).GetComponent<VillageObjectManager>();
-        }
+        this.confirmMessageText.text = string.Empty;
 
-        if (TryGetMinimapAttributesBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
-        {
-            minimapVisible = this.attributeIsActivePlayerMinimaps[minimapIndex];
-        }
+        SetSceneObjectManagerBySceneName(sceneName: this.currentSceneName, manager: ref villageObjectManager);
+        SetMinimapVisibleByMinimapAttributes(attributes: this.attributeIsActivePlayerMinimaps);
 
         ActivateMinimap(isActive: minimapVisible);
-        UpdateUIActivedBeads(isActives: this.attributeIsActivePlayerBeads);
-        ActivateSkyboxByPlayerBeads(isActiveBeads: this.attributeIsActivePlayerBeads);
+        UpdateByPlayerActiveBeads(isActives: this.attributeIsActivePlayerBeads);
 
-        this.situationNo = IsClearGame() ? 1 : 0;
-
-        RollbackIngamePreference();
+        SetIngamePreferences(
+            backMirrorVisible: this.preferenceBackMirrorVisible,
+            bgmVolume: this.preferenceBgmVolume,
+            seVolume: this.preferenceSeVolume
+        );
     }
 
     private void LateUpdate()
     {
         if (player != null)
         {
-            DefaultUIUpadate();
+            UpdateSkyBox();
+
+            UpdateNormalPanel();
             UpdateMinimap();
 
-            skyboxRotation += Time.deltaTime;
-            RenderSettings.skybox.SetFloat(ValueManager.PROPERY_SKYBOX_ROTATION, skyboxRotation);
+            DisplayInteraction();
+            DisplayGameOver();
+            DisplayGameMenu();
         }
     }
 
-    public void ChangeNormalToInteraction(NPCInteractionZone npc)
+    public void DisplayConfirmMessage(string text, EventMessageType type)
     {
-        interactNpc = npc;
-
-        // UI 세팅.
-        UpdateUIWhetherInteraction(isInteract: true);
-
-        // 상호작용 관련 데이터 초기화.
-        InitializeInteractionData(npc: interactNpc);
+        StopAllCoroutines();
+        StartCoroutine(AlertMessage(text: text, type: type, target: this.confirmMessageText));
     }
 
-    public void ChangeInteractionToNormal()
+    IEnumerator AlertMessage(
+        string text,
+        EventMessageType type,
+        Text target = null
+    )
     {
-        // UI 세팅
-        UpdateUIWhetherInteraction(isInteract: false);
-
-        // NPC 상호작용 후 후처리
-        interactNpc.ActivatePostPorcess();
-
-        interactNpc = null;
-    }
-
-    public void UpdateUIWhetherInteraction(bool isInteract)
-    {
-        // 활성화된 카메라 교체.
-        followCamera.gameObject.SetActive(!isInteract);
-        npcInteractionCamera.gameObject.SetActive(isInteract);
-
-        // 플레이어 조작 설정.
-        player._input.controlEnable = !isInteract;
-        Cursor.lockState = isInteract ? CursorLockMode.Confined : CursorLockMode.Locked;
-
-        // 활성화된 UI 교체.
-        normalPanel.SetActive(!isInteract);
-        interactPanel.SetActive(isInteract);
-    }
-
-    public void UpdateInteractionUI(out bool isContinuable)
-    {
-        Dialogue dialogue;
-        bool isLast;
-
-        if (TryGetNextDialogue(dialogue: out dialogue))
+        if (target != null)
         {
-            npcDialogue.text = dialogue.text;
-            isLast = SystemManager.instance.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
+            target.color = GetColorByEventMessageType(type: type);
+            target.text = text;
+            
+            yield return new WaitForSeconds(ValueManager.MESSAGE_DISPLAY_DURATION);
 
-            if (dialogue.type == DialogueType.Question)
-            {
-                DialogueCollection options = new DialogueCollection(dialogueCollection.Where(x => x.type == DialogueType.Option && x.sequenceNo == this.dialogueSequenceNo));
-
-                // 선택지 활성화
-                for (int i = 0; i < options.Count; i++)
-                {
-                    npcChoiceButtons[i].SetActive(true);
-                    npcChoiceTexts[i].text = options[i].text;
-                }
-
-                nextDialogueSignal.SetActive(false);
-
-                // 상호작용 입력 비활성화
-                player._input.interactEnable = false;
-            }
-            else
-            {
-                // 선택지 비활성화
-                foreach (GameObject button in npcChoiceButtons)
-                {
-                    if (button.activeSelf)
-                    {
-                        button.SetActive(false);
-                    }
-                }
-
-                // 다음 스크립트 여부 표시.
-                nextDialogueSignal.SetActive(!isLast);
-
-                // 이벤트 타입인 경우 마지막 다이얼로그에서 해당 이벤트 발생
-                if(isLast)
-                {
-                    OccurDialogueEvent(dialogue: dialogue);
-                }
-
-                // 상호작용 입력 활성화
-                player._input.interactEnable = true;
-            }
-
-            dialogueSequenceNo++;
-
-            isContinuable = !isLast;
-        }
-        else
-        {
-            isContinuable = false;
+            target.text = string.Empty;
         }
     }
 
-    public void DisplayGameMenu()
+    private Color GetColorByEventMessageType(EventMessageType type)
     {
-        if (!this.isDisplayGameMenu)
+        Color color;
+
+        switch (type)
         {
-            if (!this.isDisplayGuide)
-            {
-                this.displayGuideToggle.isOn = this.preferenceGuideVisible;
-                this.displayBackMirrorToggle.isOn = this.preferenceBackMirrorVisible;
-                this.bgmSlider.value = this.preferenceBgmVolume;
-                this.seSlider.value = this.preferenceSeVolume;
-
-                player.StopPlayerMotion();
-                SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
-            }
-            else
-            {
-                OnClickGuideOKButton();
-            }
+            case EventMessageType.Item:
+                color = Color.yellow;
+                break;
+            case EventMessageType.TrapSuccess:
+                color = new Color(0.2f, 1, 0, 1);   // Green
+                break;
+            case EventMessageType.TrapFailure:
+                color = new Color(1, 0.2f, 0, 1);   // Orange
+                break;
+            case EventMessageType.Debuff:
+                color = new Color(1, 0, 1, 1);  // Magenta
+                break;
+            case EventMessageType.Recovery:
+                color = Color.green;
+                break;
+            default:
+                color = Color.red;
+                break;
         }
-        else
-        {
-            OnClickGameMenuCancelButton();
-        }
-    }
 
-    public void DisplayGuideByGuideType(GuideType guideType)
-    {
-        Guide guide;
-
-        if (this.preferenceGuideVisible &&
-            !this.isDisplayGuide && 
-            !SystemManager.instance.displayedGuideTypeDictionary.ContainsKey(guideType) &&
-            SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
-        {
-            player.StopPlayerMotion();
-            SwitchPauseAndCursorLockEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
-
-            guideHead.text = guide.title;
-            guideBody.text = guide.description;
-
-            SystemManager.instance.displayedGuideTypeDictionary.Add(key: guideType, value: guideType);
-        }
-    }
-
-    public void DisplayGameOver()
-    {
-        if (!isDisplayGameOver)
-        {
-            isDisplayGameOver = true;
-
-            gameOverPanel.SetActive(isDisplayGameOver);
-
-            player._input.controlEnable = !isDisplayGameOver;
-            Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
-        }
+        return color;
     }
 
     public void OnClickInteractionOption(int choiceNo)
     {
-        dialogueSequenceSubNo = choiceNo;
+        this.dialogueCaseNo = choiceNo;
 
-        // 선택지 선택이 상호작용 키 입력을 대체하고
-        // Player 클래스에 작성된 상호작용에 대한 로직을 따라가기 위해 아래와 같이 처리함.
-        player._input.interact = true;
-        player.Interact();
+        // 선택지 비활성화
+        foreach (GameObject button in this.npcChoiceButtons)
+        {
+            if (button.activeSelf)
+            {
+                button.SetActive(false);
+            }
+        }
+
+        // 비활성화 되어있는 interactEnable 활성화 시킨다.
+        // 키 입력이 들어온 것으로 처리한다. 
+        player._input.interactEnable = true;
+        player._input.interact = false;
+        TryContinueInteraction();
     }
 
     public void OnClickGameMenuOKButton()
     {
-        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        UpdateExtraSettingAll();
 
-        // 설정 값 저장 - 추가할 것
+        // 설정한 Preference 를 현재 변수에 업데이트.
         this.preferenceGuideVisible = displayGuideToggle.isOn;
         this.preferenceBackMirrorVisible = displayBackMirrorToggle.isOn;
         this.preferenceBgmVolume = bgmSlider.value;
         this.preferenceSeVolume = seSlider.value;
 
-        RollbackIngamePreference();
+        // Preference 적용
+        SetIngamePreferences(
+            backMirrorVisible: this.preferenceBackMirrorVisible,
+            bgmVolume: this.preferenceBgmVolume,
+            seVolume: this.preferenceSeVolume
+        );
 
         // 타입 변환 후 교체 및 저장.
         IngamePreferenceCollection preferences = ConvertPropertyToIngamePreferences();
@@ -283,18 +209,32 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuCancelButton()
     {
-        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
-        
-        RollbackIngamePreference();
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        UpdateExtraSettingAll();
+
+        // 기존 Preference 로 롤백
+        SetIngamePreferences(
+            backMirrorVisible: this.preferenceBackMirrorVisible,
+            bgmVolume: this.preferenceBgmVolume,
+            seVolume: this.preferenceSeVolume
+        );
     }
 
     public void OnClickGameMenuLobbyButton()
     {
-        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
-        Cursor.lockState = CursorLockMode.Confined;
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        UpdateExtraSettingAll();
 
-        RollbackIngamePreference();
+        // 기존 환경 값으로 롤백
+        SetIngamePreferences(
+            backMirrorVisible: this.preferenceBackMirrorVisible,
+            bgmVolume: this.preferenceBgmVolume,
+            seVolume: this.preferenceSeVolume
+        );
 
+        // Attribute 저장
         SaveCurrentIngameAttributes(isSavePosition: true);
         SystemManager.instance.DeleteDataExclusiveUsers();
 
@@ -303,9 +243,16 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuQuitButton()
     {
-        SwitchPauseAndCursorLockEvent(panel: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+        UpdateExtraSettingAll();
 
-        RollbackIngamePreference();
+        // 기존 환경 값으로 롤백
+        SetIngamePreferences(
+            backMirrorVisible: this.preferenceBackMirrorVisible,
+            bgmVolume: this.preferenceBgmVolume,
+            seVolume: this.preferenceSeVolume
+        );
 
         SaveCurrentIngameAttributes(isSavePosition: true);
 
@@ -315,71 +262,46 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGuideOKButton()
     {
-        SwitchPauseAndCursorLockEvent(panel: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+        UpdateExtraSettingAll();
     }
 
     public void OnClickGameOverReTryButton()
     {
-        isDisplayGameOver = false;
+        // UI 및 부가적인 세팅 업데이트
+        ReverseObjectSetActive(obj: ref this.gameOverPanel, isActive: ref this.isDisplayGameOver);
+        UpdateExtraSettingAll();
 
-        gameOverPanel.SetActive(isDisplayGameOver);
-
-        player._input.controlEnable = !isDisplayGameOver;
-        Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
-
+        // 가지고 있던 Attribute 초기화.
         SystemManager.instance.ingameAttributes.Clear();
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
     }
 
-    public void ChangedValueBgmSlider()
+    public void OnValueChangedBgmSlider()
     {
         float volume = bgmSlider.value;
 
         if(volume <= ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MIN)
         {
-            volume = ValueManager.INGAME_PREFERNECE_BGM_VOLUME_MUTE;
+            volume = ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MUTE;
         }
 
         masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, volume);
     }
 
-    public void ChangedValueSoundEffectSlider()
+    public void OnValueChangedSeSlider()
     {
-        float volume = bgmSlider.value;
+        float volume = seSlider.value;
 
         if (volume <= ValueManager.INGAME_PREFERENCE_SE_VOLUME_MIN)
         {
-            volume = ValueManager.INGAME_PREFERNECE_SE_VOLUME_MUTE;
+            volume = ValueManager.INGAME_PREFERENCE_SE_VOLUME_MUTE;
         }
 
         masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, volume);
     }
 
-    public void ActivateSkyboxByPlayerBeads(bool[] isActiveBeads)
-    {
-        int materialIndex = 0;
-
-        if(isActiveBeads.Length == 3 && isActiveBeads[0])
-        {
-            if (isActiveBeads[1])
-            {
-                if (isActiveBeads[2])
-                {
-                    materialIndex = 3;
-                }
-                else
-                {
-                    materialIndex = 2;
-                }
-            }
-            else
-            {
-                materialIndex = 1;
-            }
-        }
-
-        RenderSettings.skybox = skyboxMaterials[materialIndex];
-    }
 
     public void ActivateMinimap(bool isActive)
     {
@@ -426,13 +348,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdateUIActivedBeads(bool[] isActives)
+    public void UpdateByPlayerActiveBeads(bool[] isActives)
     {
-        for(int i=0; i< playerBeadCovers.Count(); i++)
-        {
-            playerBeadCovers[i].SetActive(!isActives[i]);
-        }
+        UpdateBeadCoversByPlayerActivedBeads(isActives: isActives);
+        ChangeSkyboxByPlayerBeads(isActives: isActives);
     }
+
+
 
     public void LoadSceneBySceneType(SceneType sceneType)
     {
@@ -444,206 +366,102 @@ public class GameManager : MonoBehaviour
         LoadingSceneManager.LoadScene(sceneName: sceneName);
     }
 
-    public void MoveGameObject(GameObject gameObject, Vector3 vector)
+    public void MoveGameObject(GameObject obj, Vector3 vector)
     {
-        gameObject.transform.position = vector;
+        obj.transform.position = vector;
     }
 
-    private bool IsClearGame()
+    private void SetSceneObjectManagerBySceneName(string sceneName, ref VillageObjectManager manager)
     {
-        if(this.currentSceneName == NameManager.SCENE_VILLAGE &&
-            IshadBeadAll())
+        switch (sceneName)
         {
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool IshadBeadAll()
-    {
-        for (int i = 0; i < this.attributeIsActivePlayerBeads.Length; i++)
-        {
-            if (this.attributeIsActivePlayerBeads[i] == false)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private void InitializeInteractionData(NPCInteractionZone npc)
-    {
-        if (SystemManager.instance.GetNpcIndexByName(name: npc.npcName, index: out int npcIndex) &&
-            SystemManager.instance.GetDialoguesByNpcIndex(index: npcIndex, dialogueCollection: out DialogueCollection dialogues))
-        {
-            this.dialogueSequenceNo = 0;
-            npcName.text = npc.npcName;
-
-            if (npc.type == NpcType.Goblin)
-            {
-                this.dialogueSequenceSubNo = GetGoblinInteracionDialogueSequenceSubNo(dialogues: dialogues);
-
-                dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.sequenceSubNo == this.dialogueSequenceSubNo));
-            }
-            else
-            {
-                this.dialogueSequenceSubNo = 0;
-
-                dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.situationNo == this.situationNo));
-            }
+            case NameManager.SCENE_VILLAGE:
+                manager = GameObject.Find(NameManager.NAME_VILLAGE_OBJECT_MANAGER).GetComponent<VillageObjectManager>();
+                break;
+            case NameManager.SCENE_STAGE_1:
+                break;
+            case NameManager.SCENE_STAGE_2:
+                break;
+            case NameManager.SCENE_STAGE_3:
+                break;
+            default:
+                break;
         }
     }
 
-    private int GetGoblinInteracionDialogueSequenceSubNo(IEnumerable<Dialogue> dialogues)
+    #region ##### 게임 환경 관련 #####
+    private void ChangeSkyboxByPlayerBeads(bool[] isActives)
     {
-        // 다이럴로그 타입을 결정한다.
-        float randomTypeValue = UnityEngine.Random.Range(minInclusive: 0, maxExclusive:10);
-        DialogueType dialogueType = randomTypeValue > 4 ? DialogueType.Normal : DialogueType.Event;
+        int materialIndex = 0;
 
-        // 다이얼로그 SequenceSubNo 의 최대 최소값 구한다.
-        DialogueCollection _dialogueCollection;
-        int sequenceSubNo;
-
-        if (dialogueType == DialogueType.Event)
+        if (isActives.Length == 3 && isActives[0])
         {
-            if (player.isActiveMagicHuman)
+            if (isActives[1])
             {
-                if (player.isActiveMagicFairy)
+                if (isActives[2])
                 {
-                    sequenceSubNo = SystemManager.instance.dialogueMagicGiantSequenceSubNo;
+                    materialIndex = 3;
                 }
                 else
                 {
-                    if (UnityEngine.Random.Range(minInclusive: 0, maxExclusive: 2) > 0)
-                    {
-                        sequenceSubNo = SystemManager.instance.dialogueMagicFairySequenceSubNo;
-                    }
-                    else
-                    {
-                        sequenceSubNo = SystemManager.instance.dialogueMagicGiantSequenceSubNo;
-                    }
+                    materialIndex = 2;
                 }
             }
             else
             {
-                sequenceSubNo = SystemManager.instance.dialogueMagicHumanSequenceSubNo;
+                materialIndex = 1;
             }
         }
-        else
-        {
-            _dialogueCollection = new DialogueCollection(dialogues.Where(dialogue => dialogue.type == dialogueType).OrderBy(dialogue => dialogue.sequenceSubNo));
 
-            int randomMinValue = _dialogueCollection.FirstOrDefault().sequenceSubNo;
-            int randomMaxValue = _dialogueCollection.LastOrDefault().sequenceSubNo;
-
-            sequenceSubNo = (int)UnityEngine.Random.Range(minInclusive: randomMinValue, maxExclusive: randomMaxValue + 1);
-        }
-
-        return sequenceSubNo;
+        RenderSettings.skybox = skyboxMaterials[materialIndex];
     }
+    #endregion
 
-    private bool TryGetNextDialogue(out Dialogue dialogue)
+    private void UpdateBeadCoversByPlayerActivedBeads(bool[] isActives)
     {
-        DialogueCollection dialogues = new DialogueCollection(dialogueCollection.Where(dialogue => dialogue.sequenceNo == this.dialogueSequenceNo));
-
-        if (dialogues.Count > 0)
+        for (int i = 0; i < playerBeadCovers.Count(); i++)
         {
-            dialogue = dialogues.Where(dialogue => dialogue.sequenceSubNo == dialogueSequenceSubNo).FirstOrDefault();
-
-            if(!string.IsNullOrEmpty(dialogue.text))
-            {
-                return true;
-            }
-
-            return false;
-        }
-        else
-        {
-            dialogue = new Dialogue();
-
-            return false;
+            playerBeadCovers[i].SetActive(!isActives[i]);
         }
     }
 
-    private void OccurDialogueEvent(Dialogue dialogue)
+    private void UpdateInteractableAlram()
     {
-        if(dialogue.type == DialogueType.Event)
+        if (this.isLatestPlayerInteractable != player.isInteractable &&
+            !this.isDisplayGameMenu &&
+            !this.isDisplayGuide &&
+            !this.isDisplayGameOver &&
+            !player.isInteract)
         {
-            if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicFairySequenceSubNo)
-            {
-                player.ActivateMagicFairy(isActive: true);
-            }
-            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicGiantSequenceSubNo)
-            {
-                player.ActivateMagicGiant(isActive: true);
-            }
-            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueMagicHumanSequenceSubNo)
-            {
-                player.ActivateMagicHuman(isActive: true);
-            }
-            else if(dialogue.sequenceSubNo == SystemManager.instance.dialogueEntranceSequenceSubNo)
-            {
-                if(villageObjectManager != null)
-                {
-                    villageObjectManager.OpenPortal();
-                }
-            }
+            this.isLatestPlayerInteractable = player.isInteractable;
+            this.interactableAlram.SetActive(this.isLatestPlayerInteractable);
+
+            UpdateInteractableAlramTextByInteractionType(type: player.interactableInteractionType);
         }
     }
 
-    private void DefaultUIUpadate()
+    private void UpdateInteractableAlramTextByInteractionType(InteractionType type)
     {
-        // 체력 및 공포
-        playerLifeText.text = ValueManager.PREFIX_PLAYER_LIFE + player.currentLife.ToString();
-        playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
-        playerConfusionBar.localScale = new Vector3((float)player.confusionStack / player.confusionStackMax, 1, 1);
-
-        // 마법 효과
-        bool isActiveMagicGiant = player.magicGiantStack > 0;
-        bool isActivePoision = player.poisonStack > 0;
-
-        magicFairyImage.SetActive(player.isActiveMagicFairy);
-        magicGiantImage.SetActive(isActiveMagicGiant);
-        magicHumanImage.SetActive(player.isActiveMagicHuman);
-        poisonImage.SetActive(isActivePoision);
-        confusionImage.SetActive(player.isConfusion);
-
-        magicGiantStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
-        poisonStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
-
-        // 상호작용 가능한 경우
-        interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
-
-        // 게임오버
-        if (player.currentLife <= 0 && player.currentHp <= 0)
+        switch (type)
         {
-            isDisplayGameOver = true;
-
-            gameOverPanel.SetActive(isDisplayGameOver);
-
-            player._input.controlEnable = !isDisplayGameOver;
-            Cursor.lockState = isDisplayGameOver ? CursorLockMode.Confined : CursorLockMode.Locked;
+            case InteractionType.Diaglogue:
+                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_DIALOGUE;
+                break;
+            case InteractionType.Guide:
+                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_GUIDE;
+                break;
         }
     }
 
-    private void UpdateMinimap()
+    private void SetMinimapVisibleByMinimapAttributes(bool[] attributes)
     {
-        if (minimapVisible && minimapCamera != null)
+        if (TryGetMinimapAttributeIndexBySceneName(sceneName: this.currentSceneName, index: out int minimapIndex))
         {
-            minimapMarkerPoint = player.transform.position;
-            minimapMarkerPoint.y = 0;
-
-            minimapMarker.transform.position = minimapMarkerPoint;
-
-            minimapCameraPoint = minimapMarkerPoint;
-            minimapCameraPoint.y = minimapCamera.transform.position.y;
-            minimapCamera.transform.position = minimapCameraPoint;
+            this.minimapVisible = attributes[minimapIndex];
         }
     }
 
-    private bool TryGetMinimapAttributesBySceneName(string sceneName, out int index)
+    private bool TryGetMinimapAttributeIndexBySceneName(string sceneName, out int index)
     {
         // index 플레이어의 인게임 속성에서 미니맵에 대한 값이 배열이기 때문에 원하는 값을 찾기 위한 인덱스
         // isVisible 현재 씬에 미니맵의 존재 여부
@@ -673,49 +491,454 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
-    private void RollbackIngamePreference()
+    private void SetIngamePreferences(
+        bool backMirrorVisible,
+        float bgmVolume,
+        float seVolume
+    )
     {
-        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, this.preferenceBgmVolume);
-        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, this.preferenceSeVolume);
-        this.backMirror.SetActive(this.preferenceBackMirrorVisible);
+        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, bgmVolume);
+        this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, seVolume);
+        this.backMirror.SetActive(backMirrorVisible);
     }
 
-    private void SwitchPauseAndCursorLockEvent(ref GameObject panel, ref bool isActive)
+    private void UpdateSkyBox()
     {
-        isActive = !isActive;
+        this.skyboxRotation += Time.deltaTime;
+        RenderSettings.skybox.SetFloat(ValueManager.PROPERY_SKYBOX_ROTATION, skyboxRotation);
+    }
 
-        SwitchPause();
-        panel.SetActive(isActive);
-
-        player._input.controlEnable = !isActive;
-
-        if (IsCursorVisibleState())
+    private void UpdateNormalPanel()
+    {
+        if (this.normalPanel.activeSelf)
         {
-            Cursor.lockState = CursorLockMode.Confined;
+            // 체력 및 공포
+            playerLifeText.text = ValueManager.PREFIX_PLAYER_LIFE + player.currentLife.ToString();
+            playerHpBar.localScale = new Vector3((float)player.currentHp / player.maxHp, 1, 1);
+            playerConfusionBar.localScale = new Vector3((float)player.confusionStack / player.confusionStackMax, 1, 1);
+
+            playerKeyText.text = ValueManager.PREFIX_PLAYER_KEY + player.currentKey.ToString();
+
+            // 마법 효과
+            bool isActiveMagicGiant = player.magicGiantStack > 0;
+            bool isActivePoision = player.poisonStack > 0;
+
+            magicFairyImage.SetActive(player.isActiveMagicFairy);
+            magicGiantImage.SetActive(isActiveMagicGiant);
+            magicHumanImage.SetActive(player.isActiveMagicHuman);
+            poisonImage.SetActive(isActivePoision);
+            confusionImage.SetActive(player.isConfusion);
+
+            magicGiantStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.magicGiantStack.ToString();
+            poisonStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
+
+            // 상호작용 가능한 경우
+            //interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
+            UpdateInteractableAlram();
+        }
+    }
+
+    private void UpdateMinimap()
+    {
+        if (minimapVisible && minimapCamera != null)
+        {
+            minimapMarkerPoint = player.transform.position;
+            minimapMarkerPoint.y = 0;
+
+            minimapMarker.transform.position = minimapMarkerPoint;
+
+            minimapCameraPoint = minimapMarkerPoint;
+            minimapCameraPoint.y = minimapCamera.transform.position.y;
+            minimapCamera.transform.position = minimapCameraPoint;
+        }
+    }
+
+    private void DisplayGameOver()
+    {
+        if (!isDisplayGameOver && player.currentLife <= 0 && player.currentHp <= 0)
+        {
+            isDisplayGameOver = true;
+
+            gameOverPanel.SetActive(isDisplayGameOver);
+
+            UpdatePlayerMovable();
+            UpdateCursorVisibility();
+        }
+    }
+
+    private void DisplayInteraction()
+    {
+        // 키 입력 확인
+        if(!this.isLatestPlayerInputInteract && player._input.interact)
+        {
+            // 상호작용 가능 여부 확인
+            if (this.isLatestPlayerInteractable && player.isInteractable)
+            {
+                switch (player.interactableInteractionType)
+                {
+                    case InteractionType.Diaglogue:
+                        DisplayInteractionWithNpc();
+                        break;
+                    case InteractionType.Guide:
+                        DisplayGuideByGuideType(player.interactableGuideType);
+                        break;
+                }
+            }
+        }
+
+        this.isLatestPlayerInputInteract = player._input.interact;
+    }
+
+    private void DisplayGameMenu()
+    {
+        if (!this.isLatestPlayerInputEscape && player._input.escape)
+        {
+            if (!this.isDisplayGameMenu)
+            {
+                if (!this.isDisplayGuide)
+                {
+                    this.displayGuideToggle.isOn = this.preferenceGuideVisible;
+                    this.displayBackMirrorToggle.isOn = this.preferenceBackMirrorVisible;
+                    this.bgmSlider.value = this.preferenceBgmVolume;
+                    this.seSlider.value = this.preferenceSeVolume;
+
+                    player.StopPlayerMotion();
+
+
+                    ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
+                    UpdateExtraSettingAll();
+                }
+                else
+                {
+                    // 가이드 패널 활성화되어 있는 경우 OK 처리
+                    OnClickGuideOKButton();
+                }
+            }
+            else
+            {
+                // 게임 메뉴 패널 활성화 되어 있는 경우 Cancel 처리
+                OnClickGameMenuCancelButton();
+            }
+        }
+
+        this.isLatestPlayerInputEscape = player._input.escape;
+    }
+
+    private void DisplayInteractionWithNpc()
+    {
+        if (this.isLatestPlayerInteractWithNpc && player.isInteract)
+        {
+            // 다음 다이얼로그가 없는 경우 상호작용을 마친다.
+            if (!TryContinueInteraction())
+            {
+                ReverseInteractionSetting();
+                this.interactNpcObject.InteractionPostProcess(player: player);
+
+                this.isLatestPlayerInteractWithNpc = false;
+            }
+        }
+        else if(!this.isLatestPlayerInteractWithNpc && player.isInteract)
+        {
+            this.interactNpcObject = player.interactableNpcObject;
+
+            ReverseInteractionSetting();        // UI 세팅
+            InitInteractionWithNpcSettings();   // Dialogue 세팅
+            TryContinueInteraction();           // 상호작용 시작
+
+            this.npcName.text = interactNpcObject.npc.name;
+
+            this.isLatestPlayerInteractWithNpc = player.isInteract;
+        }
+    }
+
+    public void DisplayGuideByGuideType(GuideType guideType)
+    {
+        Guide guide;
+
+        if (!this.isDisplayGuide)
+        {
+            if(SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
+            {
+                player.StopPlayerMotion();
+
+                ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+                UpdateExtraSettingAll();
+
+                this.guideHead.text = guide.title;
+                this.guideBody.text = guide.description;
+            }
         }
         else
         {
-            Cursor.lockState = isActive ? CursorLockMode.Confined : CursorLockMode.Locked;
+            ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
+            UpdateExtraSettingAll();
         }
     }
 
-    private void SwitchPause()
+    private bool TryContinueInteraction()
     {
-        if (!isPause)
+        Dialogue dialogue;
+        bool isLast;
+
+        if(this.interactNpcObject != null &&
+           TryGetNextDialogue(dialogue: out dialogue))
         {
-            Time.timeScale = ValueManager.TIME_SCALE_PASUE;
-            isPause = true;
+            npcDialogue.text = dialogue.text;
+            isLast = SystemManager.instance.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
+
+            if(dialogue.type == DialogueType.Question)
+            {
+                UpdateDialogueOptions(sequenceNo: this.dialogueSequenceNo);
+
+                nextDialogueSignal.SetActive(false);    // 다음 다이얼로그 표시 off
+                player._input.interactEnable = false;   // 옵션 선택을 위해 상호작용 키입력 off
+            }
+            else
+            {
+                OccurDialogueEvent(dialogue: dialogue, isLast: isLast);
+
+                this.nextDialogueSignal.SetActive(!isLast); // 다음 다이얼로그 표시 업데이트
+            }
+
+            this.dialogueSequenceNo++;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void InitInteractionWithNpcSettings()
+    {
+        // 다이얼로그 관련 초기화.
+        this.dialogues = interactNpcObject.dialogues;
+
+        this.dialogueCaseNo = GetDialougeCaseNo();
+        this.dialogueSequenceNo = 0;
+
+        // 플레이어 위치 및 조작 초기화.
+        player.ForceToMove(point: interactNpcObject.playerPoint.position);
+        player.StopPlayerMotion();
+    }
+
+    private int GetDialougeCaseNo()
+    {
+        int caseNo;
+
+        if (interactNpcObject.type == NpcType.Goblin)
+        {
+            caseNo = GetDialogueSampleCaseNoForGoblin();
+        }
+        else
+        {
+            caseNo = 0;
+        }
+
+        return caseNo;
+    }
+
+    private bool TryGetNextDialogue(out Dialogue dialogue)
+    {
+        DialogueCollection _dialogues = GetNextDialogueSamples();
+
+        if (_dialogues.Count() > 0)
+        {
+            dialogue = _dialogues.FirstOrDefault();
+
+            return !string.IsNullOrEmpty(dialogue.text);
+        }
+
+        dialogue = new Dialogue();
+        return false;
+    }
+
+    private DialogueCollection GetNextDialogueSamples()
+    {
+        DialogueCollection _dialogues = new DialogueCollection(
+            dialogues.Where(x => x.type != DialogueType.Option &&
+                                 x.caseNo == this.dialogueCaseNo &&
+                                 x.sequenceNo == this.dialogueSequenceNo));
+
+        return _dialogues;
+    }
+
+    private void UpdateDialogueOptions(int sequenceNo)
+    {
+        DialogueCollection options = new DialogueCollection(
+            dialogues.Where(x => x.type == DialogueType.Option && x.sequenceNo == sequenceNo)
+        );
+
+        // 선택지 활성화
+        if (options.Count <= npcChoiceButtons.Length)
+        {
+            for (int i = 0; i < options.Count; i++)
+            {
+                npcChoiceButtons[i].SetActive(true);
+                npcChoiceTexts[i].text = options[i].text;
+            }
+        }
+    }
+
+    private void OccurDialogueEvent(Dialogue dialogue, bool isLast)
+    {
+        if (isLast && dialogue.type == DialogueType.Event)
+        {
+            if (dialogue.caseNo == SystemManager.instance.dialogueMagicFairyCaseNo)
+            {
+                player.ActivateMagicFairy(isActive: true);
+            }
+            else if (dialogue.caseNo == SystemManager.instance.dialogueMagicGiantCaseNo)
+            {
+                player.ActivateMagicGiant(isActive: true);
+            }
+            else if (dialogue.caseNo == SystemManager.instance.dialogueMagicHumanCaseNo)
+            {
+                player.ActivateMagicHuman(isActive: true);
+            }
+            else if (dialogue.caseNo == SystemManager.instance.dialogueEntranceCaseNo)
+            {
+                if (villageObjectManager != null)
+                {
+                    villageObjectManager.OpenPortal();
+                }
+            }
+        }
+    }
+
+    private int GetDialogueSampleCaseNoForGoblin()
+    {
+        // 다이럴로그 타입을 결정한다.
+        float randomTypeValue = Random.Range(minInclusive: 0, maxExclusive: 10);
+        DialogueType dialogueType = randomTypeValue > 4 ? DialogueType.Normal : DialogueType.Event;
+
+        // 다이얼로그 SequenceSubNo 의 최대 최소값 구한다.
+        DialogueCollection _dialogues;
+        int caseNo;
+
+        if (dialogueType == DialogueType.Event)
+        {
+            if (this.player.isActiveMagicHuman)
+            {
+                if (this.player.isActiveMagicFairy)
+                {
+                    caseNo = SystemManager.instance.dialogueMagicGiantCaseNo;
+                }
+                else
+                {
+                    if (Random.Range(minInclusive: 0, maxExclusive: 2) > 0)
+                    {
+                        caseNo = SystemManager.instance.dialogueMagicFairyCaseNo;
+                    }
+                    else
+                    {
+                        caseNo = SystemManager.instance.dialogueMagicGiantCaseNo;
+                    }
+                }
+            }
+            else
+            {
+                caseNo = SystemManager.instance.dialogueMagicHumanCaseNo;
+            }
+        }
+        else
+        {
+            _dialogues = new DialogueCollection(dialogues.Where(dialogue => dialogue.type == dialogueType).OrderBy(dialogue => dialogue.caseNo));
+
+            int randomMinValue = _dialogues.FirstOrDefault().caseNo;
+            int randomMaxValue = _dialogues.LastOrDefault().caseNo;
+
+            caseNo = (int)Random.Range(minInclusive: randomMinValue, maxExclusive: randomMaxValue + 1);
+        }
+
+        return caseNo;
+    }
+
+    private void ReverseInteractionSetting()
+    {
+        // 활성화된 카메라 교체.
+        bool isActiveFollowCamera = followCamera.activeSelf;
+        bool isActiveInteractionCamera = npcInteractionCamera.activeSelf;
+        ReverseObjectSetActive(obj: ref this.followCamera, isActive: ref isActiveFollowCamera);
+        ReverseObjectSetActive(obj: ref this.npcInteractionCamera, isActive: ref isActiveInteractionCamera);
+
+        if (this.npcInteractionCamera.activeSelf)
+        {
+            MoveGameObject(obj: this.npcInteractionCamera, vector: player.interactableNpcObject.cameraPoint.position);
+            this.npcInteractionCamera.transform.rotation = player.interactableNpcObject.cameraPoint.rotation;
+        }
+
+        // 활성화된 UI 교체.
+        ReverseObjectSetActive(obj: ref this.normalPanel, isActive: ref this.isDisplayNormal);
+        ReverseObjectSetActive(obj: ref this.interactPanel, isActive: ref this.isDisplayInteract);
+
+        // 부가 설정.
+        UpdatePlayerMovable();
+        UpdateCursorVisibility();
+    }
+
+    private void UpdateExtraSettingAll()
+    {
+        UpdateTimeScale();
+        UpdatePlayerMovable();
+        UpdateCursorVisibility();
+    }
+
+    private void ReverseObjectSetActive(ref GameObject obj, ref bool isActive)
+    {
+        isActive = !isActive;
+        obj.SetActive(isActive);
+    }
+
+    private void UpdateTimeScale()
+    {
+        if (!this.isPause)
+        {
+            if (IsNeedPause())
+            {
+                Time.timeScale = ValueManager.TIME_SCALE_PASUE;
+                this.isPause = true;
+            }
         }
         else
         {
             Time.timeScale = ValueManager.TIME_SCALE_PLAY;
-            isPause = false;
+            this.isPause = false;
         }
     }
 
-    private bool IsCursorVisibleState()
+    private void UpdateCursorVisibility()
     {
-        if (this.player.isInteract || this.isDisplayGameMenu || this.isDisplayGuide || this.isDisplayGameOver)
+        bool isNeedCursor = IsNeedCursor();
+
+        if(Cursor.lockState == CursorLockMode.Locked)
+        {
+            if (isNeedCursor)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+            }
+        }
+        else if(Cursor.lockState == CursorLockMode.Confined)
+        {
+            if (!isNeedCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+    }
+
+    private void UpdatePlayerMovable()
+    {
+        // 현재까지는 커서가 필요한 경우 움직임과 시야의 조작을 제한한다.
+        player._input.controlEnable = !IsNeedCursor();
+        player._input.cursorInputForLook = !IsNeedCursor();
+
+        player.InputStop();
+    }
+
+    private bool IsClearGame()
+    {
+        if (this.currentSceneName == NameManager.SCENE_VILLAGE &&
+            IshadBeadAll())
         {
             return true;
         }
@@ -723,17 +946,43 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
-    bool[] attributeIsActivePlayerBeads;
-    bool[] attributeIsActivePlayerMinimaps;
-    bool attributeSavedPositionEnabled;
-    bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
-    int attributePlayerLife, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
-    int attributeSavedSceneNumber;
-    int attributeSavedPositionX, attributeSavedPositionY, attributeSavedPositionZ;
+    private bool IshadBeadAll()
+    {
+        for (int i = 0; i < this.attributeIsActivePlayerBeads.Length; i++)
+        {
+            if (this.attributeIsActivePlayerBeads[i] == false)
+            {
+                return false;
+            }
+        }
 
-    bool preferenceGuideVisible, preferenceBackMirrorVisible;
-    float preferenceBgmVolume, preferenceSeVolume;
+        return true;
+    }
+
+    private bool IsNeedCursor()
+    {
+        return this.isDisplayGameMenu || this.isDisplayGameOver || this.isDisplayGuide || this.isDisplayInteract;
+    }
+
+    private bool IsNeedPause()
+    {
+        return this.isDisplayGameMenu || this.isDisplayGuide;
+    }
+
+    #region ##### 데이터 처리 관련#####
+    // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
+    private bool[] attributeIsActivePlayerBeads;
+    private bool[] attributeIsActivePlayerMinimaps;
+    private bool attributeSavedPositionEnabled;
+    private bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
+    private int attributePlayerLife, attributePlayerKey, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
+    private int attributeSavedSceneNumber;
+    private int attributeSavedPositionX, attributeSavedPositionY, attributeSavedPositionZ;
+
+    private bool preferenceBackMirrorVisible;
+    private float preferenceBgmVolume, preferenceSeVolume;
+
+    public bool preferenceGuideVisible { get; private set; }
 
     public void SetPlayerIngameAttributes(
         out bool[] isActiveBeads,
@@ -741,6 +990,7 @@ public class GameManager : MonoBehaviour
         out bool isActiveMagicFairy,
         out bool isActiveMagicHuman,
         out int life,
+        out int key,
         out int currentHp,
         out int currentConfusion,
         out int magicGiantStack,
@@ -771,6 +1021,7 @@ public class GameManager : MonoBehaviour
         isActiveMagicFairy = this.attributeIsActivePlayerMagicFairy;
         isActiveMagicHuman = this.attributeIsActivePlayerMagicHuman;
         life = this.attributePlayerLife;
+        key = this.attributePlayerKey;
         currentHp = this.attributePlayerCurrentHp;
         currentConfusion = this.attributePlayerCurrentConfusion;
         magicGiantStack = this.attributePlayerMagicGiantStack;
@@ -787,6 +1038,7 @@ public class GameManager : MonoBehaviour
         bool isActiveMagicFairy,
         bool isActiveMagicHuman,
         int life,
+        int key,
         int currentHp,
         int currentConfusion,
         int magicGiantStack,
@@ -813,6 +1065,7 @@ public class GameManager : MonoBehaviour
         this.attributeIsActivePlayerMagicFairy = isActiveMagicFairy;
         this.attributeIsActivePlayerMagicHuman = isActiveMagicHuman;
         this.attributePlayerLife = life;
+        this.attributePlayerKey = key;
         this.attributePlayerCurrentHp = currentHp;
         this.attributePlayerCurrentConfusion = currentConfusion;
         this.attributePlayerMagicGiantStack = magicGiantStack;
@@ -834,7 +1087,7 @@ public class GameManager : MonoBehaviour
         SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
     }
 
-    private void SetIngameAttributes()
+    private void SetIngameAttributeProperties()
     {
         attributeIsActivePlayerBeads = new bool[3];
         attributeIsActivePlayerMinimaps = new bool[3];
@@ -843,7 +1096,7 @@ public class GameManager : MonoBehaviour
         SetIngameAttributesBySavedData(ingameAttributes: SystemManager.instance.ingameAttributes);
     }
 
-    private void SetIngamePreferences()
+    private void SetIngamePreferenceProperties()
     {
         SetIngamePreferenceDefault();
         SetIngamePreferenceBySavedData(preferences: SystemManager.instance.ingamePreferences);
@@ -864,6 +1117,7 @@ public class GameManager : MonoBehaviour
         this.attributeIsActivePlayerMagicHuman = false;
 
         this.attributePlayerLife = 1;
+        this.attributePlayerKey = 0;
         this.attributePlayerCurrentHp = 100;
         this.attributePlayerCurrentConfusion = 0;
         this.attributePlayerMagicGiantStack = 0;
@@ -904,6 +1158,9 @@ public class GameManager : MonoBehaviour
                         break;
                     case NameManager.INGAME_ATTRIBUTE_NAME_LIFE:
                         attributePlayerLife = attribute.value;
+                        break;
+                    case NameManager.INGAME_ATTRIBUTE_NAME_KEY:
+                        attributePlayerKey = attribute.value;
                         break;
                     case NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP:
                         attributePlayerCurrentHp = attribute.value;
@@ -1047,6 +1304,12 @@ public class GameManager : MonoBehaviour
         ingameAttributes.Add(new IngameAttribute(
             id: index++,
             userId: userId,
+            attributeName: NameManager.INGAME_ATTRIBUTE_NAME_KEY,
+            value: this.attributePlayerKey
+        ));
+        ingameAttributes.Add(new IngameAttribute(
+            id: index++,
+            userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_CURRENT_HP,
             value: this.attributePlayerCurrentHp
         ));
@@ -1130,4 +1393,5 @@ public class GameManager : MonoBehaviour
 
         return preferences;
     }
+    #endregion
 }

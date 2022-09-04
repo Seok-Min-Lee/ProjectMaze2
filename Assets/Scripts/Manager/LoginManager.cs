@@ -7,18 +7,25 @@ using UnityEngine.UI;
 public class LogInManager : MonoBehaviour
 { 
     public GameObject inputPanel, modePanel;
-    public Text inputAccount, inputPassword, failureText, successText;
+    public Text inputAccount, inputPassword, messageText, versionText;
+    public Toggle bgmToggle;
     public AudioMixer masterMixer;
+
+    float bgmVolume;
 
     private void Start()
     {
-        inputPanel.SetActive(true);
-        modePanel.SetActive(false);
+        this.inputPanel.SetActive(true);
+        this.modePanel.SetActive(false);
 
-        failureText.text = string.Empty;
-        successText.text = string.Empty;
+        this.messageText.text = string.Empty;
+        TryGetBgmVolumeByIngamePreferences(preferences: SystemManager.instance.ingamePreferences, volume: out this.bgmVolume);
 
         InitAudioMixer();
+
+        versionText.text = ValueManager.SUFFIX_VERSION + Application.version;
+
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     public void OnClickQuit()
@@ -38,21 +45,21 @@ public class LogInManager : MonoBehaviour
             {
                 SystemManager.instance.SignUpUser(account: userAccount, password: userPassword);
 
-                StopCoroutine(AlertMessage(text: string.Empty));
-                StartCoroutine(AlertMessage(text: ValueManager.CONFIRM_MESSAGE_SIGN_UP_SUCCESS, target: this.successText));
+                StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+                StartCoroutine(AlertMessage(text: ValueManager.CONFIRM_MESSAGE_SIGN_UP_SUCCESS, color: Color.blue, target: this.messageText));
             }
             else
             {
                 // 이미 존재하는 계정
-                StopCoroutine(AlertMessage(text: string.Empty));
-                StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_OVERLAP, target: this.failureText));
+                StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+                StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_OVERLAP, color: Color.red, target: this.messageText));
             }
         }
         else
         {
             // 미입력 된경우
-            StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_NOT_INPUT, target: this.failureText));
+            StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_SIGN_UP_NOT_INPUT, color: Color.red, target: this.messageText));
         }
     }
 
@@ -68,8 +75,8 @@ public class LogInManager : MonoBehaviour
         }
         else
         {
-            StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_LOGIN_FAIL, target: this.failureText));
+            StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_LOGIN_FAIL, color: Color.red, target: this.messageText));
         }
     }
 
@@ -98,8 +105,21 @@ public class LogInManager : MonoBehaviour
         }
         else
         {
-            StopCoroutine(AlertMessage(text: string.Empty));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL, target: this.failureText));
+            StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL, color: Color.red, target: this.messageText));
+        }
+    }
+
+    public void OnValueChangedBgmToggle()
+    {
+        // isOn 일 때 Mute 로 처리한다.
+        if (this.bgmToggle.isOn)
+        {
+            this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MUTE);
+        }
+        else
+        {
+            this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, this.bgmVolume);
         }
     }
 
@@ -169,13 +189,34 @@ public class LogInManager : MonoBehaviour
         return !string.IsNullOrEmpty(sceneName);
     }
 
-    private IEnumerator AlertMessage(string text, Text target = null)
+    private bool TryGetBgmVolumeByIngamePreferences(IEnumerable<IngamePreference> preferences, out float volume)
+    {
+        foreach(IngamePreference preference in preferences)
+        {
+            if(preference.name == NameManager.INGAME_PREFERENCE_NAME_BGM_VOLUME)
+            {
+                volume = ConvertManager.ConvertStringToFloat(preference.value);
+
+                return true;
+            }
+        }
+
+        volume = ValueManager.INGAME_PREFERENCE_BGM_VOLUME_DEFAULT;
+        return false;
+    }
+
+    private IEnumerator AlertMessage(
+        string text, 
+        Color color, 
+        Text target = null
+    )
     {
         if(target != null)
         {
+            target.color = color;
             target.text = text;
 
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(ValueManager.MESSAGE_DISPLAY_DURATION);
 
             target.text = string.Empty;
         }

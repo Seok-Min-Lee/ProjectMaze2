@@ -1,7 +1,7 @@
 public enum TrapType
 {
     None = 0,
-    MisteryWall = 1,
+    MisteryDoor = 1,
     FadeInAndOut = 2,
     PushingWall = 3,
     TrafficLight = 4,

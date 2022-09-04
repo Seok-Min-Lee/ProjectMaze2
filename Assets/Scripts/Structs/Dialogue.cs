@@ -6,8 +6,8 @@ public struct Dialogue
         int id,
         int npcId,
         int situationNo,
+        int caseNo,
         int sequenceNo,
-        int sequenceSubNo,
         DialogueType type,
         string text
     )
@@ -15,8 +15,8 @@ public struct Dialogue
         this.id = id;
         this.npcId = npcId;
         this.situationNo = situationNo;
+        this.caseNo = caseNo;
         this.sequenceNo = sequenceNo;
-        this.sequenceSubNo = sequenceSubNo;
         this.type = type;
         this.text = text;
     }
@@ -24,8 +24,8 @@ public struct Dialogue
     public int id { get; private set; }
     public int npcId { get; private set; }
     public int situationNo { get; private set; }
+    public int caseNo { get; private set; }
     public int sequenceNo { get; private set; }
-    public int sequenceSubNo { get; private set; }
     public DialogueType type { get; private set; }
     public string text { get; private set; }
 }

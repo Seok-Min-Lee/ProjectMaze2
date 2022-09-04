@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TrapMachPairManager : Trap
 {
+    public GameManager manager;
     public TrapMachPairColumn[] leftColumns;
     public TrapMachPairColumn[] rightColumns;
     public GameObject reward;
@@ -57,7 +58,7 @@ public class TrapMachPairManager : Trap
             }
             else
             {
-                MachPairFail();
+                MachPairFailure();
             }
 
             this.machCount++;
@@ -74,11 +75,13 @@ public class TrapMachPairManager : Trap
 
     private void MachPairSuccess()
     {
+        manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_MACH_PAIR_SUCCESS, type: EventMessageType.TrapSuccess);
     }
 
-    private void MachPairFail()
+    private void MachPairFailure()
     {
-        this.player.OnDamage(value: ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE, isAvoidable: true);
+        player.OnDamage(value: ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE, isAvoidable: true);
+        manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_MACH_PAIR_FAILURE, type: EventMessageType.TrapFailure);
     }
 
     private void MachEnd()

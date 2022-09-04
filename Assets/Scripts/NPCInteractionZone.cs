@@ -1,32 +1,20 @@
 using UnityEngine;
 
-public class NPCInteractionZone : MonoBehaviour
+public class NpcInteractionZone : InteractionZone
 {
-    public NpcType type;
-    public GameObject NPCObject;
-    public GameObject effect;
-    public Transform cameraPoint;
-    
-    public string npcName { get; private set; }
-    
+    public NpcObject npcObject;
+        
     private void Start()
     {
-        if(ConvertManager.TryConvertNpcTypeToName(type: type, name: out string nameString))
-        {
-            this.npcName = nameString;
-        }
-        else
-        {
-            this.gameObject.SetActive(false);
-        }
+        this.interactionType = InteractionType.Diaglogue;
     }
 
     public void ActivatePostPorcess()
     {
-        switch (this.type)
+        switch (this.npcObject.type)
         {
             case NpcType.Goblin:
-                this.NPCObject.SetActive(false);
+                this.npcObject.gameObject.SetActive(false);
                 break;
         }
     }

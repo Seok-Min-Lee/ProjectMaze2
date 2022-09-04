@@ -1,7 +1,8 @@
 public static class ValueManager
 {
     public const int PLAYER_HP_MAX = 100;   // 최대 HP
-    public const int PLAYER_LIFE_MAX = 5;   // 최대 Life 개수
+    public const int PLAYER_LIFE_MAX = 9;   // 최대 Life 개수
+    public const int PLAYER_KEY_MAX = 9;    // 최대 보유 열쇠 개수
     public const int PLAYER_MAGIC_GIANT_STACK_MAX = 3;  // 플레이어 방어 최대 스택
     public const int PLAYER_POISON_STACK_MAX = 5;   // 독 최대 스택
     public const int PLAYER_POISON_TIC_DAMAGE = 2;    // 독 스택당 도트 데미지
@@ -12,10 +13,16 @@ public static class ValueManager
     public const float ITEM_ROTATION_SPEED = 60f;   // 아이템 공전 속도
 
     public const float MONSTER_TURN_BACK_ANGLE = 180f; // 몬스터 뒤돌기 각도
-    public const float MONSTER_DESTORY_DELAY = 1f;   // 몬스터 소멸까지 걸리는 시간
+    public const float MONSTER_DESTORY_DELAY = 0.5f;   // 몬스터 소멸까지 걸리는 시간
 
+    public const float MONSTER_INSECT_ATTACK_AREA_ACTIVATE_DELAY = 0.2f;        // 공격 영역 활성화까지 대기시간
+    public const float MONSTER_INSECT_ATTACK_AREA_DEACTIVATE_DELAY = 0.2f;      // 이후 공격 영역 비활성화까지 대기시간
+    public const float MONSTER_INSECT_ATTACK_AREA_DEACTIVATE_AFTER_DELAY = 0.6f;// 이후 다음 공격까지 대기시간
+    public const float MONSTER_INSECT_SUICIDE_ANIMATION_BEFORE_DELAY = 1.3f;    // Suicide 시작 후 애니메이션 발생까지 대기시간
+    public const float MONSTER_INSECT_SUICIDE_ANIMATION_AFTER_DELAY = 1.2f;     // 이후 폭발까지 대기시간
+    
     public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
-    public const float PLAYER_SPRINT_SPEED_DEFAULT = 11f;   // 플레이어 달리기 속도 기본값
+    public const float PLAYER_SPRINT_SPEED_DEFAULT = 33f;   // 플레이어 달리기 속도 기본값
     public const float PLAYER_DETOX_ACTIVATE_TIME = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
     public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 0.5f;   //'공포' 스택 업데이트 시간
     public const float PLAYER_CONFUSION_DURATION = 5.0f;  // '공포' 발현 시 지속 시간
@@ -34,13 +41,31 @@ public static class ValueManager
 
     public const float INGAME_PREFERENCE_BGM_VOLUME_MAX = 0f;    // 출력가능한 소리의 범위는 -80~20 이지만 음질을 고려하여 -40~0 내에서만 제어한다.
     public const float INGAME_PREFERENCE_BGM_VOLUME_MIN = -40f;  
-    public const float INGAME_PREFERNECE_BGM_VOLUME_MUTE = -80f; // 설정한 값이 최소값이면 뮤트 처리를 하기 위해 -80으로 변환한다.
+    public const float INGAME_PREFERENCE_BGM_VOLUME_MUTE = -80f; // 설정한 값이 최소값이면 뮤트 처리를 하기 위해 -80으로 변환한다.
+    public const float INGAME_PREFERENCE_BGM_VOLUME_DEFAULT = -10f;
     public const float INGAME_PREFERENCE_SE_VOLUME_MAX = 0f;
     public const float INGAME_PREFERENCE_SE_VOLUME_MIN = -40f;
-    public const float INGAME_PREFERNECE_SE_VOLUME_MUTE = -80f;
+    public const float INGAME_PREFERENCE_SE_VOLUME_MUTE = -80f;
+    public const float INGAME_PREFERENCE_SE_VOLUME_DEFAULT = -10f;
+
+    public const float MESSAGE_DISPLAY_DURATION = 2f;   // 시스템 메세지 지속시간
+
+    public const string MESSAGE_PLAYER_ADDICT = "중독";
+    public const string MESSAGE_PLAYER_DETOX = "해독";
+    public const string MESSAGE_PLAYER_CONFUSE = "공포";
+    public const string MESSAGE_PLAYER_CALM_DOWN = "공포 해제";
+    public const string MESSAGE_PREFIX_ITEM = "아이템 [ ";
+    public const string MESSAGE_SUFFIX_ITEM = " ] 획득";
+    public const string MESSAGE_TRAP_MACH_PAIR_SUCCESS = "짝 맞추기 성공!";
+    public const string MESSAGE_TRAP_MACH_PAIR_FAILURE = "짝 맞추기 실패!";
+    public const string MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS = "신호등 통과!";
+    public const string MESSAGE_TRAP_TRAFFIC_LIGHT_FAILURE = "신호를 준수 합시다!";
 
     public const string PREFIX_PLAYER_LIFE = "X ";  // UI 에서 플레이어 라이프 옆에 오는 표시
+    public const string PREFIX_PLAYER_KEY = "x ";  // UI 에서 플레이어 보유 Key 옆에 오는 표시
     public const string PREFIX_PLAYER_EFFECT_STACK = "X ";  // UI 에서 스택을 표현하기 위한 표시
+
+    public const string SUFFIX_VERSION = "ver ";
     
     public const string PROPERY_SKYBOX_ROTATION = "_Rotation";  // 스카이박스 세팅을 위한 스카이박스 프로퍼티
     public const string PROPERY_AUDIO_MIXER_BGM = "BGM";    // 오디오 세팅을 위한 오디오 믹서 프로퍼티 (추가한 그룹명)
@@ -59,4 +84,7 @@ public static class ValueManager
     public const string ERROR_MESSAGE_SIGN_UP_NOT_INPUT = "회원가입 실패. 입력창에 데이터를 입력해주세요.";
 
     public const string CONFIRM_MESSAGE_SIGN_UP_SUCCESS = "회원가입 완료. 로그인 해주시길 바랍니다.";
+
+    public const string INTERACTABLE_ALRAM_TEXT_DIALOGUE = "대화하기";
+    public const string INTERACTABLE_ALRAM_TEXT_GUIDE = "가이드 보기";
 }

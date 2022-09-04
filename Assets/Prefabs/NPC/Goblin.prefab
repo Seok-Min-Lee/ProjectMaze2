@@ -32,6 +32,37 @@ Transform:
   m_Father: {fileID: 6289675402897260860}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1104637249819700339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8345779785506850270}
+  m_Layer: 0
+  m_Name: Camera Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8345779785506850270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104637249819700339}
+  m_LocalRotation: {x: -0, y: 0.7933533, z: -0, w: 0.6087615}
+  m_LocalPosition: {x: -2.0000005, y: 1, z: 1.5000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2283935708415948098}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 105, z: 0}
 --- !u!1 &1494744509639369634
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,6 +405,7 @@ GameObject:
   - component: {fileID: 8158315446930692152}
   - component: {fileID: 6180772896224495234}
   - component: {fileID: 4688524116078375494}
+  - component: {fileID: 8306770865583364191}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: NPC
@@ -395,6 +427,8 @@ Transform:
   m_Children:
   - {fileID: 2939945789584711200}
   - {fileID: 587355275389239217}
+  - {fileID: 8345779785506850270}
+  - {fileID: 1570992967383991648}
   - {fileID: 7936356938847569702}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -449,6 +483,21 @@ CapsuleCollider:
   m_Height: 1.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.7, z: 0}
+--- !u!114 &8306770865583364191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3020071150641252177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066d577b04b5df641b2c1cd31e2e4503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 9
+  cameraPoint: {fileID: 8345779785506850270}
+  respawnPoint: {fileID: 1570992967383991648}
 --- !u!1 &3198451122213205014
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,6 +624,37 @@ Transform:
   - {fileID: 8123861182044494147}
   m_Father: {fileID: 5582711527966043647}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4518110230519714901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1570992967383991648}
+  m_Layer: 0
+  m_Name: Respawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1570992967383991648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518110230519714901}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2283935708415948098}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5048465478940037106
 GameObject:
@@ -870,6 +950,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2283935708415948098}
     m_Modifications:
+    - target: {fileID: 1510755667453681205, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: npcObject
+      value: 
+      objectReference: {fileID: 8306770865583364191}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: type
       value: 8
@@ -879,12 +963,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3020071150641252177}
     - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
+      propertyPath: NpcObject
+      value: 
+      objectReference: {fileID: 3020071150641252177}
+    - target: {fileID: 5189646867824129382, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: isVolatility
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5189646869060311126, guid: 9d528e684bf778a44b85c9b76c7dccb0, type: 3}
       propertyPath: m_LocalPosition.x
