@@ -36,7 +36,6 @@ public class TrapTrafficLight : Trap
         this.isActive = false;
         StopAllCoroutines();
         manager.ActivateTrafficLight(isActivate: false);
-        //manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS, type: EventMessageType.TrapSuccess);
     }
 
     private void Update()
@@ -74,9 +73,6 @@ public class TrapTrafficLight : Trap
 
             this.trafficLightType = TrapTrafficLightType.Red;
             yield return new WaitForSeconds(durationRed);
-
-            this.trafficLightType = TrapTrafficLightType.Orange;
-            yield return new WaitForSeconds(durationOrange);
 
             StartCoroutine(Timer());
         }

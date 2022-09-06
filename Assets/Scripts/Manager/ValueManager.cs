@@ -25,7 +25,7 @@ public static class ValueManager
     public const float MONSTER_INSECT_SUICIDE_ANIMATION_AFTER_DELAY = 1.2f;     // 이후 폭발까지 대기시간
     
     public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
-    public const float PLAYER_SPRINT_SPEED_DEFAULT = 11f;   // 플레이어 달리기 속도 기본값
+    public const float PLAYER_SPRINT_SPEED_DEFAULT = 33f;   // 플레이어 달리기 속도 기본값
     public const float PLAYER_POISON_TIC_DELAY = 1f;       // 플레이어 중독 데미지 딜레이
     public const float PLAYER_DETOX_ACTIVATE_TIME = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
     public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 0.5f;   //'공포' 스택 업데이트 시간
@@ -63,7 +63,7 @@ public static class ValueManager
     public const string MESSAGE_SUFFIX_ITEM = " ] 획득";
     public const string MESSAGE_TRAP_MACH_PAIR_SUCCESS = "짝 맞추기 성공!";
     public const string MESSAGE_TRAP_MACH_PAIR_FAILURE = "짝 맞추기 실패!";
-    public const string MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS = "신호등 통과!";
+    //public const string MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS = "신호등 통과!";
     public const string MESSAGE_TRAP_TRAFFIC_LIGHT_FAILURE = "신호를 준수 합시다!";
     public const string MESSAGE_PORTAL_FAIL = "구슬을 획득해야 다음 맵으로 갈 수 있습니다.";
 
