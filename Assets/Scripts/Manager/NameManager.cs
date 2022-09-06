@@ -38,6 +38,7 @@ public static class NameManager
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_X = "savedPositionX";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Y = "savedPositionY";
     public const string INGAME_ATTRIBUTE_NAME_SAVED_POSITION_Z = "savedPositionZ";
+    public const string INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR = "tutorialClear";
 
     public const string INGAME_PREFERENCE_NAME_GUIDE_VISIBLE = "guideVisible";
     public const string INGAME_PREFERENCE_NAME_BACK_MIRROR_VISIBLE = "backMirrorVisible";
@@ -53,6 +54,7 @@ public static class NameManager
 
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_LOADING = "LoadingScene";
+    public const string SCENE_TUTORIAL = "Tutorial";
     public const string SCENE_VILLAGE = "Village";
     public const string SCENE_STAGE_1 = "Stage 1";
     public const string SCENE_STAGE_2 = "Stage 2";
@@ -115,4 +117,11 @@ public static class NameManager
     public const string GUIDE_TYPE_MONSTER_CATAPULT = "monsterCatapult";
     public const string GUIDE_TYPE_NEGATIVE_EFFECT_POISON = "negativeEffectPoison";
     public const string GUIDE_TYPE_NEGATIVE_EFFECT_CONFUSION = "negativeEffectConfusion";
+    public const string GUIDE_TYPE_TUTORIAL_MOVE = "tutorialMove";
+    public const string GUIDE_TYPE_TUTORIAL_ITEM = "tutorialItem";
+    public const string GUIDE_TYPE_TUTORIAL_POISON = "tutorialPoison";
+    public const string GUIDE_TYPE_TUTORIAL_CONFUSION = "tutorialConfusion";
+    public const string GUIDE_TYPE_TUTORIAL_GAME_MENU = "tutorialGameMenu";
+    public const string GUIDE_TYPE_TUTORIAL_GUIDE_OBJECT = "tutorialGuideObject";
+    public const string GUIDE_TYPE_TUTORIAL_END = "tutorialEnd";
 }

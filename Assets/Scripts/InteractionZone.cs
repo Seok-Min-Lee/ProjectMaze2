@@ -5,4 +5,5 @@ using UnityEngine;
 public class InteractionZone : MonoBehaviour
 {
     public InteractionType interactionType { get; protected set; }
+    public bool isImmediate;
 }

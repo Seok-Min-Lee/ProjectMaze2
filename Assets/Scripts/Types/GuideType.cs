@@ -20,4 +20,12 @@ public enum GuideType
     TrapMisteryDoor,
     TrapPushingWall,
     TrapTrafficLight,
+
+    tutorialMove,
+    tutorialItem,
+    tutorialPoison,
+    tutorialConfusion,
+    tutorialGameMenu,
+    tutorialGuideObject,
+    tutorialEnd,
 }

@@ -20,6 +20,7 @@ public class SystemManager : MonoBehaviour
     public int dialogueMagicGiantCaseNo { get; private set; }
     public int dialogueEntranceCaseNo { get; private set; }
     public bool isClearGame { get; private set; }
+    public bool isClearTutorial { get; private set; }
 
     public User logInedUser { get; private set; }
 
@@ -111,13 +112,13 @@ public class SystemManager : MonoBehaviour
         return false;
     }
 
-    public void DeleteIngameIngameAttributeData()
+    public void DeleteIngameIngameAttributeDataExceptTutorialClear()
     {
         this.isClearGame = false;
         this.ingameAttributes.Clear();
     }
 
-    public void DeleteDataExclusiveUsers()
+    public void DeleteDataExceptUsers()
     {
         this.ingameAttributes = new IngameAttributeCollection();
         this.lastDialogueIndexDictionary = new Dictionary<int, int>();
@@ -143,7 +144,8 @@ public class SystemManager : MonoBehaviour
     {
         this.ingameAttributes.Clear();
         this.ingameAttributes.AddRange(ingameAttributes);
-        this.isClearGame = DetectClearGameByIngameAttributes(this.ingameAttributes);
+        this.isClearGame = DetectClearGameByIngameAttributes(attributes: this.ingameAttributes);
+        this.isClearTutorial = DetectClearTutorialByIngameAttributes(attributes: this.ingameAttributes);
 
         // JSON 데이터를 일부 수정 없이 일괄 처리하기 때문에 다른 유저들의 데이터를 한번에 넘긴다.
         IngameAttributeCollection ingameAttributeAll = new IngameAttributeCollection();
@@ -245,6 +247,7 @@ public class SystemManager : MonoBehaviour
         this.ingameAttributeExlusiveLoginedUsers.Clear();
         this.ingameAttributes = ConvertJsonDataToIngameAttribute(data: ingameAttributeRaws, userId: logInedUser.id);
         this.isClearGame = DetectClearGameByIngameAttributes(attributes: this.ingameAttributes);
+        this.isClearTutorial = DetectClearTutorialByIngameAttributes(attributes: this.ingameAttributes);
 
         GuideCollection guides = ConvertJsonDataToGuide(data: guideRaws);
         foreach(Guide guide in guides)
@@ -269,6 +272,19 @@ public class SystemManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private bool DetectClearTutorialByIngameAttributes(IEnumerable<IngameAttribute> attributes)
+    {
+        foreach(IngameAttribute attribute in attributes)
+        {
+            if(attribute.attributeName == NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR)
+            {
+                return attribute.value == 1;
+            }
+        }
+
+        return false;
     }
 
     private void LoadUserData(string path)

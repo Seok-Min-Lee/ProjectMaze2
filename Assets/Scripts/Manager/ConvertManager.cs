@@ -117,6 +117,28 @@ public static class ConvertManager
                 type = GuideType.TrapTrafficLight;
                 break;
 
+            case NameManager.GUIDE_TYPE_TUTORIAL_MOVE:
+                type = GuideType.tutorialMove;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_ITEM:
+                type = GuideType.tutorialItem;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_POISON:
+                type = GuideType.tutorialPoison;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_CONFUSION:
+                type = GuideType.tutorialConfusion;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_GAME_MENU:
+                type = GuideType.tutorialGameMenu;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_GUIDE_OBJECT:
+                type = GuideType.tutorialGuideObject;
+                break;
+            case NameManager.GUIDE_TYPE_TUTORIAL_END:
+                type = GuideType.tutorialEnd;
+                break;
+
             default:
                 type = GuideType.None;
                 break;

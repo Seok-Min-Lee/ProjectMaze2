@@ -80,10 +80,23 @@ public class LogInManager : MonoBehaviour
         }
     }
 
+    public void OnClickTutorial()
+    {
+        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_TUTORIAL);
+    }
+
     public void OnClickNewGame()
     {
-        SystemManager.instance.DeleteIngameIngameAttributeData();
-        LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
+        if (IsTutorialClearByIngameAttributes(attributes: SystemManager.instance.ingameAttributes))
+        {
+            SystemManager.instance.DeleteIngameIngameAttributeDataExceptTutorialClear();
+            LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_VILLAGE);
+        }
+        else
+        {
+            StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_NEW_GAME_FAIL, color: Color.red, target: this.messageText));
+        }
     }
 
     public void OnClickContinueGame()
@@ -106,7 +119,7 @@ public class LogInManager : MonoBehaviour
         else
         {
             StopCoroutine(AlertMessage(text: string.Empty, color: Color.red));
-            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_SELECT_FAIL, color: Color.red, target: this.messageText));
+            StartCoroutine(AlertMessage(text: ValueManager.ERROR_MESSAGE_MODE_CONTINUE_GAME_FAIL, color: Color.red, target: this.messageText));
         }
     }
 
@@ -136,6 +149,19 @@ public class LogInManager : MonoBehaviour
                 masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, ConvertManager.ConvertStringToFloat(preference.value));
             }
         }
+    }
+
+    private bool IsTutorialClearByIngameAttributes(IEnumerable<IngameAttribute> attributes)
+    {
+        foreach(IngameAttribute attribute in attributes)
+        {
+            if(attribute.attributeName == NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR)
+            {
+                return attribute.value == 1;
+            }
+        }
+
+        return false;
     }
 
     private bool TryGetSavedSceneIndexInIngameAttributes(IEnumerable<IngameAttribute> ingameAttributes, out int sceneIndex)

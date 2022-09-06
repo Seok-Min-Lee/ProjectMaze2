@@ -8,7 +8,10 @@ public static class ValueManager
     public const int PLAYER_POISON_TIC_DAMAGE = 2;    // 독 스택당 도트 데미지
     public const int PLAYER_CONFUSION_STACK_MAX = 100;  // '공포' 스택 최대값
     
-    public const int TRAP_MACH_PAIR_FAIL_DAMAGE = 33;
+    public const int TRAP_MACH_PAIR_FAIL_DAMAGE = 33;   // 함정 짝 맞추기 실패시 데미지
+
+    public const int TUTORIAL_PLAYER_SETTING_CURRENT_LIFE = 0;  // 튜토리얼 시작시 플레이어 라이프
+    public const int TUTORIAL_PLAYER_SETTING_CURRENT_HP = 50;   // 튜토리얼 시작시 플레이어 HP
 
     public const float ITEM_ROTATION_SPEED = 60f;   // 아이템 공전 속도
 
@@ -22,7 +25,8 @@ public static class ValueManager
     public const float MONSTER_INSECT_SUICIDE_ANIMATION_AFTER_DELAY = 1.2f;     // 이후 폭발까지 대기시간
     
     public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
-    public const float PLAYER_SPRINT_SPEED_DEFAULT = 33f;   // 플레이어 달리기 속도 기본값
+    public const float PLAYER_SPRINT_SPEED_DEFAULT = 11f;   // 플레이어 달리기 속도 기본값
+    public const float PLAYER_POISON_TIC_DELAY = 1f;       // 플레이어 중독 데미지 딜레이
     public const float PLAYER_DETOX_ACTIVATE_TIME = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
     public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 0.5f;   //'공포' 스택 업데이트 시간
     public const float PLAYER_CONFUSION_DURATION = 5.0f;  // '공포' 발현 시 지속 시간
@@ -50,6 +54,7 @@ public static class ValueManager
 
     public const float MESSAGE_DISPLAY_DURATION = 2f;   // 시스템 메세지 지속시간
 
+    // 시스템 메세지
     public const string MESSAGE_PLAYER_ADDICT = "중독";
     public const string MESSAGE_PLAYER_DETOX = "해독";
     public const string MESSAGE_PLAYER_CONFUSE = "공포";
@@ -71,6 +76,7 @@ public static class ValueManager
     public const string PROPERY_AUDIO_MIXER_BGM = "BGM";    // 오디오 세팅을 위한 오디오 믹서 프로퍼티 (추가한 그룹명)
     public const string PROPERY_AUDIO_MIXER_EFFECT = "Effect";  // 오디오 세팅을 위한 오디오 믹서 프로퍼티 (추가한 그룹명)
 
+    // JSON 파일 경로
     public const string JSON_PATH_TB_USER = "/Resources/tb_user.json";
     public const string JSON_PATH_TB_NPC = "/Resources/tb_npc.json";
     public const string JSON_PATH_TB_DIALOGUE = "/Resources/tb_dialogue.json";
@@ -78,13 +84,16 @@ public static class ValueManager
     public const string JSON_PATH_TB_INGAME_PREFERENCE = "/Resources/tb_ingame_preference.json";
     public const string JSON_PATH_TB_GUIDE = "/Resources/tb_guide.json";
 
+    // 로그인 화면 시스템 메세지
     public const string ERROR_MESSAGE_LOGIN_FAIL = "로그인 실패. 로그인 정보를 확인해주시길 바랍니다.";
-    public const string ERROR_MESSAGE_MODE_SELECT_FAIL = "이어하기 실패. 저장된 게임 정보가 없습니다.";
+    public const string ERROR_MESSAGE_NEW_GAME_FAIL = "게임 시작 실패. 튜토리얼을 먼저 진행해주세요.";
+    public const string ERROR_MESSAGE_MODE_CONTINUE_GAME_FAIL = "이어하기 실패. 저장된 게임 정보가 없습니다.";
     public const string ERROR_MESSAGE_SIGN_UP_OVERLAP = "회원가입 실패. 중복되는 계정이 존재합니다.";
     public const string ERROR_MESSAGE_SIGN_UP_NOT_INPUT = "회원가입 실패. 입력창에 데이터를 입력해주세요.";
 
     public const string CONFIRM_MESSAGE_SIGN_UP_SUCCESS = "회원가입 완료. 로그인 해주시길 바랍니다.";
 
+    // 인게임 상호작용 가능 메세지
     public const string INTERACTABLE_ALRAM_TEXT_DIALOGUE = "대화하기";
     public const string INTERACTABLE_ALRAM_TEXT_GUIDE = "가이드 보기";
 }

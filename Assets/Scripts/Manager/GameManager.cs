@@ -46,10 +46,10 @@ public class GameManager : MonoBehaviour
 
     public Material[] skyboxMaterials;
     public AudioMixer masterMixer;
-
+    
+    public string currentSceneName { get; private set; }
+    
     private Player player;
-
-    private string currentSceneName;
     private bool isPause, isDisplayNormal, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver, isDisplayInteract;
 
     // 미니맵 관련
@@ -69,31 +69,34 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        // Attribute, Preference 초기화
         SetIngameAttributeProperties();
         SetIngamePreferenceProperties();
     }
 
     private void Start()
     {
+        // 프로퍼티 초기화
         this.player = GameObject.FindGameObjectWithTag(tag: NameManager.TAG_PLAYER).GetComponent<Player>();
 
         this.currentSceneName = SceneManager.GetActiveScene().name;
-        this.situationNo = IsClearGame() ? 1 : 0;
+        this.situationNo = SystemManager.instance.isClearGame ? 1 : 0;
         this.isDisplayNormal = normalPanel.activeSelf;
 
         this.confirmMessageText.text = string.Empty;
 
-        SetSceneObjectManagerBySceneName(sceneName: this.currentSceneName, manager: ref villageObjectManager);
-        SetMinimapVisibleByMinimapAttributes(attributes: this.attributeIsActivePlayerMinimaps);
-
-        ActivateMinimap(isActive: minimapVisible);
-        UpdateByPlayerActiveBeads(isActives: this.attributeIsActivePlayerBeads);
-
+        // preferences 값 적용
         SetIngamePreferences(
             backMirrorVisible: this.preferenceBackMirrorVisible,
             bgmVolume: this.preferenceBgmVolume,
             seVolume: this.preferenceSeVolume
         );
+
+        SetSceneObjectManagerBySceneName(sceneName: this.currentSceneName, manager: ref villageObjectManager);
+
+        UpdateByPlayerActiveBeads(isActives: this.attributeIsActivePlayerBeads);
+        SetMinimapVisibleByMinimapAttributes(attributes: this.attributeIsActivePlayerMinimaps);
+        ActivateMinimap(isActive: minimapVisible);
     }
 
     private void LateUpdate()
@@ -236,7 +239,7 @@ public class GameManager : MonoBehaviour
 
         // Attribute 저장
         SaveCurrentIngameAttributes(isSavePosition: true);
-        SystemManager.instance.DeleteDataExclusiveUsers();
+        SystemManager.instance.DeleteDataExceptUsers();
 
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
     }
@@ -313,7 +316,7 @@ public class GameManager : MonoBehaviour
         {
             minimapCamera.SetActive(minimapVisible);
 
-            switch (currentSceneName)
+            switch (this.currentSceneName)
             {
                 case NameManager.SCENE_STAGE_1:
                     attributeIsActivePlayerMinimaps[0] = true;
@@ -354,15 +357,30 @@ public class GameManager : MonoBehaviour
         ChangeSkyboxByPlayerBeads(isActives: isActives);
     }
 
-
-
     public void LoadSceneBySceneType(SceneType sceneType)
     {
         string sceneName = ConvertManager.ConvertSceneTypeToString(sceneType: sceneType);
 
-        // Player Attribute DB 데이터 업데이트 추가.
-        SaveCurrentIngameAttributes(isSavePosition: false);
-
+        if(this.currentSceneName == NameManager.SCENE_TUTORIAL)
+        {
+            // 튜토리얼인 경우 튜토리얼 클리어 여부만 저장한다.
+            IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
+            ingameAttributes.Add(new IngameAttribute(
+                id: 0,
+                userId: SystemManager.instance.logInedUser.id,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR,
+                value: 1
+            ));
+            SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
+            
+            // 로비로 가기전에 SystemManager 데이터를 지운다.
+            SystemManager.instance.DeleteDataExceptUsers();
+        }
+        else
+        {
+            // Player Attribute DB 데이터 업데이트 추가.
+            SaveCurrentIngameAttributes(isSavePosition: false);
+        }
         LoadingSceneManager.LoadScene(sceneName: sceneName);
     }
 
@@ -373,6 +391,7 @@ public class GameManager : MonoBehaviour
 
     private void SetSceneObjectManagerBySceneName(string sceneName, ref VillageObjectManager manager)
     {
+        // ObjectManager 로 통일하고 지울 것.
         switch (sceneName)
         {
             case NameManager.SCENE_VILLAGE:
@@ -419,6 +438,8 @@ public class GameManager : MonoBehaviour
 
     private void UpdateBeadCoversByPlayerActivedBeads(bool[] isActives)
     {
+        // Bead UI는 구슬 이미지 위에 커버 이미지가 덮고 있다.
+        // 획득한 구슬이 있으면 덮고 있는 커버 이미지를 비활성화 시킨다.
         for (int i = 0; i < playerBeadCovers.Count(); i++)
         {
             playerBeadCovers[i].SetActive(!isActives[i]);
@@ -463,8 +484,8 @@ public class GameManager : MonoBehaviour
 
     private bool TryGetMinimapAttributeIndexBySceneName(string sceneName, out int index)
     {
-        // index 플레이어의 인게임 속성에서 미니맵에 대한 값이 배열이기 때문에 원하는 값을 찾기 위한 인덱스
-        // isVisible 현재 씬에 미니맵의 존재 여부
+        // index : 플레이어의 인게임 속성에서 미니맵에 대한 값이 배열이기 때문에 원하는 값을 찾기 위한 인덱스
+        // isVisible : 현재 씬에 미니맵의 존재 여부
 
         bool isVisible;
 
@@ -497,6 +518,8 @@ public class GameManager : MonoBehaviour
         float seVolume
     )
     {
+        // 가이드 표시는 ObjectManager 클래스에서 관리한다.
+
         this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_BGM, bgmVolume);
         this.masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, seVolume);
         this.backMirror.SetActive(backMirrorVisible);
@@ -555,7 +578,10 @@ public class GameManager : MonoBehaviour
 
     private void DisplayGameOver()
     {
-        if (!isDisplayGameOver && player.currentLife <= 0 && player.currentHp <= 0)
+        if (!isDisplayGameOver && 
+            !player.isTutorial &&
+            player.currentLife <= 0 && 
+            player.currentHp <= 0)
         {
             isDisplayGameOver = true;
 
@@ -569,10 +595,10 @@ public class GameManager : MonoBehaviour
     private void DisplayInteraction()
     {
         // 키 입력 확인
-        if(!this.isLatestPlayerInputInteract && player._input.interact)
+        if (!this.isLatestPlayerInputInteract && player._input.interact)
         {
             // 상호작용 가능 여부 확인
-            if (this.isLatestPlayerInteractable && player.isInteractable)
+            if (player.isInteractable)
             {
                 switch (player.interactableInteractionType)
                 {
@@ -584,6 +610,8 @@ public class GameManager : MonoBehaviour
                         break;
                 }
             }
+
+            player._input.interact = false;
         }
 
         this.isLatestPlayerInputInteract = player._input.interact;
@@ -935,17 +963,6 @@ public class GameManager : MonoBehaviour
         player.InputStop();
     }
 
-    private bool IsClearGame()
-    {
-        if (this.currentSceneName == NameManager.SCENE_VILLAGE &&
-            IshadBeadAll())
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     private bool IshadBeadAll()
     {
         for (int i = 0; i < this.attributeIsActivePlayerBeads.Length; i++)
@@ -973,7 +990,7 @@ public class GameManager : MonoBehaviour
     // 아래 변수 및 함수들은 데이터를 읽고 저장할 때에만 사용하기를 권장.
     private bool[] attributeIsActivePlayerBeads;
     private bool[] attributeIsActivePlayerMinimaps;
-    private bool attributeSavedPositionEnabled;
+    private bool attributeSavedPositionEnabled/*, attributeTutorialClear*/;
     private bool attributeIsActivePlayerMagicFairy, attributeIsActivePlayerMagicHuman;
     private int attributePlayerLife, attributePlayerKey, attributePlayerCurrentHp, attributePlayerCurrentConfusion, attributePlayerMagicGiantStack, attributePlayerPoisonStack;
     private int attributeSavedSceneNumber;
@@ -989,6 +1006,7 @@ public class GameManager : MonoBehaviour
         out bool isActiveMinimap,
         out bool isActiveMagicFairy,
         out bool isActiveMagicHuman,
+        out bool isTutorialClear,
         out int life,
         out int key,
         out int currentHp,
@@ -1001,35 +1019,56 @@ public class GameManager : MonoBehaviour
         out int savedPositionZ
     )
     {
-        switch (currentSceneName)
+        isTutorialClear = SystemManager.instance.isClearTutorial;
+        if (!isTutorialClear)
         {
-            case NameManager.SCENE_STAGE_1:
-                isActiveMinimap = this.attributeIsActivePlayerMinimaps[0];
-                break;
-            case NameManager.SCENE_STAGE_2:
-                isActiveMinimap = this.attributeIsActivePlayerMinimaps[1];
-                break;
-            case NameManager.SCENE_STAGE_3:
-                isActiveMinimap = this.attributeIsActivePlayerMinimaps[2];
-                break;
-            default:
-                isActiveMinimap = false;
-                break;
+            isActiveBeads = new bool[3];
+            isActiveMinimap = false;
+            isActiveMagicFairy = false;
+            isActiveMagicHuman = false;
+            life = ValueManager.TUTORIAL_PLAYER_SETTING_CURRENT_LIFE;
+            key = 0;
+            currentHp = ValueManager.TUTORIAL_PLAYER_SETTING_CURRENT_HP;
+            currentConfusion = 0;
+            magicGiantStack = 0;
+            poisonStack = 0;
+            savedPositionEnabled = false;
+            savedPositionX = 0;
+            savedPositionY = 0;
+            savedPositionZ = 0;
         }
+        else
+        {
+            switch (this.currentSceneName)
+            {
+                case NameManager.SCENE_STAGE_1:
+                    isActiveMinimap = this.attributeIsActivePlayerMinimaps[0];
+                    break;
+                case NameManager.SCENE_STAGE_2:
+                    isActiveMinimap = this.attributeIsActivePlayerMinimaps[1];
+                    break;
+                case NameManager.SCENE_STAGE_3:
+                    isActiveMinimap = this.attributeIsActivePlayerMinimaps[2];
+                    break;
+                default:
+                    isActiveMinimap = false;
+                    break;
+            }
 
-        isActiveBeads = this.attributeIsActivePlayerBeads;
-        isActiveMagicFairy = this.attributeIsActivePlayerMagicFairy;
-        isActiveMagicHuman = this.attributeIsActivePlayerMagicHuman;
-        life = this.attributePlayerLife;
-        key = this.attributePlayerKey;
-        currentHp = this.attributePlayerCurrentHp;
-        currentConfusion = this.attributePlayerCurrentConfusion;
-        magicGiantStack = this.attributePlayerMagicGiantStack;
-        poisonStack = this.attributePlayerPoisonStack;
-        savedPositionEnabled = this.attributeSavedPositionEnabled;
-        savedPositionX = this.attributeSavedPositionX;
-        savedPositionY = this.attributeSavedPositionY;
-        savedPositionZ = this.attributeSavedPositionZ;
+            isActiveBeads = this.attributeIsActivePlayerBeads;
+            isActiveMagicFairy = this.attributeIsActivePlayerMagicFairy;
+            isActiveMagicHuman = this.attributeIsActivePlayerMagicHuman;
+            life = this.attributePlayerLife;
+            key = this.attributePlayerKey;
+            currentHp = this.attributePlayerCurrentHp;
+            currentConfusion = this.attributePlayerCurrentConfusion;
+            magicGiantStack = this.attributePlayerMagicGiantStack;
+            poisonStack = this.attributePlayerPoisonStack;
+            savedPositionEnabled = this.attributeSavedPositionEnabled;
+            savedPositionX = this.attributeSavedPositionX;
+            savedPositionY = this.attributeSavedPositionY;
+            savedPositionZ = this.attributeSavedPositionZ;
+        }
     }
 
     public void UpdatePlayerIngameAttributes(
@@ -1048,7 +1087,7 @@ public class GameManager : MonoBehaviour
         int attributeSavedPositionZ
     )
     {
-        switch (currentSceneName)
+        switch (this.currentSceneName)
         {
             case NameManager.SCENE_STAGE_1:
                 this.attributeIsActivePlayerMinimaps[0] = isActiveMinimap;
@@ -1132,7 +1171,7 @@ public class GameManager : MonoBehaviour
 
     private void SetIngamePreferenceDefault()
     {
-        this.preferenceGuideVisible = true;
+        this.preferenceGuideVisible = this.currentSceneName == NameManager.SCENE_TUTORIAL ? false : true;
         this.preferenceBackMirrorVisible = false;
 
         this.preferenceBgmVolume = ValueManager.INGAME_PREFERENCE_BGM_VOLUME_MAX;
@@ -1192,6 +1231,9 @@ public class GameManager : MonoBehaviour
                     case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_POSITION_ENABLED:
                         attributeSavedPositionEnabled = attribute.value == 0 ? false : true;
                         break;
+                    //case NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR:
+                    //    attributeTutorialClear = attribute.value == 0 ? false : true;
+                    //    break;
                     case NameManager.INGAME_ATTRIBUTE_NAME_SAVED_SCENE_NUMBER:
                         attributeSavedSceneNumber = attribute.value;
                         break;
@@ -1294,6 +1336,12 @@ public class GameManager : MonoBehaviour
             userId: userId,
             attributeName: NameManager.INGAME_ATTRIBUTE_NAME_MAGIC_HUMAN,
             value: this.attributeIsActivePlayerMagicHuman == true ? 1 : 0
+        ));
+        ingameAttributes.Add(new IngameAttribute(
+            id: index++,
+            userId: userId,
+            attributeName: NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR,
+            value: SystemManager.instance.isClearTutorial == true ? 1 : 0
         ));
         ingameAttributes.Add(new IngameAttribute(
             id: index++,

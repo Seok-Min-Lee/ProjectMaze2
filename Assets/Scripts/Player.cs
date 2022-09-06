@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     public bool isConfusion { get; private set; }
     public bool isInteract { get; private set; }        // 상호작용 현재 진행 여부
     public bool isInteractable { get; private set; }    // 상호작용 가능 여부
+    public bool isTutorial { get; private set; }
     public InteractionType interactableInteractionType { get; private set; }
     public GuideType interactableGuideType { get; private set; }
     public NpcObject interactableNpcObject { get; private set; }
@@ -80,10 +81,11 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
 
         manager.SetPlayerIngameAttributes(
-            isActiveBeads: out bool[]  _isActieBeads,
+            isActiveBeads: out bool[] _isActieBeads,
             isActiveMinimap: out bool _isActiveMinimap,
             isActiveMagicFairy: out bool _isActiveMagicFairy,
             isActiveMagicHuman: out bool _isActiveMagicHuman,
+            isTutorialClear: out bool _isTutorial,
             life: out int _currentLife,
             key: out int _currentKey,
             currentHp: out int _currentHp,
@@ -100,6 +102,7 @@ public class Player : MonoBehaviour
         this.isActiveMinimap = _isActiveMinimap;
         this.isActiveMagicFairy = _isActiveMagicFairy;
         this.isActiveMagicHuman = _isActiveMagicHuman;
+        this.isTutorial = !_isTutorial;
         this.currentLife = _currentLife;
         this.currentKey = _currentKey;
         this.currentHp = _currentHp;
@@ -112,7 +115,7 @@ public class Player : MonoBehaviour
             ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
         }
 
-        InitializeController();
+        InitControllerSettings(controller: this._controller);
     }
 
     private void Update()
@@ -211,7 +214,7 @@ public class Player : MonoBehaviour
     public void ActivateMagicFairy(bool isActive)
     {
         this.isActiveMagicFairy = isActive;
-        InitializeController();
+        InitControllerSettings(controller: this._controller);
     }
 
     public void ActivateMagicGiant(bool isActive)
@@ -260,21 +263,6 @@ public class Player : MonoBehaviour
         );
     }
 
-    private void InitializeController()
-    {
-        if(_controller != null)
-        {
-            _controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
-            _controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
-
-            if (this.isActiveMagicFairy)
-            {
-                _controller.MoveSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
-                _controller.SprintSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
-            }
-        }
-    }
-
     private void InitializePlayer(
         out int hpMax,
         out int lifeMax,
@@ -296,6 +284,21 @@ public class Player : MonoBehaviour
         detoxActivateTime = ValueManager.PLAYER_DETOX_ACTIVATE_TIME;
         confusionStackUpdateTime = ValueManager.PLAYER_CONFUSION_STACK_UPDATE_TIME;
         confusionDuration = ValueManager.PLAYER_CONFUSION_DURATION;
+    }
+
+    private void InitControllerSettings(ThirdPersonController controller)
+    {
+        if(controller != null)
+        {
+            controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
+            controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
+
+            if (this.isActiveMagicFairy)
+            {
+                controller.MoveSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+                controller.SprintSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+            }
+        }
     }
 
     private void GetItem(GameObject gameObject)
@@ -415,7 +418,7 @@ public class Player : MonoBehaviour
         }
 
         this.damageSound.Play();
-        StartCoroutine(routine: Addict(summaryDamage: poisonTicDamage * poisonStack));
+        StartCoroutine(routine: Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
     }
 
     private void KnockBack()
@@ -438,17 +441,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    private IEnumerator Addict(int summaryDamage)
+    private IEnumerator Addict(int stack, int ticDamage)
     {
-        if (isPoison)
+        if (this.isPoison)
         {
             manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_ADDICT, type: EventMessageType.Debuff);
 
-            OnDamage(value: summaryDamage, isAvoidable: false);
+            OnDamage(value: stack * ticDamage, isAvoidable: false);
             
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(ValueManager.PLAYER_POISON_TIC_DELAY);
             
-            StartCoroutine(routine: Addict(summaryDamage: summaryDamage));
+            StartCoroutine(routine: Addict(stack: stack, ticDamage: ticDamage));
         }
     }
 
@@ -484,6 +487,12 @@ public class Player : MonoBehaviour
                 break;
             default:
                 break;
+        }
+
+        if (zone.isImmediate)
+        {
+            _input.interact = true;
+            this.isInteract = true;
         }
     }
 
@@ -521,22 +530,14 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStayInNegativeEffectZone(NegativeEffectZone negativeEffect)
     {
-        if (negativeEffect.type == NegativeEffectType.Confusion && !isConfusion)
+        switch (negativeEffect.type)
         {
-            Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
-            if (countTimeConfusion >= confusionActivateTime)
-            {
-                StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
-
-                this.confusionStack += negativeEffect.value;
-                this.countTimeConfusion = 0f;
-
-                if (this.confusionStack >= this.confusionStackMax)
-                {
-                    this.confusionStack = this.confusionStackMax;
-                    StartCoroutine(routine: Confuse());
-                }
-            }
+            case NegativeEffectType.Confusion:
+                OnTriggerStayInNegativeEffectZoneTypeConfusion(value: negativeEffect.value);
+                break;
+            case NegativeEffectType.Poison:
+                OnTriggerStayInNegativeEffectZoneTypePoison(value : negativeEffect.value);
+                break;
         }
     }
 
@@ -561,6 +562,37 @@ public class Player : MonoBehaviour
         this.interactableInteractionType = InteractionType.None;
         this.interactableGuideType = GuideType.None;
         this.interactableNpcObject = null;
+    }
+
+    private void OnTriggerStayInNegativeEffectZoneTypeConfusion(int value)
+    {
+        if (!isConfusion)
+        {
+            Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
+            if (countTimeConfusion >= confusionActivateTime)
+            {
+                StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
+
+                this.confusionStack += value;
+                this.countTimeConfusion = 0f;
+
+                if (this.confusionStack >= this.confusionStackMax)
+                {
+                    this.confusionStack = this.confusionStackMax;
+                    StartCoroutine(routine: Confuse());
+                }
+            }
+        }
+    }
+
+    private void OnTriggerStayInNegativeEffectZoneTypePoison(int value)
+    {
+        if (!this.isPoison)
+        {
+            this.isPoison = true;
+            this.poisonStack += value;
+            StartCoroutine(Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+        }
     }
 
     private bool TryGetNecessaryBeadIndexByNextSceneType(SceneType type, out int index)
@@ -606,11 +638,11 @@ public class Player : MonoBehaviour
 
         if (isAddict)
         {
-            addictEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
+            addictEffect.GetComponent<ParticleSystem>().maxParticles = this.poisonStack;
         }
         else
         {
-            detoxEffect.GetComponent<ParticleSystem>().maxParticles = poisonStack;
+            detoxEffect.GetComponent<ParticleSystem>().maxParticles = this.poisonStack;
         }
     }
 
@@ -728,6 +760,11 @@ public class Player : MonoBehaviour
 
         this.currentHp = this.maxHp;
         this.currentLife--;
+        if (isTutorial && this.currentLife < 0)
+        {
+            this.currentLife = 0;
+        }
+
         this.isPoison = false;
         this.isConfusion = false;
         this.poisonStack = 0;
