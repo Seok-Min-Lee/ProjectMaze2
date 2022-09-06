@@ -65,6 +65,7 @@ public static class ValueManager
     public const string MESSAGE_TRAP_MACH_PAIR_FAILURE = "짝 맞추기 실패!";
     public const string MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS = "신호등 통과!";
     public const string MESSAGE_TRAP_TRAFFIC_LIGHT_FAILURE = "신호를 준수 합시다!";
+    public const string MESSAGE_PORTAL_FAIL = "구슬을 획득해야 다음 맵으로 갈 수 있습니다.";
 
     public const string PREFIX_PLAYER_LIFE = "X ";  // UI 에서 플레이어 라이프 옆에 오는 표시
     public const string PREFIX_PLAYER_KEY = "x ";  // UI 에서 플레이어 보유 Key 옆에 오는 표시

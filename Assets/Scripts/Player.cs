@@ -519,8 +519,7 @@ public class Player : MonoBehaviour
         if (TryGetNecessaryBeadIndexByNextSceneType(portal.nextSceneType, index: out int index) &&
             !this.isActiveBeads[index])
         {
-            //error
-            Debug.Log("error");
+            manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PORTAL_FAIL, type: EventMessageType.Error);
         }
         else
         {

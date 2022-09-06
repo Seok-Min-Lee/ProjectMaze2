@@ -5,5 +5,6 @@ public enum EventMessageType
     TrapSuccess,
     TrapFailure,
     Debuff,
-    Recovery
+    Recovery,
+    Error,
 }

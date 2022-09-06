@@ -158,6 +158,9 @@ public class GameManager : MonoBehaviour
             case EventMessageType.Recovery:
                 color = Color.green;
                 break;
+            case EventMessageType.Error:
+                color = Color.red;
+                break;
             default:
                 color = Color.red;
                 break;
