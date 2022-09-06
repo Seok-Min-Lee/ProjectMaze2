@@ -80,7 +80,7 @@ public class TrapMachPairManager : Trap
 
     private void MachPairFailure()
     {
-        player.OnDamage(value: ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE, isAvoidable: true);
+        player.OnDamage(value: ValueManager.TRAP_MACH_PAIR_FAIL_DAMAGE, isAvoidable: false);
         manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_TRAP_MACH_PAIR_FAILURE, type: EventMessageType.TrapFailure);
     }
 
