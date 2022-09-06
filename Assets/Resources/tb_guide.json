@@ -13,7 +13,7 @@
     ,{"id": 11,"guideType":"trapMisteryDoor","title":"신비한 문","description":"플레이어의 움직임을 제한하기 위해 만든 벽입니다.(문입니다.)\n주변을 찾아보면 작은 열쇠가 보이는 곳이 있습니다.\n그곳을 지나면 벽이 사라집니다.\n\n반대로 벽이 없다가 생기는 경우도 있습니다."}
     ,{"id": 12,"guideType":"trapPushingWall","title":"강제 이동","description":"화살표 방향으로 강제로 이동하게 되는 장치입니다.\n\n기둥 안으로 들어가면 발동되며\n함정의 목적지에 도착하면 멈추게 됩니다.\n\n더 이상 작동하지 않을 때는 회색으로 변합니다."}
     ,{"id": 13,"guideType":"trapTrafficLight","title":"신호등","description":"화면 상단의 신호에 맞춰 정지해야 하는 함정입니다.\n빨간불에 움직임이 감지되면 처음으로 돌아갑니다!\n\n주황색 신호가 무척 짧으니 주의하세요!"}    
-    ,{"id": 14,"guideType":"tutorialMove","title":"기본조작","description":"WASD\t:\t이동조작\nG\t:\t상호작용\nSHIFT\t:\t걷기/달리기\nSPACE\t:\t점프"}
+    ,{"id": 14,"guideType":"tutorialMove","title":"기본조작","description":"WASD\t:\t이동조작\nE\t:\t상호작용\nSHIFT\t:\t걷기/달리기\nSPACE\t:\t점프"}
     ,{"id": 15,"guideType":"tutorialItem","title":"아이템","description":"목표 : 모든 아이템 획득하기\n\n아이템에 접촉하면 자동으로 획득됩니다.\n\n콜라\t:\t즉시 체력 회복\n하트\t:\t즉시 라이프 증가\n지도\t:\t미니맵 UI ON"}
     ,{"id": 16,"guideType":"tutorialPoison","title":"중독/해독","description":"목표 : 해독하기\n(보라색 영역을 들어가면 중독됩니다.)\n\n중독\t:\t매 초 데미지를 입고 중독 스택에 비례하여 데미지가 증가한다.\n\n해독\t:\t중독 상태에서 5초 정지하면 된다.\n스택은 부활하기 전까지 보존된다."}
     ,{"id": 17,"guideType":"tutorialConfusion","title":"공포","description":"목표 : 공포에 걸리기\n(파란색 영역에 서있으면 게이지가 올라갑니다.)\n\n공포\t:\t체력바 밑의 게이지가 가득 차면 발생한다.\n입력과 반대로 조작이 되며 시간이 지나면 해제 된다."}
