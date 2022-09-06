@@ -1,8 +1,9 @@
 public enum MonsterType
 {
-    Normal,
+    None,
     Insect,
     Zombie,
     Turret,
-    Catapult
+    Catapult,
+    Ghost,
 }

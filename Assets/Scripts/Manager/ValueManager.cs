@@ -23,7 +23,14 @@ public static class ValueManager
     public const float MONSTER_INSECT_ATTACK_AREA_DEACTIVATE_AFTER_DELAY = 0.6f;// 이후 다음 공격까지 대기시간
     public const float MONSTER_INSECT_SUICIDE_ANIMATION_BEFORE_DELAY = 1.3f;    // Suicide 시작 후 애니메이션 발생까지 대기시간
     public const float MONSTER_INSECT_SUICIDE_ANIMATION_AFTER_DELAY = 1.2f;     // 이후 폭발까지 대기시간
-    
+
+    // 몬스터 캐터펄트
+    public const float MONSTER_CATAPULT_PROJECTILE_GAIN_POWER_TIME = 2f;    // 투사체 성장시간
+    public const float MONSTER_CATAPULT_PROJECTILE_ANGULAR_POWER = 1f;      // 투사체 운동량 초기값
+    public const float MONSTER_CATAPULT_PROJECTILE_SCALE_VALUE = 0.05f;     // 투사체 스케일 초기값
+    public const float MONSTER_CATAPULT_PROJECTILE_ANGULAR_POWER_INCREMENT_VALUE = 0.1f;    // 투사체 운동량 성장값
+    public const float MONSTER_CATAPULT_PROJECTILE_SCALE_VALUE_INCREMENT_VALUE = 0.02f;     // 투사체 스케일 성장값
+
     public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
     public const float PLAYER_SPRINT_SPEED_DEFAULT = 33f;   // 플레이어 달리기 속도 기본값
     public const float PLAYER_POISON_TIC_DELAY = 1f;       // 플레이어 중독 데미지 딜레이

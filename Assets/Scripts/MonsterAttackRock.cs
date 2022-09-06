@@ -11,7 +11,7 @@ public class MonsterAttackRock : MonoBehaviour
     private Rigidbody rigid;
     private float angularPower, scaleValue; // 운동량과 스케일
     private float angularPowerIncrementValue, scaleValueIncrementValue; // 운동량과 스케일의 증가값
-    private float gainPowerTime = 2f;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
+    private float gainPowerTime = ValueManager.MONSTER_CATAPULT_PROJECTILE_GAIN_POWER_TIME;   // 운동량과 스케일 증가 시간, Awake() 에서 초기화 하면 안됨.
     private bool isShoot;
 
     void Awake()
@@ -21,15 +21,17 @@ public class MonsterAttackRock : MonoBehaviour
 
     private void Start()
     {
+        // 어떤 이벤트도 발생하지 않더라도 시간이 지나면 파괴되도록 함.
         Destroy(obj: this.gameObject, t: this.lifeTime);
 
+        // 생성과 함께 성장 시작
         StartCoroutine(GainPowerTimer());
         StartCoroutine(GainPower());
 
-        angularPower = 1f;
-        scaleValue = 0.05f;
-        angularPowerIncrementValue = 0.1f;
-        scaleValueIncrementValue = 0.02f;
+        this.angularPower = ValueManager.MONSTER_CATAPULT_PROJECTILE_ANGULAR_POWER;
+        this.scaleValue = ValueManager.MONSTER_CATAPULT_PROJECTILE_SCALE_VALUE;
+        this.angularPowerIncrementValue = ValueManager.MONSTER_CATAPULT_PROJECTILE_ANGULAR_POWER_INCREMENT_VALUE;
+        this.scaleValueIncrementValue = ValueManager.MONSTER_CATAPULT_PROJECTILE_SCALE_VALUE_INCREMENT_VALUE;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -42,13 +44,16 @@ public class MonsterAttackRock : MonoBehaviour
 
     public void ExplosionDestroy()
     {
+        // 폭발 위치에 정지
         this.rigid.angularVelocity = Vector3.zero;
         this.rigid.velocity = Vector3.zero;
 
+        // 매쉬를 비활성화 및 이펙트 활성화
         this.mesh.SetActive(false);
         this.explosionEffect.SetActive(true);
 
-        Destroy(obj: this.gameObject, t: 1f);
+        // 임의의 시간이 지나면 파괴
+        Destroy(obj: this.gameObject, t: ValueManager.MONSTER_DESTORY_DELAY);
     }
 
     IEnumerator GainPowerTimer()
@@ -61,6 +66,7 @@ public class MonsterAttackRock : MonoBehaviour
     {
         while (!isShoot)
         {
+            // 운동량과 스케일 증가
             if (this.angularPower < this.angularPowerMaxValue)
             {
                 this.angularPower += this.angularPowerIncrementValue;
@@ -71,6 +77,7 @@ public class MonsterAttackRock : MonoBehaviour
                 this.scaleValue += this.scaleValueIncrementValue;
             }
 
+            // 증가한 운동량과 스케일 적용
             this.transform.localScale = Vector3.one * this.scaleValue;
             this.rigid.AddTorque(torque: transform.right * this.angularPower, mode: ForceMode.Acceleration);
 

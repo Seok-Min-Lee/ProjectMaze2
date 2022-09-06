@@ -633,7 +633,7 @@ public class GameManager : MonoBehaviour
                     this.bgmSlider.value = this.preferenceBgmVolume;
                     this.seSlider.value = this.preferenceSeVolume;
 
-                    player.StopPlayerMotion();
+                    player.InputStop();
 
 
                     ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
@@ -690,7 +690,7 @@ public class GameManager : MonoBehaviour
         {
             if(SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
             {
-                player.StopPlayerMotion();
+                player.InputStop();
 
                 ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
                 UpdateExtraSettingAll();
@@ -749,7 +749,7 @@ public class GameManager : MonoBehaviour
 
         // 플레이어 위치 및 조작 초기화.
         player.ForceToMove(point: interactNpcObject.playerPoint.position);
-        player.StopPlayerMotion();
+        player.InputStop();
     }
 
     private int GetDialougeCaseNo()

@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
         _input = GetComponent<StarterAssetsInputs>();
         _controller = GetComponent<ThirdPersonController>();
 
-        InitializePlayer(
+        InitPlayerPreconditions(
             hpMax: out int _maxHp,
             lifeMax: out int _maxLife,
             keyMax: out int _keyMax,
@@ -79,43 +79,9 @@ public class Player : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-
-        manager.SetPlayerIngameAttributes(
-            isActiveBeads: out bool[] _isActieBeads,
-            isActiveMinimap: out bool _isActiveMinimap,
-            isActiveMagicFairy: out bool _isActiveMagicFairy,
-            isActiveMagicHuman: out bool _isActiveMagicHuman,
-            isTutorialClear: out bool _isTutorial,
-            life: out int _currentLife,
-            key: out int _currentKey,
-            currentHp: out int _currentHp,
-            currentConfusion: out int _confusionStack,
-            magicGiantStack: out int _magicGiantStack,
-            poisonStack: out int _poisonStack,
-            savedPositionEnabled: out bool _savedPositionEnabled,
-            savedPositionX: out int _savedPositionX,
-            savedPositionY: out int _savedPositionY,
-            savedPositionZ: out int _savedPositionZ
-        );
-
-        this.isActiveBeads = _isActieBeads;
-        this.isActiveMinimap = _isActiveMinimap;
-        this.isActiveMagicFairy = _isActiveMagicFairy;
-        this.isActiveMagicHuman = _isActiveMagicHuman;
-        this.isTutorial = !_isTutorial;
-        this.currentLife = _currentLife;
-        this.currentKey = _currentKey;
-        this.currentHp = _currentHp;
-        this.confusionStack = _confusionStack;
-        this.magicGiantStack = _magicGiantStack;
-        this.poisonStack = _poisonStack;
-
-        if (_savedPositionEnabled)
-        {
-            ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
-        }
-
-        InitControllerSettings(controller: this._controller);
+        
+        InitPlayerContidions();
+        InitControllerSettings();
     }
 
     private void Update()
@@ -126,17 +92,16 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        GameObject gameObject = other.gameObject;
+        GameObject obj = other.gameObject;
 
         switch (other.tag)
         {
             case NameManager.TAG_ITEM:
-                GetItem(gameObject: gameObject);
+                OnTriggerEnterToItem(obj: obj);
                 break;
 
-            case NameManager.TAG_PLAYER_RESPAWN: 
-                // 리스폰 지점 업데이트
-                respawnPoint = other.GetComponent<Transform>().position + (Vector3.up * ValueManager.PLAYER_CALIBRATION_RESPAWN_Y);
+            case NameManager.TAG_PLAYER_RESPAWN:
+                OnTriggerEnterToPlayerRespawnPoint(transform: other.GetComponent<Transform>());
                 break;
 
             case NameManager.TAG_FALL:
@@ -144,7 +109,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_MONSTER_ATTACK:
-                OnDamageByMonsterAttack(obj: gameObject);
+                OnDamageByMonsterAttack(obj: obj);
                 break;
 
             case NameManager.TAG_MONSTER_TURN_BACK_AREA:
@@ -182,7 +147,7 @@ public class Player : MonoBehaviour
                 break;
 
             case NameManager.TAG_TRAP:
-                OnTriggerStayInTrap(trapGameObject: other.gameObject);
+                OnTriggerStayInTrap(obj: other.gameObject);
                 break;
         }
     }
@@ -208,271 +173,51 @@ public class Player : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region ##### 실질 기능 함수 #####
-    public void ActivateMagicFairy(bool isActive)
+    private void OnTriggerEnterToItem(GameObject obj)
     {
-        this.isActiveMagicFairy = isActive;
-        InitControllerSettings(controller: this._controller);
-    }
-
-    public void ActivateMagicGiant(bool isActive)
-    {
-        if(isActive && magicGiantStack < ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX)
-        {
-            magicGiantStack++;
-        }
-    }
-
-    public void ActivateMagicHuman(bool isActive)
-    {
-        this.isActiveMagicHuman = isActive;
-    }
-
-    public void Interact()
-    {
-        if (this.isInteractable && _input.interact)
-        {
-            this.isInteract = true;
-        }
-        else
-        {
-            this.isInteract = false;
-        }
-    }
-
-    public void CallUpdatePlayerIngameAttributes()
-    {
-        Vector3 position = this.transform.position;
-
-        manager.UpdatePlayerIngameAttributes(
-            isActiveBeads: this.isActiveBeads,
-            isActiveMinimap: this.isActiveMinimap,
-            isActiveMagicFairy: this.isActiveMagicFairy,
-            isActiveMagicHuman: this.isActiveMagicHuman,
-            life: this.currentLife,
-            key: this.currentKey,
-            currentHp: this.currentHp,
-            currentConfusion: this.confusionStack,
-            magicGiantStack: this.magicGiantStack,
-            poisonStack: this.poisonStack,
-            attributeSavedPositionX: (int)position.x,
-            attributeSavedPositionY: (int)position.y,
-            attributeSavedPositionZ: (int)position.z
-        );
-    }
-
-    private void InitializePlayer(
-        out int hpMax,
-        out int lifeMax,
-        out int keyMax,
-        out int poisonStackMax,
-        out int confusionStackMax,
-        out int poisonTicDamage,
-        out float detoxActivateTime,
-        out float confusionStackUpdateTime,
-        out float confusionDuration
-    )
-    {
-        hpMax = ValueManager.PLAYER_HP_MAX;
-        lifeMax = ValueManager.PLAYER_LIFE_MAX;
-        keyMax = ValueManager.PLAYER_KEY_MAX;
-        poisonStackMax = ValueManager.PLAYER_POISON_STACK_MAX;
-        confusionStackMax = ValueManager.PLAYER_CONFUSION_STACK_MAX;
-        poisonTicDamage = ValueManager.PLAYER_POISON_TIC_DAMAGE;
-        detoxActivateTime = ValueManager.PLAYER_DETOX_ACTIVATE_TIME;
-        confusionStackUpdateTime = ValueManager.PLAYER_CONFUSION_STACK_UPDATE_TIME;
-        confusionDuration = ValueManager.PLAYER_CONFUSION_DURATION;
-    }
-
-    private void InitControllerSettings(ThirdPersonController controller)
-    {
-        if(controller != null)
-        {
-            controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
-            controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
-
-            if (this.isActiveMagicFairy)
-            {
-                controller.MoveSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
-                controller.SprintSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
-            }
-        }
-    }
-
-    private void GetItem(GameObject gameObject)
-    {
-        Item item = gameObject.GetComponent<Item>();
+        Item item = obj.GetComponent<Item>();
 
         switch (item.type)
         {
-            case ItemType.BackMirror:
-                break;
             case ItemType.Bead:
-                // 구슬 관리를 플레이어가 아닌 외부에서 하게 될 경우 수정.
                 GetItemBead(index: item.value);
                 break;
             case ItemType.Heal:
-                // hp, life 둘다 0 인 경우 GameOver 추가 필요.
                 ChangeCurrentHp(value: item.value, isDamage: false);
                 break;
             case ItemType.Life:
                 GetItemLife(value: item.value);
                 break;
             case ItemType.Map:
-                this.isActiveMinimap = true;
-                manager.ActivateMinimap(isActive: this.isActiveMinimap);
+                GetItemMinimap();
                 break;
             case ItemType.Key:
                 GetItemKey(value: item.value);
                 break;
+            default:
+                break;
         }
 
+        // 효과음 재생
         itemSound.Play();
 
+        // 시스템 메세지 출력
         string messageText = ValueManager.MESSAGE_PREFIX_ITEM + item.name + ValueManager.MESSAGE_SUFFIX_ITEM;
         manager.DisplayConfirmMessage(text: messageText, type: EventMessageType.Item);
 
-        gameObject.SetActive(false);
+        // 아이템 오브젝트 비활성화
+        obj.SetActive(false);
     }
 
-    private void GetItemBead(int index)
+    private void OnTriggerEnterToPlayerRespawnPoint(Transform transform)
     {
-        if(index >= 0 && index < this.isActiveBeads.Length)
-        {
-            this.isActiveBeads[index] = true;
-        }
-
-        manager.UpdateByPlayerActiveBeads(isActives: this.isActiveBeads);
-    }
-
-    private void GetItemLife(int value)
-    {
-        if(this.currentLife >= this.maxLife)
-        {
-            this.currentLife = this.maxLife;
-        }
-        else
-        {
-            this.currentLife += value;
-        }
-    }
-
-    private void GetItemKey(int value)
-    {
-        if (this.currentKey >= this.maxKey)
-        {
-            this.currentKey = this.maxKey;
-        }
-        else
-        {
-            this.currentKey += value;
-        }
-    }
-
-    private void OnDamageByMonsterAttack(GameObject obj)
-    {
-        KnockBack();    // 내용 추가 필요.
-
-        // monster 별 업데이트 할 것.
-        Monster monster = obj.gameObject.GetComponentInParent<Monster>();
-
-        if (monster != null)
-        {
-            switch (monster.type)
-            {
-                case MonsterType.Insect:
-                    OnDamageByInsect(insect: monster.GetComponent<MonsterInsect>() ,damage: monster.damage);
-                    break;
-                case MonsterType.Zombie:
-                    break;
-                case MonsterType.Turret:
-                    break;
-                case MonsterType.Catapult:
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            MonsterAttackRock rock = obj.gameObject.GetComponent<MonsterAttackRock>();
-
-            if (rock != null)
-            {
-                OnDamage(value: rock.damage, isAvoidable: true);
-                rock.ExplosionDestroy();
-            }
-            else
-            {
-                MonsterMissile missile = obj.gameObject.GetComponent<MonsterMissile>();
-
-                if (missile != null)
-                {
-                    OnDamage(value: missile.damage, isAvoidable: true);
-                    missile.ExplosionDestroy();
-                }
-            }
-
-        }
-
-        this.damageSound.Play();
-        StartCoroutine(routine: Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
-    }
-
-    private void KnockBack()
-    {
-
-    }
-
-    private void OnDamageByInsect(MonsterInsect insect, int damage)
-    {
-        if (insect.isAttack)
-        {
-            OnDamage(value: damage, isAvoidable: true); // 기본공격 데미지
-
-            isPoison = true;        // 중독 상태 활성화
-            poisonStack = poisonStack < poisonStackMax ? poisonStack + 1 : poisonStackMax;  // 중독 스택 변경
-
-            ChangePoisonEffect(isAddict: isPoison); // 중독 이펙트 활성화
-
-            countTimeDetox = 0;       // 해독 타이머 초기화
-        }
-    }
-
-    private IEnumerator Addict(int stack, int ticDamage)
-    {
-        if (this.isPoison)
-        {
-            manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_ADDICT, type: EventMessageType.Debuff);
-
-            OnDamage(value: stack * ticDamage, isAvoidable: false);
-            
-            yield return new WaitForSeconds(ValueManager.PLAYER_POISON_TIC_DELAY);
-            
-            StartCoroutine(routine: Addict(stack: stack, ticDamage: ticDamage));
-        }
-    }
-
-    private void Detoxify()
-    {
-        if (isPoison)
-        {
-            UpdateCountTimeDetox();
-
-            if(countTimeDetox > detoxActivateTime)
-            {
-                isPoison = false;
-                ChangePoisonEffect(isAddict: isPoison);
-
-                manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_DETOX, type: EventMessageType.Recovery);
-            }
-        }
+        // 리스폰 위치 저장.
+        this.respawnPoint = transform.position + (Vector3.up * ValueManager.PLAYER_CALIBRATION_RESPAWN_Y);
     }
 
     private void OnTriggerEnterToInteractionZone(InteractionZone zone)
     {
+        // 상호작용 관련 변수 세팅
         this.isInteractable = true;
         this.interactableInteractionType = zone.interactionType;
 
@@ -489,6 +234,7 @@ public class Player : MonoBehaviour
                 break;
         }
 
+        // 즉시 발생해야 하는 경우 입력이 들어온 것으로 처리
         if (zone.isImmediate)
         {
             _input.interact = true;
@@ -535,16 +281,14 @@ public class Player : MonoBehaviour
                 OnTriggerStayInNegativeEffectZoneTypeConfusion(value: negativeEffect.value);
                 break;
             case NegativeEffectType.Poison:
-                OnTriggerStayInNegativeEffectZoneTypePoison(value : negativeEffect.value);
+                OnTriggerStayInNegativeEffectZoneTypePoison(value: negativeEffect.value);
                 break;
         }
     }
 
-    private void OnTriggerStayInTrap(GameObject trapGameObject)
+    private void OnTriggerStayInTrap(GameObject obj)
     {
-        Trap trap = trapGameObject.GetComponent<Trap>();
-
-        if(trap != null)
+        if(TryGetTrapByGameObject(obj: obj, trap: out Trap trap))
         {
             switch (trap.type)
             {
@@ -557,6 +301,7 @@ public class Player : MonoBehaviour
 
     public void OnTriggerExitFromInteractionZone()
     {
+        // 상호작용 가능 영역을 벗어 났을 때 관련 변수 초기화
         this.isInteractable = false;
         this.interactableInteractionType = InteractionType.None;
         this.interactableGuideType = GuideType.None;
@@ -565,16 +310,19 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStayInNegativeEffectZoneTypeConfusion(int value)
     {
-        if (!isConfusion)
+        if (!this.isConfusion)
         {
-            Timer(tick: Time.deltaTime, time: ref countTimeConfusion);
-            if (countTimeConfusion >= confusionActivateTime)
+            Timer(tick: Time.deltaTime, time: ref this.countTimeConfusion);
+
+            if (this.countTimeConfusion >= this.confusionActivateTime)
             {
+                // 공포 게이지 증가 및 이펙트 활성화
                 StartCoroutine(routine: ActiveVolatileEffect(effect: confusionChargeEffect, duration: confusionChargeEffect.GetComponent<ParticleSystem>().duration));
 
                 this.confusionStack += value;
                 this.countTimeConfusion = 0f;
 
+                // 공포 게이지가 최대에 도달하면 공포 효과 활성화
                 if (this.confusionStack >= this.confusionStackMax)
                 {
                     this.confusionStack = this.confusionStackMax;
@@ -591,6 +339,204 @@ public class Player : MonoBehaviour
             this.isPoison = true;
             this.poisonStack += value;
             StartCoroutine(Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+        }
+    }
+
+    #endregion
+
+    #region ##### 실질 기능 함수 #####
+    public void ActivateMagicFairy(bool isActive)
+    {
+        this.isActiveMagicFairy = isActive;
+        InitControllerSettings();
+    }
+
+    public void ActivateMagicGiant(bool isActive)
+    {
+        if(isActive && magicGiantStack < ValueManager.PLAYER_MAGIC_GIANT_STACK_MAX)
+        {
+            magicGiantStack++;
+        }
+    }
+
+    public void ActivateMagicHuman(bool isActive)
+    {
+        this.isActiveMagicHuman = isActive;
+    }
+
+    public void CallUpdatePlayerIngameAttributes()
+    {
+        Vector3 position = this.transform.position;
+
+        manager.UpdatePlayerIngameAttributes(
+            isActiveBeads: this.isActiveBeads,
+            isActiveMinimap: this.isActiveMinimap,
+            isActiveMagicFairy: this.isActiveMagicFairy,
+            isActiveMagicHuman: this.isActiveMagicHuman,
+            life: this.currentLife,
+            key: this.currentKey,
+            currentHp: this.currentHp,
+            currentConfusion: this.confusionStack,
+            magicGiantStack: this.magicGiantStack,
+            poisonStack: this.poisonStack,
+            attributeSavedPositionX: (int)position.x,
+            attributeSavedPositionY: (int)position.y,
+            attributeSavedPositionZ: (int)position.z
+        );
+    }
+
+    public void Interact()
+    {
+        // 상호작용 가능한 상태일 때 입력이 들어오는 지 확인
+        // 상호작용 처리는 GameManager 에서 처리.
+        if (this.isInteractable && _input.interact)
+        {
+            this.isInteract = true;
+        }
+        else
+        {
+            this.isInteract = false;
+        }
+    }
+
+    private void GetItemBead(int index)
+    {
+        if(index >= 0 && index < this.isActiveBeads.Length)
+        {
+            this.isActiveBeads[index] = true;
+        }
+
+        manager.UpdateByPlayerActiveBeads(isActives: this.isActiveBeads);
+    }
+
+    private void GetItemMinimap()
+    {
+        this.isActiveMinimap = true;
+        manager.ActivateMinimap(isActive: this.isActiveMinimap);
+    }
+
+    private void GetItemLife(int value)
+    {
+        this.currentLife = GetValueIncreaseToNotExceedMaxValue(
+            startValue: this.currentLife,
+            maxValue: this.maxLife,
+            increaseValue: value
+        );
+    }
+
+    private void GetItemKey(int value)
+    {
+        this.currentKey = GetValueIncreaseToNotExceedMaxValue(
+            startValue: this.currentKey,
+            maxValue: this.maxKey,
+            increaseValue: value
+        );
+    }
+
+    private void OnDamageByMonsterAttack(GameObject obj)
+    {
+        // MonsterAttack의 경우 아래 순서대로 확인하여 처리한다.
+        // 1. 몬스터의 직접적인 공격인지
+        // 2. 캐터펄트가 발사한 투사체인지
+        // 3. 터렛이 발사한 투사체인지
+        if (TryGetMontserByGameObject(obj: obj, monster: out Monster monster))
+        {
+            switch (monster.type)
+            {
+                case MonsterType.Insect:
+                    OnDamageByInsect(insect: monster.GetComponent<MonsterInsect>(), damage: monster.damage);
+                    break;
+                case MonsterType.Zombie:
+                    break;
+                case MonsterType.Turret:
+                    break;
+                case MonsterType.Catapult:
+                    break;
+                case MonsterType.Ghost:
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            if (TryGetMonsterAttackRockByGameObject(obj: obj, rock: out MonsterAttackRock rock))
+            {
+                // 데미지 부여 후 폭발 및 소멸
+                OnDamage(value: rock.damage, isAvoidable: true);
+                rock.ExplosionDestroy();
+            }
+            else
+            {
+                if (TryGetMonsterMissileByGameObject(obj: obj, missile: out MonsterMissile missile))
+                {
+                    // 데미지 부여 후 폭발 및 소멸
+                    OnDamage(value: missile.damage, isAvoidable: true);
+                    missile.ExplosionDestroy();
+                }
+            }
+
+        }
+
+        this.damageSound.Play();
+        StartCoroutine(routine: Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+    }
+
+    private void OnDamageByInsect(MonsterInsect insect, int damage)
+    {
+        if (insect.isAttack)
+        {
+            // 기본공격 데미지 부여
+            OnDamage(value: damage, isAvoidable: true); 
+
+            // 중독 활성화
+            this.isPoison = true;
+            this.poisonStack = GetValueIncreaseToNotExceedMaxValue(
+                startValue: this.poisonStack, 
+                maxValue: this.poisonStackMax, 
+                increaseValue: 1
+            );
+
+            // 중독 이펙트 활성화
+            ChangePoisonEffect(isAddict: isPoison);
+            
+            // 해독 타이머 초기화
+            countTimeDetox = 0;       
+        }
+    }
+
+    private IEnumerator Addict(int stack, int ticDamage)
+    {
+        if (this.isPoison)
+        {
+            // 시스템 메세지 출력
+            manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_ADDICT, type: EventMessageType.Debuff);
+
+            // 중독 도트 데미지 부여
+            OnDamage(value: stack * ticDamage, isAvoidable: false);
+            
+            yield return new WaitForSeconds(ValueManager.PLAYER_POISON_TIC_DELAY);
+            
+            StartCoroutine(routine: Addict(stack: stack, ticDamage: ticDamage));
+        }
+    }
+
+    private void Detoxify()
+    {
+        if (this.isPoison)
+        {
+            // 정지 시간 체크
+            UpdateCountTimeDetox();
+
+            if(this.countTimeDetox > this.detoxActivateTime)
+            {
+                // 중독 상태 비활성화
+                this.isPoison = false;
+                ChangePoisonEffect(isAddict: isPoison);
+
+                // 시스템 메세지 출력
+                manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_DETOX, type: EventMessageType.Recovery);
+            }
         }
     }
 
@@ -619,14 +565,13 @@ public class Player : MonoBehaviour
     private void UpdateCountTimeDetox()
     {
         // 점프, 이동 입력 없을 경우 정지 상태로 판단
-        if (!_input.jump &&
-            _input.move == Vector2.zero)
+        if (IsInputtingPlayerMovement())
         {
-            Timer(tick: Time.deltaTime, time: ref countTimeDetox);
+            countTimeDetox = 0;
         }
         else
         {
-            countTimeDetox = 0;
+            Timer(tick: Time.deltaTime, time: ref countTimeDetox);
         }
     }
 
@@ -694,7 +639,7 @@ public class Player : MonoBehaviour
         _input.LookInput(newLookDirection: Vector2.zero);
     }
 
-    public bool IsMoving()
+    public bool IsInputtingPlayerMovement()
     {
         if(_input.jump || _input.move != Vector2.zero)
         {
@@ -723,34 +668,26 @@ public class Player : MonoBehaviour
     {
         if (isDamage)
         {
-            currentHp -= value;
+            this.currentHp = GetValueDecreaseToNotExceedMinValue(
+                startValue: this.currentHp,
+                minValue: 0,
+                decreaseValue: value
+            );
 
-            if (currentHp <= 0)
+            if (this.currentHp <= 0 &&
+                this.currentLife > 0)
             {
-                currentHp = 0;
-
-                if (currentLife > 0)
-                {
-                    Resurrect();
-                }
+                Resurrect();
             }
         }
         else
         {
-            currentHp += value;
-
-            if (currentHp > maxHp)
-            {
-                currentHp = maxHp;
-            }
+            this.currentHp = GetValueIncreaseToNotExceedMaxValue(
+                startValue: this.currentHp,
+                maxValue: this.maxHp,
+                increaseValue: value
+            );
         }        
-    }
-
-    public void StopPlayerMotion()
-    {
-        _input.MoveInput(newMoveDirection: Vector2.zero);
-        _input.JumpInput(newJumpState: false);
-        _input.SprintInput(newSprintState: false);
     }
 
     private void Resurrect()
@@ -790,5 +727,135 @@ public class Player : MonoBehaviour
         effect.SetActive(false);
     }
 
+    private int GetValueIncreaseToNotExceedMaxValue(int startValue, int maxValue, int increaseValue)
+    {
+        startValue += increaseValue;
+
+        if(startValue > maxValue)
+        {
+            startValue = maxValue;
+        }
+
+        return startValue;
+    }
+
+    private int GetValueDecreaseToNotExceedMinValue(int startValue, int minValue, int decreaseValue)
+    {
+        startValue -= decreaseValue;
+
+        if(startValue < minValue)
+        {
+            startValue = minValue;
+        }
+
+        return startValue;
+    }
+
     #endregion
+
+    private void InitPlayerPreconditions(
+        out int hpMax,
+        out int lifeMax,
+        out int keyMax,
+        out int poisonStackMax,
+        out int confusionStackMax,
+        out int poisonTicDamage,
+        out float detoxActivateTime,
+        out float confusionStackUpdateTime,
+        out float confusionDuration
+    )
+    {
+        hpMax = ValueManager.PLAYER_HP_MAX;
+        lifeMax = ValueManager.PLAYER_LIFE_MAX;
+        keyMax = ValueManager.PLAYER_KEY_MAX;
+        poisonStackMax = ValueManager.PLAYER_POISON_STACK_MAX;
+        confusionStackMax = ValueManager.PLAYER_CONFUSION_STACK_MAX;
+        poisonTicDamage = ValueManager.PLAYER_POISON_TIC_DAMAGE;
+        detoxActivateTime = ValueManager.PLAYER_DETOX_ACTIVATE_TIME;
+        confusionStackUpdateTime = ValueManager.PLAYER_CONFUSION_STACK_UPDATE_TIME;
+        confusionDuration = ValueManager.PLAYER_CONFUSION_DURATION;
+    }
+
+    private void InitPlayerContidions()
+    {
+        // IngameAttribute 값 적용
+        manager.SetPlayerIngameAttributes(
+            isActiveBeads: out bool[] _isActieBeads,
+            isActiveMinimap: out bool _isActiveMinimap,
+            isActiveMagicFairy: out bool _isActiveMagicFairy,
+            isActiveMagicHuman: out bool _isActiveMagicHuman,
+            isTutorialClear: out bool _isTutorial,
+            life: out int _currentLife,
+            key: out int _currentKey,
+            currentHp: out int _currentHp,
+            currentConfusion: out int _confusionStack,
+            magicGiantStack: out int _magicGiantStack,
+            poisonStack: out int _poisonStack,
+            savedPositionEnabled: out bool _savedPositionEnabled,
+            savedPositionX: out int _savedPositionX,
+            savedPositionY: out int _savedPositionY,
+            savedPositionZ: out int _savedPositionZ
+        );
+
+        this.isActiveBeads = _isActieBeads;
+        this.isActiveMinimap = _isActiveMinimap;
+        this.isActiveMagicFairy = _isActiveMagicFairy;
+        this.isActiveMagicHuman = _isActiveMagicHuman;
+        this.isTutorial = !_isTutorial;
+        this.currentLife = _currentLife;
+        this.currentKey = _currentKey;
+        this.currentHp = _currentHp;
+        this.confusionStack = _confusionStack;
+        this.magicGiantStack = _magicGiantStack;
+        this.poisonStack = _poisonStack;
+
+        // 플레이어 초기 위치 세팅
+        if (_savedPositionEnabled)
+        {
+            ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
+        }
+    }
+
+    private void InitControllerSettings()
+    {
+        if (this._controller != null)
+        {
+            this._controller.MoveSpeed = ValueManager.PLAYER_MOVE_SPEED_DEFAULT;
+            this._controller.SprintSpeed = ValueManager.PLAYER_SPRINT_SPEED_DEFAULT;
+
+            if (this.isActiveMagicFairy)
+            {
+                this._controller.MoveSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+                this._controller.SprintSpeed *= ValueManager.PLAYER_MAGIC_SPEED_RATIO;
+            }
+        }
+    }
+
+    private bool TryGetTrapByGameObject(GameObject obj, out Trap trap)
+    {
+        trap = obj.GetComponent<Trap>();
+
+        return trap != null;
+    }
+
+    private bool TryGetMontserByGameObject(GameObject obj, out Monster monster)
+    {
+        monster = obj.GetComponentInParent<Monster>();
+
+        return monster != null;
+    }
+
+    private bool TryGetMonsterAttackRockByGameObject(GameObject obj, out MonsterAttackRock rock)
+    {
+        rock = obj.GetComponentInParent<MonsterAttackRock>();
+
+        return rock != null;
+    }
+
+    private bool TryGetMonsterMissileByGameObject(GameObject obj, out MonsterMissile missile)
+    {
+        missile = obj.GetComponentInParent<MonsterMissile>();
+
+        return missile != null;
+    }
 }

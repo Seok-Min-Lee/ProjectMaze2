@@ -50,7 +50,7 @@ public class TrapTrafficLight : Trap
     public void Jaywalk(Player player)
     {
         if (this.trafficLightType == TrapTrafficLightType.Red &&
-            player.IsMoving())
+            player.IsInputtingPlayerMovement())
         {
             int _damage = this.damage > 0 ? this.damage : player.maxHp;
 
