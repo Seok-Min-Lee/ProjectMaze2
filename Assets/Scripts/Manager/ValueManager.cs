@@ -68,6 +68,7 @@ public static class ValueManager
     public const string MESSAGE_PLAYER_CALM_DOWN = "공포 해제";
     public const string MESSAGE_PREFIX_ITEM = "아이템 [ ";
     public const string MESSAGE_SUFFIX_ITEM = " ] 획득";
+    public const string MESSAGE_MISTERY_DOOR_ACTIVATE = "미로 어딘가의 '신비한 문'이 작동하였습니다.";
     public const string MESSAGE_TRAP_MACH_PAIR_SUCCESS = "짝 맞추기 성공!";
     public const string MESSAGE_TRAP_MACH_PAIR_FAILURE = "짝 맞추기 실패!";
     //public const string MESSAGE_TRAP_TRAFFIC_LIGHT_SUCCESS = "신호등 통과!";
