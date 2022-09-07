@@ -521,8 +521,7 @@ public class GameManager : MonoBehaviour
         if (minimapVisible && minimapCamera != null)
         {
             // 플레이어 마커 위치 업데이트
-            minimapMarkerPoint = player.transform.position;
-            minimapMarkerPoint.y = 0;
+            minimapMarkerPoint = new Vector3(minimapMarker.transform.position.x, 0, minimapMarker.transform.position.z);
 
             minimapMarker.transform.position = minimapMarkerPoint;
 

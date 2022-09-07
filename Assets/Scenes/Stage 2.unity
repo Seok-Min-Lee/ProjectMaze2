@@ -7016,7 +7016,7 @@ PrefabInstance:
     - target: {fileID: 6458087771421202376, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: minimapMarker
       value: 
-      objectReference: {fileID: 1600584137}
+      objectReference: {fileID: 1411651561}
     - target: {fileID: 6458087771983916932, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -7147,6 +7147,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+--- !u!1 &1411651561 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3419064087164517916, guid: a55aaca6377ee6346a73cb40ae96d034, type: 3}
+  m_PrefabInstance: {fileID: 1411651560}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1444787318
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8049,11 +8054,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
---- !u!1 &1600584137 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7835272225958312030, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
-  m_PrefabInstance: {fileID: 1600584136}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1600584139 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7835272226384020257, guid: b45f2b3857ed177479ac55b51b3fcb12, type: 3}
