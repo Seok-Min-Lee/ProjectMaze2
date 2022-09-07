@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using StarterAssets;
 
 public class Player : MonoBehaviour
@@ -833,7 +834,8 @@ public class Player : MonoBehaviour
         this.poisonStack = _poisonStack;
 
         // 플레이어 초기 위치 세팅
-        if (_savedPositionEnabled)
+        // 튜토리얼에서는 적용되지 않도록 한다.
+        if (_savedPositionEnabled && SceneManager.GetActiveScene().name != NameManager.SCENE_TUTORIAL)
         {
             ForceToMove(new Vector3(_savedPositionX, _savedPositionY, _savedPositionZ));
         }

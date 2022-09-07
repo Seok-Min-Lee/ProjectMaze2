@@ -241,8 +241,11 @@ public class GameManager : MonoBehaviour
             seVolume: this.preferenceSeVolume
         );
 
-        // Attribute 저장
-        SaveCurrentIngameAttributes(isSavePosition: true);
+        // 튜토리얼 모드가 아니라면 Attribute 를 저장한다.
+        if (currentSceneName != NameManager.SCENE_TUTORIAL)
+        {
+            SaveCurrentIngameAttributes(isSavePosition: true);
+        }
         SystemManager.instance.DeleteDataExceptUsers();
 
         LoadingSceneManager.LoadScene(sceneName: NameManager.SCENE_LOBBY);
