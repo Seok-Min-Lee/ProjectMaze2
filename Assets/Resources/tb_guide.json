@@ -19,5 +19,5 @@
     ,{"id": 17,"guideType":"tutorialConfusion","title":"공포","description":"목표 : 공포에 걸리기\n(파란색 영역에 서있으면 게이지가 올라갑니다.)\n\n공포\t:\t체력바 밑의 게이지가 가득 차면 발생한다.\n입력과 반대로 조작이 되며 시간이 지나면 해제 된다."}
     ,{"id": 18,"guideType":"tutorialGameMenu","title":"게임 메뉴 설정","description":"목표 : 가이드 표시 켜기 (ESC)\n\n게임 메뉴에서 사운드 볼륨, 가이드 오브젝트 표시, 백미러 표시를 설정할 수 있습니다."}
     ,{"id": 19,"guideType":"tutorialGuideObject","title":"가이드 오브젝트","description":"가이드 오브젝트는 해당 상황의 가이드를 제공합니다.\n\n더 재미있는 플레이를 원한다면 없이 도전해보는 것도 좋습니다!"}
-    ,{"id": 20,"guideType":"tutorialEnd","title":"끝","description":"축하드립니다.\n준비된 튜토리얼을 모두 통과하셨습니다.\n앞의 문으로 들어가면 메인 화면으로 돌아가 게임을 진행할 수 있습니다."}
+    ,{"id": 20,"guideType":"tutorialEnd","title":"튜토리얼 종료","description":"축하드립니다.\n준비된 튜토리얼을 모두 통과하셨습니다.\n앞의 문으로 들어가면 메인 화면으로 돌아가 게임을 진행할 수 있습니다."}
 ]
