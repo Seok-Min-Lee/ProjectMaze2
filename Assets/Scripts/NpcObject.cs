@@ -21,9 +21,8 @@ public class NpcObject : MonoBehaviour
         }
 
         int situationNo = SystemManager.instance.isClearGame ? 1 : 0;
-        dialogues = GetDialoguesByClearOrNot(situationNo: situationNo);
-
-        playerPoint = GetComponentInChildren<InteractionZone>().transform;
+        this.dialogues = GetDialoguesByClearOrNot(situationNo: situationNo);
+        this.playerPoint = GetComponentInChildren<InteractionZone>().transform;
 
         SetTransformByClearOrNot();
     }
@@ -43,6 +42,7 @@ public class NpcObject : MonoBehaviour
 
     private void SetTransformByClearOrNot()
     {
+        // 게임 클리어 했을 때 위치가 바뀌는 경우 respawnPoint로 이동한다.
         if(respawnPoint != null &&
            SystemManager.instance.isClearGame)
         {
@@ -53,10 +53,14 @@ public class NpcObject : MonoBehaviour
 
     private DialogueCollection GetDialoguesByClearOrNot(int situationNo)
     {
+        // npc 타입을 통해 npc 이름을 가져온다.
+        // npc 이름을 통해 npc Index 를 가져온다.
+        // npc Index 를 통해 다이얼로그들을 가져온다.
         if (ConvertManager.TryConvertNpcTypeToName(type: this.type, name: out string _name) &&
             SystemManager.instance.TryGetNpcIndexByName(name: _name, out int _index) &&
             SystemManager.instance.TryGetDialoguesByNpcIndex(index: _index, dialogues: out DialogueCollection _dialolgues))
         {
+            // situationNo 에 맞는 다이얼로그를 찾는다. 없다면 모든 다이얼로그를 반환한다.
             DialogueCollection _dialoguesBySituationNo = new DialogueCollection(_dialolgues.Where(dialogue => dialogue.situationNo == situationNo));
             
             if(_dialoguesBySituationNo.Count > 0)
