@@ -40,6 +40,7 @@ public class Player : MonoBehaviour
 
     private Vector3 respawnPoint, interactPoint;
 
+    private bool isActiveAddict, isActiveDetoxTimer;
     private int poisonStackMax, poisonTicDamage;
     private float detoxActivateTime, confusionActivateTime, confusionDuration, countTimeDetox, countTimeConfusion;
 
@@ -86,8 +87,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Detoxify();
         Interact();
+        
+        if(this.isActiveDetoxTimer && IsInputtingPlayerMovement())
+        {
+            this.countTimeDetox = 0;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -339,7 +344,8 @@ public class Player : MonoBehaviour
             this.isPoison = true;
             this.poisonStack = GetValueIncreaseToNotExceedMaxValue(startValue: this.poisonStack, maxValue: this.poisonStackMax, increaseValue: value);
 
-            StartCoroutine(Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+            TryStartAddict();
+            TryStartDetoxTimer();
         }
     }
 
@@ -480,7 +486,9 @@ public class Player : MonoBehaviour
         }
 
         this.damageSound.Play();
-        StartCoroutine(routine: Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+        
+        TryStartAddict();
+        TryStartDetoxTimer();
     }
 
     private void OnDamageByInsect(MonsterInsect insect, int damage)
@@ -506,39 +514,62 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void TryStartAddict()
+    {
+        if (!this.isActiveAddict)
+        {
+            StartCoroutine(Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
+            this.isActiveAddict = true;
+        }
+    }
+
     private IEnumerator Addict(int stack, int ticDamage)
     {
-        if (this.isPoison)
+        while (this.isPoison)
         {
             // 시스템 메세지 출력
             manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_ADDICT, type: EventMessageType.Debuff);
 
             // 중독 도트 데미지 부여
             OnDamage(value: stack * ticDamage, isAvoidable: false);
-            
+
             yield return new WaitForSeconds(ValueManager.PLAYER_POISON_TIC_DELAY);
-            
-            StartCoroutine(routine: Addict(stack: stack, ticDamage: ticDamage));
         }
     }
 
-    private void Detoxify()
+    private void TryStartDetoxTimer()
     {
-        if (this.isPoison)
+        if (!this.isActiveDetoxTimer)
         {
-            // 정지 시간 체크
-            UpdateCountTimeDetox();
+            StartCoroutine(DetoxTimer());
+            this.isActiveDetoxTimer = true;
+        }
+    }
 
-            if(this.countTimeDetox > this.detoxActivateTime)
+    private IEnumerator DetoxTimer()
+    {
+        while (this.isPoison)
+        {
+            this.countTimeDetox += Time.deltaTime;
+
+            if (this.countTimeDetox >= this.detoxActivateTime)
             {
-                // 중독 상태 비활성화
-                this.isPoison = false;
-                ChangePoisonEffect(isAddict: isPoison);
+                // 이펙트 교체
+                ChangePoisonEffect(isAddict: false);
 
                 // 시스템 메세지 출력
                 manager.DisplayConfirmMessage(text: ValueManager.MESSAGE_PLAYER_DETOX, type: EventMessageType.Recovery);
+
+                // 중독 비활성화
+                this.isPoison = false;
+                this.isActiveAddict = false;
             }
+
+            yield return null;
         }
+
+        this.isActiveDetoxTimer = false;
+        this.countTimeDetox = 0;
     }
 
     private bool TryGetNecessaryBeadIndexByNextSceneType(SceneType type, out int index)
@@ -562,20 +593,6 @@ public class Player : MonoBehaviour
 
         return index > -1;
     }
-
-    private void UpdateCountTimeDetox()
-    {
-        // 점프, 이동 입력 없을 경우 정지 상태로 판단
-        if (IsInputtingPlayerMovement())
-        {
-            countTimeDetox = 0;
-        }
-        else
-        {
-            Timer(tick: Time.deltaTime, time: ref countTimeDetox);
-        }
-    }
-
     private void ChangePoisonEffect(bool isAddict)
     {
         addictEffect.SetActive(isAddict);
@@ -706,6 +723,11 @@ public class Player : MonoBehaviour
         this.isConfusion = false;
         this.poisonStack = 0;
         this.confusionStack = 0;
+
+        this.isActiveAddict = false;
+        this.isActiveDetoxTimer = false;
+        this.countTimeDetox = 0;
+        this.countTimeConfusion = 0;
 
         this.addictEffect.SetActive(false);
         this.detoxEffect.SetActive(false);
