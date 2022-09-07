@@ -31,8 +31,8 @@ public static class ValueManager
     public const float MONSTER_CATAPULT_PROJECTILE_ANGULAR_POWER_INCREMENT_VALUE = 0.1f;    // 투사체 운동량 성장값
     public const float MONSTER_CATAPULT_PROJECTILE_SCALE_VALUE_INCREMENT_VALUE = 0.02f;     // 투사체 스케일 성장값
 
-    public const float PLAYER_MOVE_SPEED_DEFAULT = 11f;  // 플레이어 이동 속도 기본값
-    public const float PLAYER_SPRINT_SPEED_DEFAULT = 33f;   // 플레이어 달리기 속도 기본값
+    public const float PLAYER_MOVE_SPEED_DEFAULT = 5f;  // 플레이어 이동 속도 기본값
+    public const float PLAYER_SPRINT_SPEED_DEFAULT = 11f;   // 플레이어 달리기 속도 기본값
     public const float PLAYER_POISON_TIC_DELAY = 1f;       // 플레이어 중독 데미지 딜레이
     public const float PLAYER_DETOX_ACTIVATE_TIME = 5.0f;     //'중독' 상태 해제를 위한 미입력 시간
     public const float PLAYER_CONFUSION_STACK_UPDATE_TIME = 0.5f;   //'공포' 스택 업데이트 시간
