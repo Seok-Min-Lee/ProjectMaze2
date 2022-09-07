@@ -70,8 +70,8 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // Attribute, Preference 초기화
-        SetIngameAttributeProperties();
-        SetIngamePreferenceProperties();
+        InitIngameAttributeProperties();
+        InitIngamePreferenceProperties();
     }
 
     private void Start()
@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
     {
         this.dialogueCaseNo = choiceNo;
 
-        // 선택지 비활성화
+        // 선택지 버튼 비활성화
         foreach (GameObject button in this.npcChoiceButtons)
         {
             if (button.activeSelf)
@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuOKButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         UpdateExtraSettingAll();
 
@@ -215,7 +215,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuCancelButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         UpdateExtraSettingAll();
 
@@ -229,7 +229,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuLobbyButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         UpdateExtraSettingAll();
 
@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGameMenuQuitButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
         UpdateExtraSettingAll();
 
@@ -268,14 +268,14 @@ public class GameManager : MonoBehaviour
 
     public void OnClickGuideOKButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
         UpdateExtraSettingAll();
     }
 
     public void OnClickGameOverReTryButton()
     {
-        // UI 및 부가적인 세팅 업데이트
+        // UI 및 세팅 업데이트.
         ReverseObjectSetActive(obj: ref this.gameOverPanel, isActive: ref this.isDisplayGameOver);
         UpdateExtraSettingAll();
 
@@ -308,6 +308,62 @@ public class GameManager : MonoBehaviour
         masterMixer.SetFloat(ValueManager.PROPERY_AUDIO_MIXER_EFFECT, volume);
     }
 
+    public void ActivateTrafficLight(bool isActivate)
+    {
+        trafficLightPanel.SetActive(isActivate);
+    }
+
+    public void UpdateTrafficLightByType(TrapTrafficLightType type)
+    {
+        for (int i = 0; i < trafficLights.Length; i++)
+        {
+            if (i == (int)type)
+            {
+                trafficLights[i].SetActive(true);
+            }
+            else
+            {
+                trafficLights[i].SetActive(false);
+            }
+        }
+    }
+
+    public void LoadSceneBySceneType(SceneType sceneType)
+    {
+        string sceneName = ConvertManager.ConvertSceneTypeToString(sceneType: sceneType);
+
+        if(this.currentSceneName == NameManager.SCENE_TUTORIAL)
+        {
+            // 튜토리얼인 경우 튜토리얼 클리어 여부만 저장한다.
+            IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
+            ingameAttributes.Add(new IngameAttribute(
+                id: 0,
+                userId: SystemManager.instance.logInedUser.id,
+                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR,
+                value: 1
+            ));
+
+            SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
+            
+            // 로비로 가기전에 SystemManager 데이터를 지운다.
+            SystemManager.instance.DeleteDataExceptUsers();
+        }
+        else
+        {
+            // Player Attribute DB 데이터 업데이트 추가.
+            SaveCurrentIngameAttributes(isSavePosition: false);
+        }
+        LoadingSceneManager.LoadScene(sceneName: sceneName);
+    }
+
+    public void UpdateByPlayerActiveBeads(bool[] isActives)
+    {
+        // UI 업데이트.
+        UpdateBeadCoversByPlayerActivedBeads(isActives: isActives);
+
+        // 스카이박스 업데이트.
+        UpdateSkyboxByPlayerBeads(isActives: isActives);
+    }
 
     public void ActivateMinimap(bool isActive)
     {
@@ -331,149 +387,6 @@ public class GameManager : MonoBehaviour
                     attributeIsActivePlayerMinimaps[2] = true;
                     break;
             }
-        }
-    }
-
-    public void ActivateTrafficLight(bool isActivate)
-    {
-        trafficLightPanel.SetActive(isActivate);
-    }
-
-    public void UpdateTrafficLightByType(TrapTrafficLightType type)
-    {
-        for (int i = 0; i < trafficLights.Length; i++)
-        {
-            if (i == (int)type)
-            {
-                trafficLights[i].SetActive(true);
-            }
-            else
-            {
-                trafficLights[i].SetActive(false);
-            }
-        }
-    }
-
-    public void UpdateByPlayerActiveBeads(bool[] isActives)
-    {
-        UpdateBeadCoversByPlayerActivedBeads(isActives: isActives);
-        ChangeSkyboxByPlayerBeads(isActives: isActives);
-    }
-
-    public void LoadSceneBySceneType(SceneType sceneType)
-    {
-        string sceneName = ConvertManager.ConvertSceneTypeToString(sceneType: sceneType);
-
-        if(this.currentSceneName == NameManager.SCENE_TUTORIAL)
-        {
-            // 튜토리얼인 경우 튜토리얼 클리어 여부만 저장한다.
-            IngameAttributeCollection ingameAttributes = new IngameAttributeCollection();
-            ingameAttributes.Add(new IngameAttribute(
-                id: 0,
-                userId: SystemManager.instance.logInedUser.id,
-                attributeName: NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR,
-                value: 1
-            ));
-            SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
-            
-            // 로비로 가기전에 SystemManager 데이터를 지운다.
-            SystemManager.instance.DeleteDataExceptUsers();
-        }
-        else
-        {
-            // Player Attribute DB 데이터 업데이트 추가.
-            SaveCurrentIngameAttributes(isSavePosition: false);
-        }
-        LoadingSceneManager.LoadScene(sceneName: sceneName);
-    }
-
-    public void MoveGameObject(GameObject obj, Vector3 vector)
-    {
-        obj.transform.position = vector;
-    }
-
-    private void SetSceneObjectManagerBySceneName(string sceneName, ref VillageObjectManager manager)
-    {
-        // ObjectManager 로 통일하고 지울 것.
-        switch (sceneName)
-        {
-            case NameManager.SCENE_VILLAGE:
-                manager = GameObject.Find(NameManager.NAME_VILLAGE_OBJECT_MANAGER).GetComponent<VillageObjectManager>();
-                break;
-            case NameManager.SCENE_STAGE_1:
-                break;
-            case NameManager.SCENE_STAGE_2:
-                break;
-            case NameManager.SCENE_STAGE_3:
-                break;
-            default:
-                break;
-        }
-    }
-
-    #region ##### 게임 환경 관련 #####
-    private void ChangeSkyboxByPlayerBeads(bool[] isActives)
-    {
-        int materialIndex = 0;
-
-        if (isActives.Length == 3 && isActives[0])
-        {
-            if (isActives[1])
-            {
-                if (isActives[2])
-                {
-                    materialIndex = 3;
-                }
-                else
-                {
-                    materialIndex = 2;
-                }
-            }
-            else
-            {
-                materialIndex = 1;
-            }
-        }
-
-        RenderSettings.skybox = skyboxMaterials[materialIndex];
-    }
-    #endregion
-
-    private void UpdateBeadCoversByPlayerActivedBeads(bool[] isActives)
-    {
-        // Bead UI는 구슬 이미지 위에 커버 이미지가 덮고 있다.
-        // 획득한 구슬이 있으면 덮고 있는 커버 이미지를 비활성화 시킨다.
-        for (int i = 0; i < playerBeadCovers.Count(); i++)
-        {
-            playerBeadCovers[i].SetActive(!isActives[i]);
-        }
-    }
-
-    private void UpdateInteractableAlram()
-    {
-        if (this.isLatestPlayerInteractable != player.isInteractable &&
-            !this.isDisplayGameMenu &&
-            !this.isDisplayGuide &&
-            !this.isDisplayGameOver &&
-            !player.isInteract)
-        {
-            this.isLatestPlayerInteractable = player.isInteractable;
-            this.interactableAlram.SetActive(this.isLatestPlayerInteractable);
-
-            UpdateInteractableAlramTextByInteractionType(type: player.interactableInteractionType);
-        }
-    }
-
-    private void UpdateInteractableAlramTextByInteractionType(InteractionType type)
-    {
-        switch (type)
-        {
-            case InteractionType.Diaglogue:
-                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_DIALOGUE;
-                break;
-            case InteractionType.Guide:
-                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_GUIDE;
-                break;
         }
     }
 
@@ -515,6 +428,11 @@ public class GameManager : MonoBehaviour
         return isVisible;
     }
 
+    public void MoveGameObject(GameObject obj, Vector3 vector)
+    {
+        obj.transform.position = vector;
+    }
+
     private void SetIngamePreferences(
         bool backMirrorVisible,
         float bgmVolume,
@@ -530,6 +448,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateSkyBox()
     {
+        // 스카이박스 상시 회전
         this.skyboxRotation += Time.deltaTime;
         RenderSettings.skybox.SetFloat(ValueManager.PROPERY_SKYBOX_ROTATION, skyboxRotation);
     }
@@ -559,8 +478,40 @@ public class GameManager : MonoBehaviour
             poisonStackText.text = ValueManager.PREFIX_PLAYER_EFFECT_STACK + player.poisonStack.ToString();
 
             // 상호작용 가능한 경우
-            //interactableAlram.SetActive(player.isInteractPreprocessReady ? true : false);
             UpdateInteractableAlram();
+        }
+    }
+
+    private void UpdateInteractableAlram()
+    {
+        // 1. 상호작용 가능 상태가 변했는지 확인
+        // 2. 평상시 UI 외에 활성화 된 것이 있는 지 확인
+        if (this.isLatestPlayerInteractable != player.isInteractable &&
+            !this.isDisplayGameMenu &&
+            !this.isDisplayGuide &&
+            !this.isDisplayGameOver &&
+            !player.isInteract)
+        {
+            // 상호작용 알림 패널 업데이트.
+            ReverseObjectSetActive(obj: ref this.interactableAlram, isActive: ref this.isLatestPlayerInteractable);
+            //this.isLatestPlayerInteractable = player.isInteractable;
+            //this.interactableAlram.SetActive(this.isLatestPlayerInteractable);
+
+            // 상호작용 타입에 따라 텍스트 업데이트.
+            UpdateInteractableAlramTextByInteractionType(type: player.interactableInteractionType);
+        }
+    }
+
+    private void UpdateInteractableAlramTextByInteractionType(InteractionType type)
+    {
+        switch (type)
+        {
+            case InteractionType.Diaglogue:
+                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_DIALOGUE;
+                break;
+            case InteractionType.Guide:
+                this.interactableAlramText.text = ValueManager.INTERACTABLE_ALRAM_TEXT_GUIDE;
+                break;
         }
     }
 
@@ -568,11 +519,14 @@ public class GameManager : MonoBehaviour
     {
         if (minimapVisible && minimapCamera != null)
         {
+            // 플레이어 마커 위치 업데이트
             minimapMarkerPoint = player.transform.position;
             minimapMarkerPoint.y = 0;
 
             minimapMarker.transform.position = minimapMarkerPoint;
 
+            // 미니맵 카메라 위치 업데이트
+            // (플레이어 마커 위치 + 카메라 높이 값)
             minimapCameraPoint = minimapMarkerPoint;
             minimapCameraPoint.y = minimapCamera.transform.position.y;
             minimapCamera.transform.position = minimapCameraPoint;
@@ -581,14 +535,15 @@ public class GameManager : MonoBehaviour
 
     private void DisplayGameOver()
     {
+        // 1. 게임 오버 패널 활성화 상태 확인
+        // 2. 튜토리얼 모드 인지 확인 (튜토리얼에서는 게임오버되지 않는다.)
+        // 3. 플레이어 HP, Life 확인
         if (!isDisplayGameOver && 
             !player.isTutorial &&
             player.currentLife <= 0 && 
             player.currentHp <= 0)
         {
-            isDisplayGameOver = true;
-
-            gameOverPanel.SetActive(isDisplayGameOver);
+            ReverseObjectSetActive(obj: ref this.gameOverPanel, isActive: ref this.isDisplayGameOver);
 
             UpdatePlayerMovable();
             UpdateCursorVisibility();
@@ -597,10 +552,10 @@ public class GameManager : MonoBehaviour
 
     private void DisplayInteraction()
     {
-        // 키 입력 확인
+        // 1. 키 입력 확인 ( 미입력 -> 입력 )
+        // 2. 플레이어가 상호작용 가능한 상태인지 확인
         if (!this.isLatestPlayerInputInteract && player._input.interact)
         {
-            // 상호작용 가능 여부 확인
             if (player.isInteractable)
             {
                 switch (player.interactableInteractionType)
@@ -622,20 +577,25 @@ public class GameManager : MonoBehaviour
 
     private void DisplayGameMenu()
     {
+        // 1. ESC 입력 확인
+        // 2. 게임 메뉴 활성화 확인
+        // 3. 가이드 창 활성화 확인
         if (!this.isLatestPlayerInputEscape && player._input.escape)
         {
             if (!this.isDisplayGameMenu)
             {
                 if (!this.isDisplayGuide)
                 {
+                    // 현재 세팅된 값을 UI 에 표시
                     this.displayGuideToggle.isOn = this.preferenceGuideVisible;
                     this.displayBackMirrorToggle.isOn = this.preferenceBackMirrorVisible;
                     this.bgmSlider.value = this.preferenceBgmVolume;
                     this.seSlider.value = this.preferenceSeVolume;
 
+                    // 플레이어 정지
                     player.InputStop();
 
-
+                    // UI 및 세팅 업데이트.
                     ReverseObjectSetActive(obj: ref this.gameMenuPanel, isActive: ref this.isDisplayGameMenu);
                     UpdateExtraSettingAll();
                 }
@@ -657,12 +617,14 @@ public class GameManager : MonoBehaviour
 
     private void DisplayInteractionWithNpc()
     {
+        // 1. 이미 NPC 와 상호작용 중인지 확인
+        // 2. 해당 NPC 와 상호작용 시작하는 것인지 확인
         if (this.isLatestPlayerInteractWithNpc && player.isInteract)
         {
             // 다음 다이얼로그가 없는 경우 상호작용을 마친다.
             if (!TryContinueInteraction())
             {
-                ReverseInteractionSetting();
+                ReverseInteractionSetting();    // UI 전환
                 this.interactNpcObject.InteractionPostProcess(player: player);
 
                 this.isLatestPlayerInteractWithNpc = false;
@@ -670,15 +632,16 @@ public class GameManager : MonoBehaviour
         }
         else if(!this.isLatestPlayerInteractWithNpc && player.isInteract)
         {
+            // 관련 프로퍼티 업데이트.
             this.interactNpcObject = player.interactableNpcObject;
-
-            ReverseInteractionSetting();        // UI 세팅
-            InitInteractionWithNpcSettings();   // Dialogue 세팅
-            TryContinueInteraction();           // 상호작용 시작
-
+            this.isLatestPlayerInteractWithNpc = player.isInteract;
+            
+            // 텍스트 업데이트.
             this.npcName.text = interactNpcObject.npc.name;
 
-            this.isLatestPlayerInteractWithNpc = player.isInteract;
+            ReverseInteractionSetting();        // UI 전환
+            InitInteractionWithNpcSettings();   // Dialogue 세팅
+            TryContinueInteraction();           // 상호작용 시작
         }
     }
 
@@ -690,8 +653,10 @@ public class GameManager : MonoBehaviour
         {
             if(SystemManager.instance.guideTypeGuideDictionary.TryGetValue(key: guideType, value: out guide))
             {
+                // 플레이어 정지
                 player.InputStop();
 
+                // UI 및 세팅 업데이트.
                 ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
                 UpdateExtraSettingAll();
 
@@ -701,6 +666,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // UI 및 세팅 업데이트.
             ReverseObjectSetActive(obj: ref this.guidePanel, isActive: ref this.isDisplayGuide);
             UpdateExtraSettingAll();
         }
@@ -714,23 +680,29 @@ public class GameManager : MonoBehaviour
         if(this.interactNpcObject != null &&
            TryGetNextDialogue(dialogue: out dialogue))
         {
+            // 대화 텍스트 및 마지막 다이얼로그인지 확인
             npcDialogue.text = dialogue.text;
             isLast = SystemManager.instance.lastDialogueIndexDictionary.ContainsKey(dialogue.id);
 
+            // 선택지에 나타나는 다이얼로그인지 확인
             if(dialogue.type == DialogueType.Question)
             {
+                // 선택지 세팅
                 UpdateDialogueOptions(sequenceNo: this.dialogueSequenceNo);
 
-                nextDialogueSignal.SetActive(false);    // 다음 다이얼로그 표시 off
-                player._input.interactEnable = false;   // 옵션 선택을 위해 상호작용 키입력 off
+                this.nextDialogueSignal.SetActive(false);    // 다음 다이얼로그 표시 비활성화
+                player._input.interactEnable = false;   // 옵션 선택을 위해 상호작용 키입력 불가능하도록 설정
             }
             else
             {
+                // 이벤트 발생
                 OccurDialogueEvent(dialogue: dialogue, isLast: isLast);
 
-                this.nextDialogueSignal.SetActive(!isLast); // 다음 다이얼로그 표시 업데이트
+                // 다음 다이얼로그 표시 업데이트
+                this.nextDialogueSignal.SetActive(!isLast); 
             }
 
+            // 다음 다이얼로그를 가져오기 위해 SequenceNo를 증가시킨다.
             this.dialogueSequenceNo++;
 
             return true;
@@ -756,6 +728,8 @@ public class GameManager : MonoBehaviour
     {
         int caseNo;
 
+        // Goblin 의 경우만 CaseNo 를 통해 랜덤한 다이얼로그가 출력되기 때문에 값을 정해준다.
+        // 그렇지 않은 경우 0 으로 설정하고 선택지에 따라 업데이트 된다.
         if (interactNpcObject.type == NpcType.Goblin)
         {
             caseNo = GetDialogueSampleCaseNoForGoblin();
@@ -770,23 +744,15 @@ public class GameManager : MonoBehaviour
 
     private bool TryGetNextDialogue(out Dialogue dialogue)
     {
-        DialogueCollection _dialogues = GetNextDialogueSamples();
+        dialogue = GetNextDialogueSamples().FirstOrDefault();
 
-        if (_dialogues.Count() > 0)
-        {
-            dialogue = _dialogues.FirstOrDefault();
-
-            return !string.IsNullOrEmpty(dialogue.text);
-        }
-
-        dialogue = new Dialogue();
-        return false;
+        return !string.IsNullOrEmpty(dialogue.text);
     }
 
     private DialogueCollection GetNextDialogueSamples()
     {
         DialogueCollection _dialogues = new DialogueCollection(
-            dialogues.Where(x => x.type != DialogueType.Option &&
+            this.dialogues.Where(x => x.type != DialogueType.Option &&
                                  x.caseNo == this.dialogueCaseNo &&
                                  x.sequenceNo == this.dialogueSequenceNo));
 
@@ -795,8 +761,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateDialogueOptions(int sequenceNo)
     {
+        // 선택지별로 CaseNo 를 가지고 있기 때문에 SequenceNo 로만 가져온다.
+        // 현재 구조상 선택지가 여러 번 나오는 경우는 없기 때문에 가능한 상태이며 추후 다른 케이스가 추가되면 수정이 필요하다.
         DialogueCollection options = new DialogueCollection(
-            dialogues.Where(x => x.type == DialogueType.Option && x.sequenceNo == sequenceNo)
+            this.dialogues.Where(x => x.type == DialogueType.Option && x.sequenceNo == sequenceNo)
         );
 
         // 선택지 활성화
@@ -838,16 +806,14 @@ public class GameManager : MonoBehaviour
 
     private int GetDialogueSampleCaseNoForGoblin()
     {
-        // 다이럴로그 타입을 결정한다.
-        float randomTypeValue = Random.Range(minInclusive: 0, maxExclusive: 10);
-        DialogueType dialogueType = randomTypeValue > 4 ? DialogueType.Normal : DialogueType.Event;
-
-        // 다이얼로그 SequenceSubNo 의 최대 최소값 구한다.
         DialogueCollection _dialogues;
         int caseNo;
 
-        if (dialogueType == DialogueType.Event)
+        if (GetTrueOrFalseByHalfChance())
         {
+            // 1. MagicHuman을 우선적으로 발생시킨다.
+            // 2. MagicFairy가 활성화 상태라면 마지막 남은 MagicGiant만 발생시킨다.
+            // 3. MagicFairy가 비활성화 상태라면 MagicGiant와 5:5 확률로 발생시킨다.
             if (this.player.isActiveMagicHuman)
             {
                 if (this.player.isActiveMagicFairy)
@@ -856,14 +822,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (Random.Range(minInclusive: 0, maxExclusive: 2) > 0)
-                    {
-                        caseNo = SystemManager.instance.dialogueMagicFairyCaseNo;
-                    }
-                    else
-                    {
-                        caseNo = SystemManager.instance.dialogueMagicGiantCaseNo;
-                    }
+                    caseNo = GetTrueOrFalseByHalfChance() ? SystemManager.instance.dialogueMagicFairyCaseNo : SystemManager.instance.dialogueMagicGiantCaseNo;
                 }
             }
             else
@@ -873,7 +832,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            _dialogues = new DialogueCollection(dialogues.Where(dialogue => dialogue.type == dialogueType).OrderBy(dialogue => dialogue.caseNo));
+            // Goblin 설정 상 다이얼로그 패턴을 CaseNo 로 구분하고 있다. (실제 데이터 역시 Event 타입과 교차 없이 정렬이 제대로 되어 있어야한다.)
+            // 랜덤한 다이얼로그를 가져오기 위해 CaseNo 의 범위를 구한다.
+            _dialogues = new DialogueCollection(dialogues.Where(dialogue => dialogue.type == DialogueType.Normal).OrderBy(dialogue => dialogue.caseNo));
 
             int randomMinValue = _dialogues.FirstOrDefault().caseNo;
             int randomMaxValue = _dialogues.LastOrDefault().caseNo;
@@ -882,6 +843,61 @@ public class GameManager : MonoBehaviour
         }
 
         return caseNo;
+    }
+
+    private void SetSceneObjectManagerBySceneName(string sceneName, ref VillageObjectManager manager)
+    {
+        // ObjectManager 로 통일하고 지울 것.
+        switch (sceneName)
+        {
+            case NameManager.SCENE_VILLAGE:
+                manager = GameObject.Find(NameManager.NAME_VILLAGE_OBJECT_MANAGER).GetComponent<VillageObjectManager>();
+                break;
+            case NameManager.SCENE_STAGE_1:
+                break;
+            case NameManager.SCENE_STAGE_2:
+                break;
+            case NameManager.SCENE_STAGE_3:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void UpdateSkyboxByPlayerBeads(bool[] isActives)
+    {
+        int materialIndex = 0;
+
+        if (isActives.Length == 3 && isActives[0])
+        {
+            if (isActives[1])
+            {
+                if (isActives[2])
+                {
+                    materialIndex = 3;
+                }
+                else
+                {
+                    materialIndex = 2;
+                }
+            }
+            else
+            {
+                materialIndex = 1;
+            }
+        }
+
+        RenderSettings.skybox = skyboxMaterials[materialIndex];
+    }
+
+    private void UpdateBeadCoversByPlayerActivedBeads(bool[] isActives)
+    {
+        // Bead UI는 구슬 이미지 위에 커버 이미지가 덮고 있다.
+        // 획득한 구슬이 있으면 덮고 있는 커버 이미지를 비활성화 시킨다.
+        for (int i = 0; i < playerBeadCovers.Count(); i++)
+        {
+            playerBeadCovers[i].SetActive(!isActives[i]);
+        }
     }
 
     private void ReverseInteractionSetting()
@@ -909,9 +925,9 @@ public class GameManager : MonoBehaviour
 
     private void UpdateExtraSettingAll()
     {
-        UpdateTimeScale();
-        UpdatePlayerMovable();
-        UpdateCursorVisibility();
+        UpdateTimeScale();          // 게임 일시 정지 여부 설정
+        UpdatePlayerMovable();      // 플레이어 조작 가능 여부 설정
+        UpdateCursorVisibility();   // 커서 활성화 결정
     }
 
     private void ReverseObjectSetActive(ref GameObject obj, ref bool isActive)
@@ -987,6 +1003,11 @@ public class GameManager : MonoBehaviour
     private bool IsNeedPause()
     {
         return this.isDisplayGameMenu || this.isDisplayGuide;
+    }
+
+    private bool GetTrueOrFalseByHalfChance()
+    {
+        return Random.Range(minInclusive: 0, maxExclusive: 2) > 0;
     }
 
     #region ##### 데이터 처리 관련#####
@@ -1129,7 +1150,7 @@ public class GameManager : MonoBehaviour
         SystemManager.instance.SaveIngameAttributes(ingameAttributes: ingameAttributes);
     }
 
-    private void SetIngameAttributeProperties()
+    private void InitIngameAttributeProperties()
     {
         attributeIsActivePlayerBeads = new bool[3];
         attributeIsActivePlayerMinimaps = new bool[3];
@@ -1138,7 +1159,7 @@ public class GameManager : MonoBehaviour
         SetIngameAttributesBySavedData(ingameAttributes: SystemManager.instance.ingameAttributes);
     }
 
-    private void SetIngamePreferenceProperties()
+    private void InitIngamePreferenceProperties()
     {
         SetIngamePreferenceDefault();
         SetIngamePreferenceBySavedData(preferences: SystemManager.instance.ingamePreferences);
