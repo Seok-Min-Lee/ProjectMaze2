@@ -337,7 +337,8 @@ public class Player : MonoBehaviour
         if (!this.isPoison)
         {
             this.isPoison = true;
-            this.poisonStack += value;
+            this.poisonStack = GetValueIncreaseToNotExceedMaxValue(startValue: this.poisonStack, maxValue: this.poisonStackMax, increaseValue: value);
+
             StartCoroutine(Addict(stack: this.poisonStack, ticDamage: this.poisonTicDamage));
         }
     }
