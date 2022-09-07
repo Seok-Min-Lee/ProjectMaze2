@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -87,6 +88,8 @@ public class LogInManager : MonoBehaviour
 
     public void OnClickNewGame()
     {
+        // 튜토리얼 클리어한 상태인지 확인하고 맞다면 새 게임을 진행한다.
+        // 아니라면 에러 메세지를 출력한다.
         if (IsTutorialClearByIngameAttributes(attributes: SystemManager.instance.ingameAttributes))
         {
             SystemManager.instance.DeleteIngameIngameAttributeDataExceptTutorialClear();
@@ -101,7 +104,9 @@ public class LogInManager : MonoBehaviour
 
     public void OnClickContinueGame()
     {
-        if (SystemManager.instance.ingameAttributes.Count > 0)
+        // 튜토리얼 클리어 외의 Attribute 값이 있으면 저장된 데이터가 있다고 판단하고 이어하기를 진행한다.
+        // 아니라면 에러 메세지를 출력한다.
+        if (IsEnableContinueGameByIngameAttributes(attributes: SystemManager.instance.ingameAttributes))
         {
             int sceneIndex;
             string sceneName;
@@ -158,6 +163,20 @@ public class LogInManager : MonoBehaviour
             if(attribute.attributeName == NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR)
             {
                 return attribute.value == 1;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsEnableContinueGameByIngameAttributes(IEnumerable<IngameAttribute> attributes)
+    {
+        // 튜토리얼 클리어 외의 값이 있으면 저장된 데이터가 있다고 판단한다.
+        foreach (IngameAttribute attribute in attributes)
+        {
+            if (attribute.attributeName != NameManager.INGAME_ATTRIBUTE_NAME_TUTORIAL_CLEAR)
+            {
+                return true;
             }
         }
 
