@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class VillageObjectManager : MonoBehaviour
 {
-    public GameObject portal;
     public GameObject dragonGroup;
     public MeshRenderer[] invisuableWalls;
     public AudioSource backgroundMusicA, backgroundMusicB;
@@ -33,7 +32,6 @@ public class VillageObjectManager : MonoBehaviour
         }
 
         this.dragonGroup.SetActive(this.isClearGame);
-        this.portal.SetActive(this.isClearGame);
 
         if (this.isClearGame)
         {
@@ -45,10 +43,5 @@ public class VillageObjectManager : MonoBehaviour
             this.backgroundMusicA.Play();
             this.backgroundMusicA.loop = true; 
         }
-    }
-
-    public void OpenPortal()
-    {
-        this.portal.SetActive(true);
     }
 }

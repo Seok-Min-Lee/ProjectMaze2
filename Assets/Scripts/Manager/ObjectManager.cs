@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ObjectManager : MonoBehaviour
 {
@@ -9,16 +10,23 @@ public class ObjectManager : MonoBehaviour
     private List<GameObject> npcObjectAll;
     private List<GameObject> npcGiantStatues, npcGiantTwins;
     private List<GameObject> guideObjectAll;
+    private GameObject portal;
 
     private bool isLatestPreferenceGuideVisible;
+    private bool isClearGame;
+    private string currentSceneName;
 
     private void Start()
     {
         this.gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         this.player = GameObject.FindGameObjectWithTag(NameManager.TAG_PLAYER).GetComponent<Player>();
 
+        this.isClearGame = SystemManager.instance.isClearGame;
+        this.currentSceneName = SceneManager.GetActiveScene().name;
+
         this.npcObjectAll = GetGameObjectsByTag(tag: NameManager.TAG_NPC);
         this.guideObjectAll = GetGameObjectsByTag(tag: NameManager.TAG_GUIDE);
+        this.portal = GameObject.FindGameObjectWithTag(NameManager.TAG_PORTAL);
 
         SplitNpcObjectsByNpcType(
             npcObjectAll: this.npcObjectAll, 
@@ -26,13 +34,18 @@ public class ObjectManager : MonoBehaviour
             npcGiantTwins: out this.npcGiantTwins
         );
 
-        SetNpcObjectsByClearOrNot();
+        SetGameObjectsByClearOrNot();
         SetGuideObjectByPreference();
     }
 
     private void Update()
     {
         UpdateGuideObjectVisiblityByPreference();
+    }
+
+    public void ActivatePortal()
+    {
+        this.portal.SetActive(true);
     }
 
     private void UpdateGuideObjectVisiblityByPreference()
@@ -53,18 +66,21 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    private void SetNpcObjectsByClearOrNot()
+    private void SetGameObjectsByClearOrNot()
     {
-        bool isClearGame = SystemManager.instance.isClearGame;
-
-        foreach (GameObject statue in npcGiantStatues)
+        foreach (GameObject statue in this.npcGiantStatues)
         {
-            statue.SetActive(!isClearGame);
+            statue.SetActive(!this.isClearGame);
         }
 
-        foreach (GameObject twin in npcGiantTwins)
+        foreach (GameObject twin in this.npcGiantTwins)
         {
-            twin.SetActive(isClearGame);
+            twin.SetActive(this.isClearGame);
+        }
+
+        if (!this.isClearGame && this.currentSceneName == NameManager.SCENE_VILLAGE)
+        {
+            portal.SetActive(false);
         }
     }
 

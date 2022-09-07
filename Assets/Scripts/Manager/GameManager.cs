@@ -8,6 +8,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    public ObjectManager objectManager;
     // Ä«¸Þ¶ó
     public GameObject followCamera, backMirrorCamera, npcInteractionCamera, minimapCamera;
 
@@ -46,8 +47,8 @@ public class GameManager : MonoBehaviour
 
     public Material[] skyboxMaterials;
     public AudioMixer masterMixer;
-    
-    public string currentSceneName { get; private set; }
+
+    private string currentSceneName;
     
     private Player player;
     private bool isPause, isDisplayNormal, isDisplayGuide, isDisplayGameMenu, isDisplayGameOver, isDisplayInteract;
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
     private DialogueCollection dialogues;
     private VillageObjectManager villageObjectManager;
     private NpcObject interactNpcObject;
-    public int situationNo { get; private set; }
+    private int situationNo;
     private int dialogueSequenceNo, dialogueCaseNo;
 
     private float skyboxRotation;
@@ -796,10 +797,7 @@ public class GameManager : MonoBehaviour
             }
             else if (dialogue.caseNo == SystemManager.instance.dialogueEntranceCaseNo)
             {
-                if (villageObjectManager != null)
-                {
-                    villageObjectManager.OpenPortal();
-                }
+                objectManager.ActivatePortal();
             }
         }
     }
